@@ -3,6 +3,6 @@ package constant
 type Role int
 
 const (
-	USER Role = iota
+	USER Role = iota + 1
 	ADMIN
 )
