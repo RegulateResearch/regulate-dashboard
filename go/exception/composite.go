@@ -3,21 +3,23 @@ package exception
 import "fmt"
 
 type Composite struct {
+	cause      Cause
 	origin     string
 	message    string
 	wrappedErr Exception
 }
 
-func NewCompositeException(origin string, message string, err Exception) Composite {
+func NewCompositeException(cause Cause, origin string, message string, err Exception) Composite {
 	return Composite{
+		cause:      cause,
 		origin:     origin,
 		message:    message,
 		wrappedErr: err,
 	}
 }
 
-func (err Composite) Cause() string {
-	return err.wrappedErr.Cause()
+func (err Composite) Cause() Cause {
+	return err.cause
 }
 
 func (err Composite) Origin() string {

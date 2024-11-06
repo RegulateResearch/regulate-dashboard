@@ -3,13 +3,13 @@ package exception
 import "fmt"
 
 type Base struct {
-	cause        string
+	cause        Cause
 	origin       string
 	message      string
 	wrappedError error
 }
 
-func NewBaseException(cause string, origin string, message string, err error) Base {
+func NewBaseException(cause Cause, origin string, message string, err error) Base {
 	return Base{
 		cause:        cause,
 		origin:       origin,
@@ -18,7 +18,7 @@ func NewBaseException(cause string, origin string, message string, err error) Ba
 	}
 }
 
-func (err Base) Cause() string {
+func (err Base) Cause() Cause {
 	return err.cause
 }
 

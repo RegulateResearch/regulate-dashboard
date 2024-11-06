@@ -2,25 +2,29 @@ package exception
 
 import "net/http"
 
-var CAUSE_USER = "user"
-var CAUSE_UNAUTHORIZED = "unauthorized"
-var CAUSE_FORBIDDEN = "forbidden"
-var CAUSE_NOT_FOUND = "not found"
-var CAUSE_INTERNAL = "internal"
+type Cause int
+
+const (
+	CAUSE_USER Cause = iota
+	CAUSE_UNAUTHORIZED
+	CAUSE_FORBIDDEN
+	CAUSE_NOT_FOUND
+	CAUSE_INTERNAL
+)
 
 type causeStatusMapping struct {
-	cause  string
+	cause  Cause
 	status int
 }
 
-func NewCauseStatusMapping(cause string, status int) causeStatusMapping {
+func NewCauseStatusMapping(cause Cause, status int) causeStatusMapping {
 	return causeStatusMapping{
 		cause:  cause,
 		status: status,
 	}
 }
 
-func (m causeStatusMapping) Cause() string {
+func (m causeStatusMapping) Cause() Cause {
 	return m.cause
 }
 
@@ -28,7 +32,7 @@ func (m causeStatusMapping) Status() int {
 	return m.status
 }
 
-func GetHttpStatus(cause string) int {
+func GetHttpStatus(cause Cause) int {
 	status := http.StatusTeapot
 	cause_mappings := getCauseStatusMapping()
 	for _, mapping := range cause_mappings {
