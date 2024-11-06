@@ -1,6 +1,7 @@
 package config
 
 import (
+	"log"
 	"os"
 	"strconv"
 
@@ -8,7 +9,7 @@ import (
 )
 
 func GetBcryptCost() int {
-	costStr := os.Getenv("BCRYPT_COST")
+	costStr := os.Getenv(envBcryptCost)
 	cost, err := strconv.Atoi(costStr)
 	if err != nil {
 		cost = bcrypt.DefaultCost
@@ -18,9 +19,9 @@ func GetBcryptCost() int {
 }
 
 func GetJwtSecret() string {
-	secret := os.Getenv("JWT_SECRET")
+	secret := os.Getenv(envJwtSecret)
 	if secret == "" {
-		secret = "berbahaya"
+		log.Fatalln("please provide JWT secret")
 	}
 
 	return secret

@@ -5,7 +5,7 @@ import "net/http"
 type Cause int
 
 const (
-	CAUSE_USER Cause = iota
+	CAUSE_USER Cause = iota + 1
 	CAUSE_UNAUTHORIZED
 	CAUSE_FORBIDDEN
 	CAUSE_NOT_FOUND

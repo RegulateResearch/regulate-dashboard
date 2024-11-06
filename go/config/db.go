@@ -1,35 +1,18 @@
 package config
 
 import (
-	"database/sql"
 	"fmt"
 	"os"
-
-	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
-func ConnectDB() (*sql.DB, error) {
-	db, err := sql.Open("pgx", getDatabaseURL())
-	if err != nil {
-		return nil, err
-	}
-
-	err = db.Ping()
-	if err != nil {
-		return nil, err
-	}
-
-	return db, nil
-}
-
-func getDatabaseURL() string {
-	url := os.Getenv("DATABASE_URL")
+func GetDatabaseURL() string {
+	url := os.Getenv(envDatabaseURL)
 	if url == "" {
-		username := os.Getenv("DATABASE_USERNAME")
-		password := os.Getenv("DATABASE_PASSWORD")
-		host := os.Getenv("DATABASE_HOST")
-		port := os.Getenv("DATABASE_PORT")
-		name := os.Getenv("DATABASE_NAME")
+		username := os.Getenv(envDatabaseUsername)
+		password := os.Getenv(envDatabasePassword)
+		host := os.Getenv(envDatabaseHost)
+		port := os.Getenv(envDatabasePort)
+		name := os.Getenv(envDatabaseName)
 		url = fmt.Sprintf("postgres://%s:%s@%s:%s/%s", username, password, host, port, name)
 	}
 

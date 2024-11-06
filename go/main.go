@@ -1,6 +1,8 @@
 package main
 
-import "frascati/config"
+import (
+	"frascati/config"
+)
 
 func main() {
 	config.InitEnv()

@@ -3,6 +3,6 @@ package exception
 type Exception interface {
 	Error() string
 	Origin() string
-	Cause() string
+	Cause() Cause
 	Verbose() string
 }
