@@ -31,5 +31,10 @@ func (err Base) Error() string {
 }
 
 func (err Base) Verbose() string {
-	return fmt.Sprintf("%s\n\t%s", err.message, err.wrappedError.Error())
+	wrappedErr := err.wrappedError
+	if wrappedErr != nil {
+		return fmt.Sprintf("%s\n\t%s", err.message, err.wrappedError.Error())
+	}
+
+	return fmt.Sprintf("%s\n", err.message)
 }
