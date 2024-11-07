@@ -24,3 +24,7 @@ func GenerateErrAuthFailComposite(err exception.Exception) exception.Exception {
 func GenerateErrAuthFailBase(subdomain string, err error) exception.Exception {
 	return exception.NewBaseException(exception.CAUSE_INTERNAL, fmt.Sprintf("auth/%s", subdomain), "auth process fail", err)
 }
+
+func GenerateErrInvalidToken(subdomain string, err error) exception.Exception {
+	return exception.NewBaseException(exception.CAUSE_UNAUTHORIZED, fmt.Sprintf("auth/%s", subdomain), "token is invalid", err)
+}
