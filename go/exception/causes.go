@@ -45,6 +45,10 @@ func GetHttpStatus(cause Cause) int {
 	return status
 }
 
+func GetExceptionHttpStatus(exc Exception) int {
+	return GetHttpStatus(exc.Cause())
+}
+
 func getCauseStatusMapping() []causeStatusMapping {
 	cause_mappings := []causeStatusMapping{
 		NewCauseStatusMapping(CAUSE_USER, http.StatusBadRequest),
