@@ -23,6 +23,7 @@ func HandleError(ctx *gin.Context) {
 	var exc exception.Exception
 	if errors.As(err, &exc) {
 		ctx.AbortWithStatusJSON(exception.GetExceptionHttpStatus(exc), response.NewExceptionResponse("request fail", exc))
+		return
 	}
 
 	var verr validator.ValidationErrors

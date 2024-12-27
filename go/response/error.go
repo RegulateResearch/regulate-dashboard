@@ -5,8 +5,8 @@ import (
 )
 
 type ErrorResponse[T any] struct {
-	Message string
-	Error   T
+	Message string `json:"message"`
+	Error   T      `json:"error"`
 }
 
 func NewExceptionResponse(message string, exc exception.Exception) ErrorResponse[string] {

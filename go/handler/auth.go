@@ -2,7 +2,6 @@ package handler
 
 import (
 	"frascati/dto"
-	"frascati/exception"
 	"frascati/handler/converter"
 	"frascati/service/auth"
 	"net/http"
@@ -26,20 +25,14 @@ func (h AuthHandler) Register(ctx *gin.Context) {
 	var userRegister dto.UserWrite
 	err := ctx.ShouldBindBodyWithJSON(&userRegister)
 	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"message": "invalid input",
-		})
-
+		ctx.Error(err)
 		return
 	}
 
 	userWrite := converter.ConvertUserWriteToEntity(userRegister)
 	userReturn, exc := h.authService.Register(ctx, userWrite)
 	if exc != nil {
-		ctx.AbortWithStatusJSON(exception.GetHttpStatus(exc.Cause()), gin.H{
-			"message": exc.Error(),
-		})
-
+		ctx.Error(exc)
 		return
 	}
 
@@ -50,10 +43,7 @@ func (h AuthHandler) Login(ctx *gin.Context) {
 	var userLogin dto.UserWrite
 	err := ctx.ShouldBindBodyWithJSON(&userLogin)
 	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"message": "invalid input",
-		})
-
+		ctx.Error(err)
 		return
 	}
 
@@ -61,10 +51,7 @@ func (h AuthHandler) Login(ctx *gin.Context) {
 	token, exc := h.authService.Login(ctx, userWrite)
 
 	if exc != nil {
-		ctx.AbortWithStatusJSON(exception.GetHttpStatus(exc.Cause()), gin.H{
-			"message": exc.Error(),
-		})
-
+		ctx.Error(exc)
 		return
 	}
 
