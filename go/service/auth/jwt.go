@@ -15,6 +15,7 @@ import (
 
 type JwtService interface {
 	GenerateToken(entity.User) (string, exception.Exception)
+	ParseToken(token string) (dto.UserTokenReturn, exception.Exception)
 }
 
 type jwtServiceImpl struct {
