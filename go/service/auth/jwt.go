@@ -65,7 +65,7 @@ func (s jwtServiceImpl) ParseToken(token string) (dto.UserTokenReturn, exception
 		token,
 		&placeHolderClaim,
 		func(t *jwt.Token) (any, error) {
-			return s.secret, nil
+			return []byte(s.secret), nil
 		},
 		jwt.WithIssuer(s.issuer),
 		jwt.WithExpirationRequired(),
@@ -73,7 +73,7 @@ func (s jwtServiceImpl) ParseToken(token string) (dto.UserTokenReturn, exception
 	)
 
 	if !jwtToken.Valid {
-		return dto.UserTokenReturn{}, auth_exception.GenerateErrInvalidToken("jwt", nil)
+		return dto.UserTokenReturn{}, auth_exception.GenerateErrInvalidToken("jwt", errors.New("this token does not pass token validity test"))
 	}
 
 	if err != nil {
@@ -82,7 +82,7 @@ func (s jwtServiceImpl) ParseToken(token string) (dto.UserTokenReturn, exception
 
 	resClaim, ok := jwtToken.Claims.(*customClaim)
 	if !ok {
-		return dto.UserTokenReturn{}, auth_exception.GenerateErrInvalidToken("jwt", nil)
+		return dto.UserTokenReturn{}, auth_exception.GenerateErrInvalidToken("jwt", errors.New("token data casting fail"))
 	}
 
 	return resClaim.UserData, nil

@@ -5,4 +5,5 @@ type Exception interface {
 	Origin() string
 	Cause() Cause
 	Verbose() string
+	ToMap() map[string]any
 }

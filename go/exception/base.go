@@ -38,3 +38,12 @@ func (err Base) Verbose() string {
 
 	return fmt.Sprintf("%s\n", err.message)
 }
+
+func (err Base) ToMap() map[string]any {
+	return map[string]any{
+		"cause":   err.cause,
+		"origin":  err.origin,
+		"message": err.message,
+		"error":   err.wrappedError.Error(),
+	}
+}

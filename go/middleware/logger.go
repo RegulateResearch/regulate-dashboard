@@ -44,9 +44,9 @@ func (m LoggerMiddleware) LogActivities(ctx *gin.Context) {
 		var exc exception.Exception
 		if errors.As(lastErr, &exc) {
 			if exc.Cause() == exception.CAUSE_INTERNAL {
-				m.logger.WithFieldsError(fields).Errorf("error:\n%s", exc.Verbose())
+				m.logger.WithFieldsError(fields).WithField("errorObj", exc.ToMap()).Errorf("error:\n%s", exc.Error())
 			} else {
-				m.logger.WithFieldsWarn(fields).Warnf("warning:\n%s", exc.Verbose())
+				m.logger.WithFieldsWarn(fields).WithField("errorObj", exc.ToMap()).Warnf("warning:\n%s", exc.Error())
 			}
 		}
 

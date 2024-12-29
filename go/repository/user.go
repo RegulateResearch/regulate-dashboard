@@ -26,7 +26,7 @@ func NewUserRepository(db *sql.DB) UserRepository {
 func (r userRepositoryImpl) FindAll(ctx context.Context) ([]entity.User, exception.Exception) {
 	res := make([]entity.User, 0)
 	query :=
-		`SELECT id, username, role
+		`SELECT id, username, user_role
 		FROM users`
 
 	rows, err := r.db.Query(query)

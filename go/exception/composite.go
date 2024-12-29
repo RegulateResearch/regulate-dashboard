@@ -33,3 +33,12 @@ func (err Composite) Error() string {
 func (err Composite) Verbose() string {
 	return fmt.Sprintf("%s\n\t%s", err.message, err.wrappedErr.Verbose())
 }
+
+func (err Composite) ToMap() map[string]any {
+	return map[string]any{
+		"cause":   err.cause,
+		"origin":  err.origin,
+		"message": err.message,
+		"error":   err.wrappedErr.ToMap(),
+	}
+}

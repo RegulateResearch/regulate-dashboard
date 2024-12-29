@@ -52,7 +52,6 @@ func Authorize(authorizeFn func(userData dto.UserTokenReturn) bool) func(*gin.Co
 		if exc != nil {
 			ctx.Error(exc)
 			ctx.Abort()
-
 			return
 		}
 
@@ -61,6 +60,7 @@ func Authorize(authorizeFn func(userData dto.UserTokenReturn) bool) func(*gin.Co
 		} else {
 			exc = exception.NewBaseException(exception.CAUSE_FORBIDDEN, "auth/middleware", "resource not found", middleware_exception.ErrAuthorizationFailsForbidden)
 			ctx.Error(exc)
+			ctx.Abort()
 			return
 		}
 	}
