@@ -2,20 +2,17 @@ package auth
 
 import (
 	"errors"
-	"frascati/dto"
 	"frascati/entity"
 	"frascati/exception"
 	auth_exception "frascati/service/auth/exception"
-
-	"strconv"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 )
 
 type JwtService interface {
-	GenerateToken(entity.User) (string, exception.Exception)
-	ParseToken(token string) (dto.UserTokenReturn, exception.Exception)
+	GenerateToken(entity.SessionData) (string, exception.Exception)
+	ParseToken(token string) (entity.SessionData, exception.Exception)
 }
 
 type jwtServiceImpl struct {
@@ -24,17 +21,17 @@ type jwtServiceImpl struct {
 	method jwt.SigningMethod
 }
 
-func NewJwtService(secret string) JwtService {
+func NewJwtService(issuer string, secret string) JwtService {
 	return jwtServiceImpl{
-		issuer: "frascati",
+		issuer: issuer,
 		secret: secret,
 		method: jwt.SigningMethodHS256,
 	}
 }
 
-func (s jwtServiceImpl) GenerateToken(user entity.User) (string, exception.Exception) {
+func (s jwtServiceImpl) GenerateToken(sessionData entity.SessionData) (string, exception.Exception) {
 	now := time.Now()
-	idStr := strconv.FormatInt(user.ID, 10)
+	idStr := sessionData.ID.String()
 	regClaim := jwt.RegisteredClaims{
 		Issuer:    s.issuer,
 		Subject:   idStr,
@@ -44,10 +41,7 @@ func (s jwtServiceImpl) GenerateToken(user entity.User) (string, exception.Excep
 
 	claim := customClaim{
 		RegisteredClaims: regClaim,
-		UserData: dto.UserTokenReturn{
-			ID:   user.ID,
-			Role: user.Role,
-		},
+		SessionData:      sessionData,
 	}
 
 	token := jwt.NewWithClaims(s.method, claim)
@@ -59,7 +53,7 @@ func (s jwtServiceImpl) GenerateToken(user entity.User) (string, exception.Excep
 	return tokenStr, nil
 }
 
-func (s jwtServiceImpl) ParseToken(token string) (dto.UserTokenReturn, exception.Exception) {
+func (s jwtServiceImpl) ParseToken(token string) (entity.SessionData, exception.Exception) {
 	var placeHolderClaim customClaim
 	jwtToken, err := jwt.ParseWithClaims(
 		token,
@@ -72,20 +66,22 @@ func (s jwtServiceImpl) ParseToken(token string) (dto.UserTokenReturn, exception
 		jwt.WithValidMethods([]string{s.method.Alg()}),
 	)
 
+	emptySession := entity.SessionData{}
+
 	if !jwtToken.Valid {
-		return dto.UserTokenReturn{}, auth_exception.GenerateErrInvalidToken("jwt", errors.New("this token does not pass token validity test"))
+		return emptySession, auth_exception.GenerateErrInvalidToken("jwt", errors.New("this token does not pass token validity test"))
 	}
 
 	if err != nil {
-		return dto.UserTokenReturn{}, checkErrToken(err)
+		return emptySession, checkErrToken(err)
 	}
 
 	resClaim, ok := jwtToken.Claims.(*customClaim)
 	if !ok {
-		return dto.UserTokenReturn{}, auth_exception.GenerateErrInvalidToken("jwt", errors.New("token data casting fail"))
+		return emptySession, auth_exception.GenerateErrInvalidToken("jwt", errors.New("token data casting fail"))
 	}
 
-	return resClaim.UserData, nil
+	return resClaim.SessionData, nil
 }
 
 func checkErrToken(err error) exception.Exception {
@@ -102,5 +98,5 @@ func checkErrToken(err error) exception.Exception {
 
 type customClaim struct {
 	jwt.RegisteredClaims
-	UserData dto.UserTokenReturn `json:"user_data"`
+	SessionData entity.SessionData `json:"data"`
 }

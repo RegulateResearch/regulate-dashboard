@@ -1,4 +1,4 @@
-package exception
+package auth_exception
 
 import (
 	"fmt"

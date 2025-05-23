@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"frascati/dto"
+	"frascati/entity"
 	"frascati/exception"
 	middleware_exception "frascati/middleware/exception"
 	"frascati/service/auth"
@@ -46,7 +46,7 @@ func (m AuthMiddleware) Authenticate(ctx *gin.Context) {
 	ctx.Set("user_data", userData)
 }
 
-func Authorize(authorizeFn func(userData dto.UserTokenReturn) bool) func(*gin.Context) {
+func Authorize(authorizeFn func(userData entity.SessionData) bool) func(*gin.Context) {
 	return func(ctx *gin.Context) {
 		userData, exc := session.PassAuthValue(ctx)
 		if exc != nil {

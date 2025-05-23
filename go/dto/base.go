@@ -1,5 +1,7 @@
 package dto
 
+import "frascati/typing"
+
 type Base struct {
-	ID int64 `json:"id"`
+	ID typing.ID `json:"id"`
 }

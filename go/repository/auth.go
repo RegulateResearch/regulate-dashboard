@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"frascati/constant"
+	"frascati/constants"
 	"frascati/entity"
 	"frascati/exception"
 	repository_exception "frascati/repository/exception"
@@ -33,7 +33,7 @@ func (r authRepositoryImpl) Add(ctx context.Context, newUserData entity.UserWrit
 	`
 
 	var user entity.User
-	err := r.db.QueryRowContext(ctx, query, newUserData.Username, newUserData.Password, constant.ROLE_USER).Scan(&user.ID, &user.Username, &user.Role)
+	err := r.db.QueryRowContext(ctx, query, newUserData.Username, newUserData.Password, constants.ROLE_USER).Scan(&user.ID, &user.Username, &user.Role)
 	if err != nil {
 		return entity.User{}, repository_exception.CreateDBException(err, "auth", "something is wrong in our end")
 	}

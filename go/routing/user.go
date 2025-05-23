@@ -2,8 +2,8 @@ package routing
 
 import (
 	"database/sql"
-	"frascati/constant"
-	"frascati/dto"
+	"frascati/constants"
+	"frascati/entity"
 	"frascati/handler"
 	"frascati/middleware"
 	"frascati/repository"
@@ -15,8 +15,8 @@ import (
 func SetupUserRouting(router *gin.Engine, authMiddleware middleware.AuthMiddleware, db *sql.DB) {
 	group := router.Group("/user")
 	group.Use(authMiddleware.Authenticate)
-	group.Use(middleware.Authorize(func(userData dto.UserTokenReturn) bool {
-		return userData.Role == constant.ROLE_USER
+	group.Use(middleware.Authorize(func(userData entity.SessionData) bool {
+		return userData.Role == constants.ROLE_USER
 	}))
 
 	userHandler := handler.NewUserHandler(service.NewUserService(repository.NewUserRepository(db)))

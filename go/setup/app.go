@@ -15,4 +15,5 @@ func SetupApplication(r *gin.Engine, db *sql.DB) {
 	routing.SetupRouterHandler(r, authService)
 	routing.SetupAdminRouting(r, authMiddleware, db)
 	routing.SetupUserRouting(r, authMiddleware, db)
+	routing.SetupSessionRouting(r, authMiddleware)
 }

@@ -19,10 +19,18 @@ func GetBcryptCost() int {
 }
 
 func GetJwtSecret() string {
-	secret := os.Getenv(envJwtSecret)
-	if secret == "" {
+	return getMandatoryAuthValue(envJwtSecret)
+}
+
+func GetJwtIssuer() string {
+	return getMandatoryAuthValue(envJwtIssuer)
+}
+
+func getMandatoryAuthValue(varName string) string {
+	value := os.Getenv(varName)
+	if value == "" {
 		log.Fatalln("please provide JWT secret")
 	}
 
-	return secret
+	return value
 }

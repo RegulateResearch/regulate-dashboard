@@ -1,0 +1,63 @@
+volumes:
+  postgres_data:
+  pgadmin:
+
+services:
+  db:
+    container_name: db
+    image: postgres:16
+    restart: "always"
+    volumes:
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=${BACKEND_DB_PASSWORD}
+      - POSTGRES_USER=${BACKEND_DB_USERNAME}
+      - POSTGRES_DB=${BACKEND_DB_NAME}
+    healthcheck:
+      test:
+        ["CMD-SHELL", "pg_isready -d ${BACKEND_DB_NAME} -U ${BACKEND_DB_USERNAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4:8.14
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    depends_on:
+      db:
+        condition: service_healthy
+  backend:
+    container_name: backend
+    build:
+      context: ./go
+      dockerfile: Dockerfile.multistage
+    environment:
+      DATABASE_USERNAME: ${BACKEND_DB_USERNAME}
+      DATABASE_PASSWORD: ${BACKEND_DB_PASSWORD}
+      DATABASE_HOST: db
+      DATABASE_NAME: ${BACKEND_DB_NAME}
+      BCRYPT_COST: ${BACKEND_BCRYPT_COST}
+      JWT_SECRET: ${BACKEND_JWT_SECRET}
+      JWT_ISSUER: ${BACKEND_JWT_ISSUER}
+    depends_on:
+      db:
+        condition: service_healthy
+  nginx:
+    container_name: nginx
+    image: nginx:1.27.3-bookworm-perl
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/logs:/var/log/nginx
+    ports:
+      - 80:80
+    depends_on:
+      backend:
+        condition: service_started
+      pgadmin:
+        condition: service_started

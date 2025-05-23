@@ -77,7 +77,12 @@ func (s authServiceImpl) Login(ctx context.Context, userWrite entity.UserWrite) 
 		return "", auth_exception.GenerateErrLoginFail(nil)
 	}
 
-	tokenStr, err := s.jwtService.GenerateToken(user)
+	sessionData := entity.SessionData{
+		ID:   user.ID,
+		Role: user.Role,
+	}
+
+	tokenStr, err := s.jwtService.GenerateToken(sessionData)
 	if err != nil {
 		return "", auth_exception.GenerateErrAuthFailComposite(err)
 	}

@@ -10,7 +10,7 @@ import (
 func SetupAuthFunctionalities(db *sql.DB) (auth.AuthService, auth.JwtService) {
 	authRepo := repository.NewAuthRepository(db)
 	bcryptService := auth.NewBcryptService(config.GetBcryptCost())
-	jwtService := auth.NewJwtService(config.GetJwtSecret())
+	jwtService := auth.NewJwtService(config.GetJwtIssuer(), config.GetJwtSecret())
 
 	authService := auth.NewAuthService(authRepo, bcryptService, jwtService)
 

@@ -7,9 +7,7 @@ import (
 
 func ConvertUserEntityToDTO(user entity.User) dto.User {
 	return dto.User{
-		Base: dto.Base{
-			ID: user.ID,
-		},
+		Base:     ConvertBaseEntityToDto(user.Base),
 		Username: user.Username,
 		Role:     user.Role,
 	}

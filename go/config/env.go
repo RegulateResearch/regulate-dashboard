@@ -10,4 +10,5 @@ var envDatabaseName = "DATABASE_NAME"
 var envServerPort = "PORT"
 
 var envJwtSecret = "JWT_SECRET"
+var envJwtIssuer = "JWT_ISSUER"
 var envBcryptCost = "BCRYPT_COST"

@@ -1,0 +1,28 @@
+# build stage
+FROM golang:1.22-alpine as build-stage
+
+WORKDIR /backend
+COPY go.mod go.sum ./
+RUN go mod download
+
+COPY . .
+
+RUN CGO_ENABLED=0 GOOS=linux go build -o backend-binary .
+
+# run stage
+# only copy this to Dockerfile if build is handled separately
+FROM alpine:3.21.0 AS build-release-stage
+
+WORKDIR /app
+
+COPY --from=build-stage /backend/backend-binary /app/backend-binary
+COPY --from=build-stage /backend/.env /app/.env 
+
+EXPOSE 8080
+
+RUN addgroup -S golang && adduser -S golang -G golang
+RUN chown -R golang:golang /app
+
+USER golang
+
+ENTRYPOINT ["/app/backend-binary"]

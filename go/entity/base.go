@@ -1,9 +1,12 @@
 package entity
 
-import "time"
+import (
+	"frascati/typing"
+	"time"
+)
 
 type Base struct {
-	ID        int64
+	ID        typing.ID
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt time.Time

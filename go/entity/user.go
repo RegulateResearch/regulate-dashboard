@@ -1,12 +1,12 @@
 package entity
 
-import "frascati/constant"
+import "frascati/constants"
 
 type User struct {
 	Base
 	Username string
 	Password string
-	Role     constant.Role
+	Role     constants.Role
 }
 
 type UserWrite struct {
