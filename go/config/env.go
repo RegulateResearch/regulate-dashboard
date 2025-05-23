@@ -8,6 +8,7 @@ var envDatabasePort = "DATABASE_PORT"
 var envDatabaseName = "DATABASE_NAME"
 
 var envServerPort = "PORT"
+var envListenerPort = "LISTENER_PORT"
 
 var envJwtSecret = "JWT_SECRET"
 var envJwtIssuer = "JWT_ISSUER"

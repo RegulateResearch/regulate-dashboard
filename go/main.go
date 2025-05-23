@@ -18,7 +18,7 @@ func main() {
 	defer func() {
 		err := db.Close()
 		if err != nil {
-			log.Fatalln("cannot close db")
+			log.Fatalf("cannot close db: %v", err)
 		}
 	}()
 
@@ -27,6 +27,15 @@ func main() {
 
 	router := routing.SetupRouter(logger)
 	setup.SetupApplication(router, db)
+
+	go func() {
+		grpcServer, netListener := setup.SetupGrpc(logger)
+		if err := grpcServer.Serve(netListener); err != nil {
+			log.Fatalf("failed to serve: %v", err)
+		} else {
+			log.Println("grpc serve success")
+		}
+	}()
 
 	router.Run(fmt.Sprintf(":%s", config.GetServerPort()))
 }

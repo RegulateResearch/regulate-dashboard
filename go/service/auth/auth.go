@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"errors"
 	"frascati/entity"
 	"frascati/exception"
 	"frascati/repository"
@@ -74,7 +75,7 @@ func (s authServiceImpl) Login(ctx context.Context, userWrite entity.UserWrite) 
 
 	loginSuccess := s.bcryptService.ComparePassword(user.Password, password)
 	if !loginSuccess {
-		return "", auth_exception.GenerateErrLoginFail(nil)
+		return "", auth_exception.GenerateErrLoginFail(errors.New("wrong password"))
 	}
 
 	sessionData := entity.SessionData{

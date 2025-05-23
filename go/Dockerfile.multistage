@@ -1,5 +1,5 @@
 # build stage
-FROM golang:1.22-alpine as build-stage
+FROM golang:1.23.6-alpine as build-stage
 
 WORKDIR /backend
 COPY go.mod go.sum ./
@@ -18,7 +18,7 @@ WORKDIR /app
 COPY --from=build-stage /backend/backend-binary /app/backend-binary
 COPY --from=build-stage /backend/.env /app/.env 
 
-EXPOSE 8080
+EXPOSE 8080 9090
 
 RUN addgroup -S golang && adduser -S golang -G golang
 RUN chown -R golang:golang /app

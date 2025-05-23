@@ -1,4 +1,4 @@
-package exception
+package middleware_exception
 
 import "errors"
 
