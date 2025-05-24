@@ -1,4 +1,4 @@
-package exception
+package repository_exception
 
 import (
 	"fmt"
