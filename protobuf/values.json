@@ -1,0 +1,18 @@
+{
+    "services": [
+        {
+            "dir_name": "go",
+            "service_name": "frascati"
+        }, 
+        {
+            "dir_name": "grpc-client-coba",
+            "service_name": "coba"
+        }
+    ],
+    "classes": [
+        {
+            "file_name": "coba",
+            "service_dir_names": ["go", "grpc-client-coba"]
+        }
+    ]
+}

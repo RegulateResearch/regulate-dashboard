@@ -21,7 +21,7 @@ func Generate() {
 			dir := dirs[i]
 			service := dirServiceTuple[dir]
 			log.Println("generating protofile: ", fmt.Sprintf("%s-%s", class, service))
-			generateProto(class, service)
+			GenerateProto(class, service)
 			log.Println(values.PrintDelim('-', 15))
 		}
 	}
@@ -29,11 +29,11 @@ func Generate() {
 	log.Println(values.PrintDelim('=', 15))
 }
 
-func generateProto(className string, serviceName string) {
+func GenerateProto(className string, serviceName string) {
 	protoFileName := fmt.Sprintf("template/%s.proto", className)
 	protoFile, err := os.Open(protoFileName)
 	if err != nil {
-		log.Fatalln("cannot open file coba.proto")
+		log.Fatalf("cannot open file %s.proto", className)
 	}
 	defer protoFile.Close()
 
@@ -48,7 +48,7 @@ func generateProto(className string, serviceName string) {
 }
 
 func generateProtoFile(readIO io.Reader, writeIO io.Writer, serviceName string) {
-	placeholder := "<PACKAGE_NAME>"
+	placeholder := "<SERVICE_NAME>"
 	scanner := bufio.NewScanner(readIO)
 	writer := bufio.NewWriter(writeIO)
 	for scanner.Scan() {

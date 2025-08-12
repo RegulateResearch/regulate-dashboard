@@ -1,5 +1,5 @@
 syntax = "proto3";
-option go_package = "<PACKAGE_NAME>/pbuf"; // go-package value will be replaced by proto generator
+option go_package = "<SERVICE_NAME>/pbuf"; // go-package value will be replaced by proto generator
 
 package pbuf;
 

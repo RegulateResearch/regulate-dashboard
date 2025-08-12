@@ -1,11 +1,23 @@
 package main
 
 import (
-	"protogen/executor"
-	"protogen/generator"
+	"fmt"
+	"protogen/lambda"
+	"protogen/values"
+	"protogen/worker"
 )
 
 func main() {
-	generator.Generate()
-	executor.Execute()
+	value, err := values.ParseValue()
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	classes := value.WorkerClasses()
+	lambda.ExecList(classes, func(c worker.Class) {
+		err := c.Process()
+		if err != nil {
+			fmt.Println(err.Error())
+		}
+	})
 }
