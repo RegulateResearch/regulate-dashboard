@@ -8,6 +8,7 @@ import (
 func UserEntityToDTO(user entity.User) dto.User {
 	return dto.User{
 		Base:     BaseEntityToDto(user.Base),
+		Email:    user.Email,
 		Username: user.Username,
 		Role:     user.Role,
 	}
