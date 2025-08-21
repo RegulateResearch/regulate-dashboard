@@ -1,7 +1,5 @@
 package exception
 
-import "fmt"
-
 type Base struct {
 	cause        Cause
 	origin       string
@@ -9,7 +7,7 @@ type Base struct {
 	wrappedError error
 }
 
-func NewBaseException(cause Cause, origin string, message string, err error) Base {
+func NewBaseException(cause Cause, origin string, message string, err error) Exception {
 	return Base{
 		cause:        cause,
 		origin:       origin,
@@ -28,15 +26,6 @@ func (err Base) Origin() string {
 
 func (err Base) Error() string {
 	return err.message
-}
-
-func (err Base) Verbose() string {
-	wrappedErr := err.wrappedError
-	if wrappedErr != nil {
-		return fmt.Sprintf("%s\n\t%s", err.message, err.wrappedError.Error())
-	}
-
-	return fmt.Sprintf("%s\n", err.message)
 }
 
 func (err Base) ToMap() map[string]any {

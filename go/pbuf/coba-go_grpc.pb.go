@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v3.21.12
-// source: coba.proto
+// source: coba-go.proto
 
 package pbuf
 
@@ -201,5 +201,5 @@ var Greeter_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "coba.proto",
+	Metadata: "coba-go.proto",
 }

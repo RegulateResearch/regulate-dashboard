@@ -11,8 +11,8 @@ import (
 )
 
 type JwtService interface {
-	GenerateToken(entity.SessionData) (string, exception.Exception)
-	ParseToken(token string) (entity.SessionData, exception.Exception)
+	GenerateToken(entity.Session) (string, exception.Exception)
+	ParseToken(token string) (entity.Session, exception.Exception)
 }
 
 type jwtServiceImpl struct {
@@ -29,7 +29,7 @@ func NewJwtService(issuer string, secret string) JwtService {
 	}
 }
 
-func (s jwtServiceImpl) GenerateToken(sessionData entity.SessionData) (string, exception.Exception) {
+func (s jwtServiceImpl) GenerateToken(sessionData entity.Session) (string, exception.Exception) {
 	now := time.Now()
 	idStr := sessionData.ID.String()
 	regClaim := jwt.RegisteredClaims{
@@ -53,7 +53,7 @@ func (s jwtServiceImpl) GenerateToken(sessionData entity.SessionData) (string, e
 	return tokenStr, nil
 }
 
-func (s jwtServiceImpl) ParseToken(token string) (entity.SessionData, exception.Exception) {
+func (s jwtServiceImpl) ParseToken(token string) (entity.Session, exception.Exception) {
 	var placeHolderClaim customClaim
 	jwtToken, err := jwt.ParseWithClaims(
 		token,
@@ -66,7 +66,7 @@ func (s jwtServiceImpl) ParseToken(token string) (entity.SessionData, exception.
 		jwt.WithValidMethods([]string{s.method.Alg()}),
 	)
 
-	emptySession := entity.SessionData{}
+	emptySession := entity.Session{}
 
 	if !jwtToken.Valid {
 		return emptySession, auth_exception.GenerateErrInvalidToken("jwt", errors.New("this token does not pass token validity test"))
@@ -98,5 +98,5 @@ func checkErrToken(err error) exception.Exception {
 
 type customClaim struct {
 	jwt.RegisteredClaims
-	SessionData entity.SessionData `json:"data"`
+	SessionData entity.Session `json:"data"`
 }

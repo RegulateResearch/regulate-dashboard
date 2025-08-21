@@ -4,12 +4,8 @@ import "frascati/constants"
 
 type User struct {
 	Base
-	Username string
+	Email    string
 	Password string
+	Username string
 	Role     constants.Role
-}
-
-type UserWrite struct {
-	Username string
-	Password string
 }

@@ -1,7 +1,5 @@
 package exception
 
-import "fmt"
-
 type Composite struct {
 	cause      Cause
 	origin     string
@@ -9,7 +7,7 @@ type Composite struct {
 	wrappedErr Exception
 }
 
-func NewCompositeException(cause Cause, origin string, message string, err Exception) Composite {
+func NewCompositeException(cause Cause, origin string, message string, err Exception) Exception {
 	return Composite{
 		cause:      cause,
 		origin:     origin,
@@ -28,10 +26,6 @@ func (err Composite) Origin() string {
 
 func (err Composite) Error() string {
 	return err.message
-}
-
-func (err Composite) Verbose() string {
-	return fmt.Sprintf("%s\n\t%s", err.message, err.wrappedErr.Verbose())
 }
 
 func (err Composite) ToMap() map[string]any {

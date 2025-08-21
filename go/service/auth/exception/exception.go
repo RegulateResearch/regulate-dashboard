@@ -1,20 +1,23 @@
 package auth_exception
 
 import (
+	"errors"
 	"fmt"
 	"frascati/exception"
 )
+
+var errEmailAlreadyExists = errors.New("email is already registered")
 
 func GenerateErrPasswordFailure(err error) exception.Exception {
 	return exception.NewBaseException(exception.CAUSE_INTERNAL, "auth/bcrypt", "bcrypt hashing error", err)
 }
 
 func GenerateErrUserAlreadyExist() exception.Exception {
-	return exception.NewBaseException(exception.CAUSE_USER, "auth/service", "username already used", nil)
+	return exception.NewBaseException(exception.CAUSE_USER, "auth/service", "email already used", errEmailAlreadyExists)
 }
 
 func GenerateErrLoginFail(err error) exception.Exception {
-	return exception.NewBaseException(exception.CAUSE_UNAUTHORIZED, "auth/service", "either username or password is wrong", err)
+	return exception.NewBaseException(exception.CAUSE_UNAUTHORIZED, "auth/service", "either email or password is wrong", err)
 }
 
 func GenerateErrAuthFailComposite(err exception.Exception) exception.Exception {

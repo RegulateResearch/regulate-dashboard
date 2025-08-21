@@ -46,7 +46,7 @@ func (m AuthMiddleware) Authenticate(ctx *gin.Context) {
 	ctx.Set("user_data", userData)
 }
 
-func Authorize(authorizeFn func(userData entity.SessionData) bool) func(*gin.Context) {
+func (m AuthMiddleware) Authorize(authorizeFn func(entity.Session) bool) func(*gin.Context) {
 	return func(ctx *gin.Context) {
 		userData, exc := session.PassAuthValue(ctx)
 		if exc != nil {
@@ -55,9 +55,7 @@ func Authorize(authorizeFn func(userData entity.SessionData) bool) func(*gin.Con
 			return
 		}
 
-		if authorizeFn(userData) {
-			return
-		} else {
+		if !authorizeFn(userData) {
 			exc = exception.NewBaseException(exception.CAUSE_FORBIDDEN, "auth/middleware", "resource not found", middleware_exception.ErrAuthorizationFailsForbidden)
 			ctx.Error(exc)
 			ctx.Abort()

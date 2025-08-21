@@ -1,4 +1,4 @@
-package auth
+package service
 
 import (
 	"context"
@@ -6,21 +6,22 @@ import (
 	"frascati/entity"
 	"frascati/exception"
 	"frascati/repository"
+	"frascati/service/auth"
 	auth_exception "frascati/service/auth/exception"
 )
 
 type AuthService interface {
-	Register(context.Context, entity.UserWrite) (entity.User, exception.Exception)
-	Login(context.Context, entity.UserWrite) (string, exception.Exception)
+	Register(context.Context, entity.User) (entity.User, exception.Exception)
+	Login(context.Context, entity.User) (string, exception.Exception)
 }
 
 type authServiceImpl struct {
 	repo          repository.AuthRepository
-	bcryptService BcryptService
-	jwtService    JwtService
+	bcryptService auth.BcryptService
+	jwtService    auth.JwtService
 }
 
-func NewAuthService(userRepo repository.AuthRepository, bcryptService BcryptService, jwtService JwtService) AuthService {
+func NewAuthService(userRepo repository.AuthRepository, bcryptService auth.BcryptService, jwtService auth.JwtService) AuthService {
 	return authServiceImpl{
 		repo:          userRepo,
 		bcryptService: bcryptService,
@@ -28,15 +29,13 @@ func NewAuthService(userRepo repository.AuthRepository, bcryptService BcryptServ
 	}
 }
 
-func (s authServiceImpl) Register(ctx context.Context, userWrite entity.UserWrite) (entity.User, exception.Exception) {
-	username := userWrite.Username
-
-	usernameExist, err := s.repo.IsExist(ctx, username)
+func (s authServiceImpl) Register(ctx context.Context, userWrite entity.User) (entity.User, exception.Exception) {
+	emailExist, err := s.repo.IsExistByEmail(ctx, userWrite.Email)
 	if err != nil {
 		return entity.User{}, err
 	}
 
-	if usernameExist {
+	if emailExist {
 		return entity.User{}, auth_exception.GenerateErrUserAlreadyExist()
 	}
 
@@ -47,8 +46,9 @@ func (s authServiceImpl) Register(ctx context.Context, userWrite entity.UserWrit
 		return entity.User{}, err
 	}
 
-	newUserData := entity.UserWrite{
-		Username: username,
+	newUserData := entity.User{
+		Email:    userWrite.Email,
+		Username: userWrite.Username,
 		Password: string(hashedPassword),
 	}
 
@@ -60,11 +60,8 @@ func (s authServiceImpl) Register(ctx context.Context, userWrite entity.UserWrit
 	return user, nil
 }
 
-func (s authServiceImpl) Login(ctx context.Context, userWrite entity.UserWrite) (string, exception.Exception) {
-	username := userWrite.Username
-	password := userWrite.Password
-
-	user, err := s.repo.FindByUsername(ctx, username)
+func (s authServiceImpl) Login(ctx context.Context, userWrite entity.User) (string, exception.Exception) {
+	user, err := s.repo.FindByEmail(ctx, userWrite.Email)
 	if err != nil {
 		if err.Cause() == exception.CAUSE_NOT_FOUND {
 			return "", auth_exception.GenerateErrLoginFail(err)
@@ -73,12 +70,12 @@ func (s authServiceImpl) Login(ctx context.Context, userWrite entity.UserWrite) 
 		return "", auth_exception.GenerateErrAuthFailComposite(err)
 	}
 
-	loginSuccess := s.bcryptService.ComparePassword(user.Password, password)
+	loginSuccess := s.bcryptService.ComparePassword(user.Password, userWrite.Password)
 	if !loginSuccess {
 		return "", auth_exception.GenerateErrLoginFail(errors.New("wrong password"))
 	}
 
-	sessionData := entity.SessionData{
+	sessionData := entity.Session{
 		ID:   user.ID,
 		Role: user.Role,
 	}

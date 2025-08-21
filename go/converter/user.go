@@ -5,17 +5,25 @@ import (
 	"frascati/entity"
 )
 
-func ConvertUserEntityToDTO(user entity.User) dto.User {
+func UserEntityToDTO(user entity.User) dto.User {
 	return dto.User{
-		Base:     ConvertBaseEntityToDto(user.Base),
+		Base:     BaseEntityToDto(user.Base),
 		Username: user.Username,
 		Role:     user.Role,
 	}
 }
 
-func ConvertUserWriteToEntity(userWrite dto.UserWrite) entity.UserWrite {
-	return entity.UserWrite{
-		Username: *userWrite.Username,
-		Password: *userWrite.Password,
+func UserLoginToEntity(data dto.UserLogin) entity.User {
+	return entity.User{
+		Email:    data.Email,
+		Password: data.Password,
+	}
+}
+
+func UserRegisterToEntity(data dto.UserRegister) entity.User {
+	return entity.User{
+		Email:    data.Email,
+		Password: data.Password,
+		Username: data.Username,
 	}
 }

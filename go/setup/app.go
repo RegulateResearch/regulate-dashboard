@@ -2,18 +2,18 @@ package setup
 
 import (
 	"database/sql"
-	"frascati/middleware"
-	"frascati/routing"
-
-	"github.com/gin-gonic/gin"
+	"frascati/prep/logger"
 )
 
-func SetupApplication(r *gin.Engine, db *sql.DB) {
-	authService, jwtService := SetupAuthFunctionalities(db)
-	authMiddleware := middleware.NewAuthMiddleware(jwtService)
+func SetupApplication(db *sql.DB) (logger.EnhancedLogger, Handlers, Middlewares) {
+	logger := setupLogger()
 
-	routing.SetupRouterHandler(r, authService)
-	routing.SetupAdminRouting(r, authMiddleware, db)
-	routing.SetupUserRouting(r, authMiddleware, db)
-	routing.SetupSessionRouting(r, authMiddleware)
+	jwtService, bcryptService := setupAuthUtils()
+	repos := setupRepositories(db)
+	services := setupServices(repos, jwtService, bcryptService)
+
+	handlers := setupHandlers(services)
+	middlewares := setupMiddlewares(jwtService, logger)
+
+	return logger, handlers, middlewares
 }

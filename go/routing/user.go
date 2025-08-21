@@ -15,7 +15,7 @@ import (
 func SetupUserRouting(router *gin.Engine, authMiddleware middleware.AuthMiddleware, db *sql.DB) {
 	group := router.Group("/user")
 	group.Use(authMiddleware.Authenticate)
-	group.Use(middleware.Authorize(func(userData entity.SessionData) bool {
+	group.Use(authMiddleware.Authorize(func(userData entity.Session) bool {
 		return userData.Role == constants.ROLE_USER
 	}))
 

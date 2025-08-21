@@ -5,8 +5,8 @@ import (
 	"frascati/entity"
 )
 
-func ConvertSessionDataToDto(data entity.SessionData) dto.SessionData {
-	return dto.SessionData{
+func SessionDataToDto(data entity.Session) dto.Session {
+	return dto.Session{
 		ID:   data.ID,
 		Role: data.Role.ToString(),
 	}

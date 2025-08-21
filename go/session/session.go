@@ -1,16 +1,15 @@
 package session
 
 import (
-	"fmt"
 	"frascati/entity"
 	"frascati/exception"
 
 	"github.com/gin-gonic/gin"
 )
 
-func PassAuthValue(ctx *gin.Context) (entity.SessionData, exception.Exception) {
+func PassAuthValue(ctx *gin.Context) (entity.Session, exception.Exception) {
 	userDataRaw, ok := ctx.Get("user_data")
-	emptyData := entity.SessionData{}
+	emptyData := entity.Session{}
 	if !ok {
 		return emptyData, exception.NewBaseException(
 			exception.CAUSE_INTERNAL,
@@ -20,9 +19,7 @@ func PassAuthValue(ctx *gin.Context) (entity.SessionData, exception.Exception) {
 		)
 	}
 
-	userData, ok := userDataRaw.(entity.SessionData)
-	fmt.Printf("id: %d", userData.ID)
-	fmt.Printf("role: %s", userData.Role.ToString())
+	userData, ok := userDataRaw.(entity.Session)
 	if !ok {
 		return emptyData, exception.NewBaseException(
 			exception.CAUSE_INTERNAL,

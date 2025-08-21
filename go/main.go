@@ -22,11 +22,8 @@ func main() {
 		}
 	}()
 
-	warnFile, errorFile := prep.PrepFile()
-	logger := setup.SetupEnhanceLogger(warnFile, errorFile)
-
-	router := routing.SetupRouter(logger)
-	setup.SetupApplication(router, db)
+	logger, handlers, middlewares := setup.SetupApplication(db)
+	router := routing.SetupRouter(handlers, middlewares)
 
 	go func() {
 		grpcServer, netListener := setup.SetupGrpc(logger)

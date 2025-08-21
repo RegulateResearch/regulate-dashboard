@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"frascati/converter"
+	"frascati/lambda"
 	"frascati/response"
 	"frascati/service"
 	"net/http"
@@ -25,5 +27,7 @@ func (h UserHandler) GetAll(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, response.NewSuccessResponse(res, "success user"))
+	resDto := lambda.MapList(res, converter.UserEntityToDTO)
+
+	ctx.JSON(http.StatusOK, response.NewSuccessResponse(resDto, "success user"))
 }

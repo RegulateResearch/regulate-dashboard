@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.6
 // 	protoc        v3.21.12
-// source: coba.proto
+// source: coba-grpc-client-coba.proto
 
 package pbuf
 
@@ -33,7 +33,7 @@ type ResponseHeader struct {
 
 func (x *ResponseHeader) Reset() {
 	*x = ResponseHeader{}
-	mi := &file_coba_proto_msgTypes[0]
+	mi := &file_coba_grpc_client_coba_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -45,7 +45,7 @@ func (x *ResponseHeader) String() string {
 func (*ResponseHeader) ProtoMessage() {}
 
 func (x *ResponseHeader) ProtoReflect() protoreflect.Message {
-	mi := &file_coba_proto_msgTypes[0]
+	mi := &file_coba_grpc_client_coba_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -58,7 +58,7 @@ func (x *ResponseHeader) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResponseHeader.ProtoReflect.Descriptor instead.
 func (*ResponseHeader) Descriptor() ([]byte, []int) {
-	return file_coba_proto_rawDescGZIP(), []int{0}
+	return file_coba_grpc_client_coba_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *ResponseHeader) GetStatus() int32 {
@@ -85,7 +85,7 @@ type HelloRequest struct {
 
 func (x *HelloRequest) Reset() {
 	*x = HelloRequest{}
-	mi := &file_coba_proto_msgTypes[1]
+	mi := &file_coba_grpc_client_coba_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -97,7 +97,7 @@ func (x *HelloRequest) String() string {
 func (*HelloRequest) ProtoMessage() {}
 
 func (x *HelloRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_coba_proto_msgTypes[1]
+	mi := &file_coba_grpc_client_coba_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -110,7 +110,7 @@ func (x *HelloRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HelloRequest.ProtoReflect.Descriptor instead.
 func (*HelloRequest) Descriptor() ([]byte, []int) {
-	return file_coba_proto_rawDescGZIP(), []int{1}
+	return file_coba_grpc_client_coba_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *HelloRequest) GetName() string {
@@ -130,7 +130,7 @@ type HelloRequestMultiple struct {
 
 func (x *HelloRequestMultiple) Reset() {
 	*x = HelloRequestMultiple{}
-	mi := &file_coba_proto_msgTypes[2]
+	mi := &file_coba_grpc_client_coba_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -142,7 +142,7 @@ func (x *HelloRequestMultiple) String() string {
 func (*HelloRequestMultiple) ProtoMessage() {}
 
 func (x *HelloRequestMultiple) ProtoReflect() protoreflect.Message {
-	mi := &file_coba_proto_msgTypes[2]
+	mi := &file_coba_grpc_client_coba_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -155,7 +155,7 @@ func (x *HelloRequestMultiple) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HelloRequestMultiple.ProtoReflect.Descriptor instead.
 func (*HelloRequestMultiple) Descriptor() ([]byte, []int) {
-	return file_coba_proto_rawDescGZIP(), []int{2}
+	return file_coba_grpc_client_coba_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *HelloRequestMultiple) GetName() []string {
@@ -177,7 +177,7 @@ type HelloResponse struct {
 
 func (x *HelloResponse) Reset() {
 	*x = HelloResponse{}
-	mi := &file_coba_proto_msgTypes[3]
+	mi := &file_coba_grpc_client_coba_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -189,7 +189,7 @@ func (x *HelloResponse) String() string {
 func (*HelloResponse) ProtoMessage() {}
 
 func (x *HelloResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_coba_proto_msgTypes[3]
+	mi := &file_coba_grpc_client_coba_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -202,7 +202,7 @@ func (x *HelloResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HelloResponse.ProtoReflect.Descriptor instead.
 func (*HelloResponse) Descriptor() ([]byte, []int) {
-	return file_coba_proto_rawDescGZIP(), []int{3}
+	return file_coba_grpc_client_coba_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *HelloResponse) GetHeader() *ResponseHeader {
@@ -219,12 +219,11 @@ func (x *HelloResponse) GetMessage() string {
 	return ""
 }
 
-var File_coba_proto protoreflect.FileDescriptor
+var File_coba_grpc_client_coba_proto protoreflect.FileDescriptor
 
-const file_coba_proto_rawDesc = "" +
+const file_coba_grpc_client_coba_proto_rawDesc = "" +
 	"\n" +
-	"\n" +
-	"coba.proto\x12\x04pbuf\"B\n" +
+	"\x1bcoba-grpc-client-coba.proto\x12\x04pbuf\"B\n" +
 	"\x0eResponseHeader\x12\x16\n" +
 	"\x06status\x18\x01 \x01(\x05R\x06status\x12\x18\n" +
 	"\amessage\x18\x02 \x01(\tR\amessage\"\"\n" +
@@ -238,28 +237,28 @@ const file_coba_proto_rawDesc = "" +
 	"\aGreeter\x125\n" +
 	"\bSayHello\x12\x12.pbuf.HelloRequest\x1a\x13.pbuf.HelloResponse\"\x00\x12E\n" +
 	"\x10SayHelloMultiple\x12\x1a.pbuf.HelloRequestMultiple\x1a\x13.pbuf.HelloResponse\"\x00\x12:\n" +
-	"\rSayHelloError\x12\x12.pbuf.HelloRequest\x1a\x13.pbuf.HelloResponse\"\x00B\x0fZ\rfrascati/pbufb\x06proto3"
+	"\rSayHelloError\x12\x12.pbuf.HelloRequest\x1a\x13.pbuf.HelloResponse\"\x00B\vZ\tcoba/pbufb\x06proto3"
 
 var (
-	file_coba_proto_rawDescOnce sync.Once
-	file_coba_proto_rawDescData []byte
+	file_coba_grpc_client_coba_proto_rawDescOnce sync.Once
+	file_coba_grpc_client_coba_proto_rawDescData []byte
 )
 
-func file_coba_proto_rawDescGZIP() []byte {
-	file_coba_proto_rawDescOnce.Do(func() {
-		file_coba_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_coba_proto_rawDesc), len(file_coba_proto_rawDesc)))
+func file_coba_grpc_client_coba_proto_rawDescGZIP() []byte {
+	file_coba_grpc_client_coba_proto_rawDescOnce.Do(func() {
+		file_coba_grpc_client_coba_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_coba_grpc_client_coba_proto_rawDesc), len(file_coba_grpc_client_coba_proto_rawDesc)))
 	})
-	return file_coba_proto_rawDescData
+	return file_coba_grpc_client_coba_proto_rawDescData
 }
 
-var file_coba_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
-var file_coba_proto_goTypes = []any{
+var file_coba_grpc_client_coba_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_coba_grpc_client_coba_proto_goTypes = []any{
 	(*ResponseHeader)(nil),       // 0: pbuf.ResponseHeader
 	(*HelloRequest)(nil),         // 1: pbuf.HelloRequest
 	(*HelloRequestMultiple)(nil), // 2: pbuf.HelloRequestMultiple
 	(*HelloResponse)(nil),        // 3: pbuf.HelloResponse
 }
-var file_coba_proto_depIdxs = []int32{
+var file_coba_grpc_client_coba_proto_depIdxs = []int32{
 	0, // 0: pbuf.HelloResponse.header:type_name -> pbuf.ResponseHeader
 	1, // 1: pbuf.Greeter.SayHello:input_type -> pbuf.HelloRequest
 	2, // 2: pbuf.Greeter.SayHelloMultiple:input_type -> pbuf.HelloRequestMultiple
@@ -274,26 +273,26 @@ var file_coba_proto_depIdxs = []int32{
 	0, // [0:1] is the sub-list for field type_name
 }
 
-func init() { file_coba_proto_init() }
-func file_coba_proto_init() {
-	if File_coba_proto != nil {
+func init() { file_coba_grpc_client_coba_proto_init() }
+func file_coba_grpc_client_coba_proto_init() {
+	if File_coba_grpc_client_coba_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_coba_proto_rawDesc), len(file_coba_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_coba_grpc_client_coba_proto_rawDesc), len(file_coba_grpc_client_coba_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_coba_proto_goTypes,
-		DependencyIndexes: file_coba_proto_depIdxs,
-		MessageInfos:      file_coba_proto_msgTypes,
+		GoTypes:           file_coba_grpc_client_coba_proto_goTypes,
+		DependencyIndexes: file_coba_grpc_client_coba_proto_depIdxs,
+		MessageInfos:      file_coba_grpc_client_coba_proto_msgTypes,
 	}.Build()
-	File_coba_proto = out.File
-	file_coba_proto_goTypes = nil
-	file_coba_proto_depIdxs = nil
+	File_coba_grpc_client_coba_proto = out.File
+	file_coba_grpc_client_coba_proto_goTypes = nil
+	file_coba_grpc_client_coba_proto_depIdxs = nil
 }

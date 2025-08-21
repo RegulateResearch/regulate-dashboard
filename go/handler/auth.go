@@ -3,17 +3,18 @@ package handler
 import (
 	"frascati/converter"
 	"frascati/dto"
-	"frascati/service/auth"
+	"frascati/response"
+	"frascati/service"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 type AuthHandler struct {
-	authService auth.AuthService
+	authService service.AuthService
 }
 
-func NewAuthHandler(authService auth.AuthService) AuthHandler {
+func NewAuthHandler(authService service.AuthService) AuthHandler {
 	handler := AuthHandler{
 		authService: authService,
 	}
@@ -22,32 +23,32 @@ func NewAuthHandler(authService auth.AuthService) AuthHandler {
 }
 
 func (h AuthHandler) Register(ctx *gin.Context) {
-	var userRegister dto.UserWrite
+	var userRegister dto.UserRegister
 	err := ctx.ShouldBindBodyWithJSON(&userRegister)
 	if err != nil {
 		ctx.Error(err)
 		return
 	}
 
-	userWrite := converter.ConvertUserWriteToEntity(userRegister)
+	userWrite := converter.UserRegisterToEntity(userRegister)
 	userReturn, exc := h.authService.Register(ctx, userWrite)
 	if exc != nil {
 		ctx.Error(exc)
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, converter.ConvertUserEntityToDTO(userReturn))
+	ctx.JSON(http.StatusCreated, converter.UserEntityToDTO(userReturn))
 }
 
 func (h AuthHandler) Login(ctx *gin.Context) {
-	var userLogin dto.UserWrite
+	var userLogin dto.UserLogin
 	err := ctx.ShouldBindBodyWithJSON(&userLogin)
 	if err != nil {
 		ctx.Error(err)
 		return
 	}
 
-	userWrite := converter.ConvertUserWriteToEntity(userLogin)
+	userWrite := converter.UserLoginToEntity(userLogin)
 	token, exc := h.authService.Login(ctx, userWrite)
 
 	if exc != nil {
@@ -55,7 +56,5 @@ func (h AuthHandler) Login(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{
-		"access_token": token,
-	})
+	ctx.JSON(http.StatusOK, response.NewSuccessResponse(token, "login success"))
 }

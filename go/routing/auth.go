@@ -1,15 +1,14 @@
 package routing
 
 import (
-	"frascati/handler"
-	"frascati/service/auth"
-
-	"github.com/gin-gonic/gin"
+	"frascati/routing/grouping"
+	"frascati/setup"
 )
 
-func SetupRouterHandler(router *gin.Engine, authService auth.AuthService) {
-	authHandler := handler.NewAuthHandler(authService)
-	group := router.Group("/auth")
-	group.POST("/register", authHandler.Register)
-	group.POST("/login", authHandler.Login)
+func setupAuthRouting(routers grouping.Routes, handlers setup.Handlers) {
+	authHandler := handlers.Auth
+	authGroup := routers.NoLogin.Group("/auth")
+
+	authGroup.POST("/register", authHandler.Register)
+	authGroup.POST("/login", authHandler.Login)
 }

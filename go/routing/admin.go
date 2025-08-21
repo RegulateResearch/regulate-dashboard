@@ -15,7 +15,7 @@ import (
 func SetupAdminRouting(router *gin.Engine, authMiddleware middleware.AuthMiddleware, db *sql.DB) {
 	group := router.Group("/admin")
 	group.Use(authMiddleware.Authenticate)
-	group.Use(middleware.Authorize(func(userData entity.SessionData) bool {
+	group.Use(authMiddleware.Authorize(func(userData entity.Session) bool {
 		return userData.Role == constants.ROLE_ADMIN
 	}))
 
