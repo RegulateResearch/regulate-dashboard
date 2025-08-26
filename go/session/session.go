@@ -1,8 +1,8 @@
 package session
 
 import (
-	"frascati/entity"
 	"frascati/exception"
+	"frascati/obj/entity"
 
 	"github.com/gin-gonic/gin"
 )

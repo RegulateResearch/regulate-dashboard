@@ -5,8 +5,8 @@ import (
 	"database/sql"
 	"errors"
 	"frascati/constants"
-	"frascati/entity"
 	"frascati/exception"
+	"frascati/obj/entity"
 	repository_exception "frascati/repository/exception"
 )
 

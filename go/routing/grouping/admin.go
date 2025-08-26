@@ -2,7 +2,7 @@ package grouping
 
 import (
 	"frascati/constants"
-	"frascati/entity"
+	"frascati/obj/entity"
 	"frascati/setup"
 
 	"github.com/gin-gonic/gin"

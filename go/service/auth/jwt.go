@@ -2,8 +2,8 @@ package auth
 
 import (
 	"errors"
-	"frascati/entity"
 	"frascati/exception"
+	"frascati/obj/entity"
 	auth_exception "frascati/service/auth/exception"
 	"time"
 

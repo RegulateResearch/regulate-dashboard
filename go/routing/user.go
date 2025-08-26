@@ -3,9 +3,9 @@ package routing
 import (
 	"database/sql"
 	"frascati/constants"
-	"frascati/entity"
 	"frascati/handler"
 	"frascati/middleware"
+	"frascati/obj/entity"
 	"frascati/repository"
 	"frascati/service"
 

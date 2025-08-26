@@ -2,8 +2,8 @@ package service
 
 import (
 	"context"
-	"frascati/entity"
 	"frascati/exception"
+	"frascati/obj/entity"
 	"frascati/repository"
 )
 

@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"frascati/converter"
-	"frascati/dto"
+	"frascati/obj/converter"
+	"frascati/obj/dto"
 	"frascati/response"
 	"frascati/service"
 	"net/http"

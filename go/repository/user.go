@@ -3,8 +3,8 @@ package repository
 import (
 	"context"
 	"database/sql"
-	"frascati/entity"
 	"frascati/exception"
+	"frascati/obj/entity"
 	repository_exception "frascati/repository/exception"
 	"log"
 )

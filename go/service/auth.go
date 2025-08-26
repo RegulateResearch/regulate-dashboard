@@ -3,8 +3,8 @@ package service
 import (
 	"context"
 	"errors"
-	"frascati/entity"
 	"frascati/exception"
+	"frascati/obj/entity"
 	"frascati/repository"
 	"frascati/service/auth"
 	auth_exception "frascati/service/auth/exception"

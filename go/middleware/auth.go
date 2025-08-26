@@ -1,9 +1,9 @@
 package middleware
 
 import (
-	"frascati/entity"
 	"frascati/exception"
 	middleware_exception "frascati/middleware/exception"
+	"frascati/obj/entity"
 	"frascati/service/auth"
 	"frascati/session"
 	"strings"

@@ -1,8 +1,8 @@
 package converter
 
 import (
-	"frascati/dto"
-	"frascati/entity"
+	"frascati/obj/dto"
+	"frascati/obj/entity"
 )
 
 func UserEntityToDTO(user entity.User) dto.User {
