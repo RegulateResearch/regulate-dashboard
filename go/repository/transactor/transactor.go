@@ -1,15 +1,15 @@
 package transactor
 
 import (
-	"context"
 	"database/sql"
 	"fmt"
 	"frascati/exception"
 	repository_exception "frascati/repository/exception"
+	"frascati/typing"
 )
 
 type Transactor interface {
-	WithTransaction(ctx context.Context, txOption Option, readOnly bool, function func(context.Context) exception.Exception) exception.Exception
+	WithTransaction(ctx typing.Context, txOption Option, readOnly bool, function func(typing.Context) exception.Exception) exception.Exception
 }
 
 type transactorPostgreSQL struct {
@@ -20,18 +20,7 @@ func NewTransactor(db *sql.DB) Transactor {
 	return &transactorPostgreSQL{db: db}
 }
 
-func ExtractTx(ctx context.Context) *sql.Tx {
-	tx, ok := ctx.Value(TxKey{}).(*sql.Tx)
-	if !ok {
-		return nil
-	}
-
-	return tx
-}
-
-type TxKey struct{}
-
-func (t *transactorPostgreSQL) WithTransaction(ctx context.Context, txOption Option, readOnly bool, fn func(ctx context.Context) exception.Exception) exception.Exception {
+func (t *transactorPostgreSQL) WithTransaction(ctx typing.Context, txOption Option, readOnly bool, fn func(typing.Context) exception.Exception) exception.Exception {
 	tx, err := t.db.BeginTx(ctx, &sql.TxOptions{
 		Isolation: txOption.toSqlIsolationLevel(),
 		ReadOnly:  readOnly,
@@ -41,7 +30,9 @@ func (t *transactorPostgreSQL) WithTransaction(ctx context.Context, txOption Opt
 	}
 	defer tx.Rollback()
 
-	exc := fn(context.WithValue(ctx, TxKey{}, tx))
+	setTx(ctx, tx)
+
+	exc := fn(ctx)
 	if exc != nil {
 		if errRollback := tx.Rollback(); errRollback != nil {
 			return repository_exception.CreateDBException(errRollback, "transactor", fmt.Sprintf("cannot rollback transaction: %s", exc.Error()))
