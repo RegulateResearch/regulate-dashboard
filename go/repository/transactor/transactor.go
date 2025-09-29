@@ -9,7 +9,7 @@ import (
 )
 
 type Transactor interface {
-	WithTransaction(context.Context, func(context.Context) exception.Exception) exception.Exception
+	WithTransaction(ctx context.Context, txOption Option, readOnly bool, function func(context.Context) exception.Exception) exception.Exception
 }
 
 type transactorPostgreSQL struct {
@@ -31,10 +31,10 @@ func ExtractTx(ctx context.Context) *sql.Tx {
 
 type TxKey struct{}
 
-func (t *transactorPostgreSQL) WithTransaction(ctx context.Context, fn func(ctx context.Context) exception.Exception) exception.Exception {
+func (t *transactorPostgreSQL) WithTransaction(ctx context.Context, txOption Option, readOnly bool, fn func(ctx context.Context) exception.Exception) exception.Exception {
 	tx, err := t.db.BeginTx(ctx, &sql.TxOptions{
-		Isolation: sql.LevelSerializable,
-		ReadOnly:  false,
+		Isolation: txOption.toSqlIsolationLevel(),
+		ReadOnly:  readOnly,
 	})
 	if err != nil {
 		return repository_exception.CreateDBException(err, "transactor", "cannot begin transaction")
