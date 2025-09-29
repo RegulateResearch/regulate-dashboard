@@ -7,7 +7,7 @@ import (
 
 func SessionDataToDto(data entity.Session) dto.Session {
 	return dto.Session{
-		ID:   data.ID,
+		Base: dto.Base{ID: data.ID},
 		Role: data.Role.ToString(),
 	}
 }
