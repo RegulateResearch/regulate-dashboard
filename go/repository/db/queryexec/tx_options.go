@@ -1,18 +1,18 @@
-package transactor
+package queryexec
 
 import "database/sql"
 
-type Option int
+type TxOption int
 
 const (
-	OptionDefault Option = iota
-	OptionReadCommitted
-	OptionWriteCommitted
-	OptionRepeatableRead
-	OptionSerializable
+	TxOptionDefault TxOption = iota
+	TxOptionReadCommitted
+	TxOptionWriteCommitted
+	TxOptionRepeatableRead
+	TxOptionSerializable
 )
 
-func (o Option) toSqlIsolationLevel() sql.IsolationLevel {
+func (o TxOption) toSqlIsolationLevel() sql.IsolationLevel {
 	allOptions := []sql.IsolationLevel{
 		sql.LevelDefault,
 		sql.LevelReadCommitted,

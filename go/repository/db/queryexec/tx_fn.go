@@ -1,11 +1,11 @@
-package transactor
+package queryexec
 
 import (
 	"database/sql"
 	"frascati/typing"
 )
 
-func GetTx(ctx typing.Context) (tx *sql.Tx, ok bool) {
+func getTx(ctx typing.Context) (tx *sql.Tx, ok bool) {
 	val, ok := ctx.Get("tx")
 	if ok {
 		tx, ok = val.(*sql.Tx)
