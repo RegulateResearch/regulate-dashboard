@@ -1,18 +1,19 @@
 package service
 
 import (
-	"context"
 	"errors"
 	"frascati/exception"
 	"frascati/obj/entity"
 	"frascati/repository"
-	"frascati/service/auth"
-	auth_exception "frascati/service/auth/exception"
+	"frascati/util/auth"
+	auth_exception "frascati/util/auth/exception"
+
+	"frascati/typing"
 )
 
 type AuthService interface {
-	Register(context.Context, entity.User) (entity.User, exception.Exception)
-	Login(context.Context, entity.User) (string, exception.Exception)
+	Register(typing.Context, entity.User) (entity.User, exception.Exception)
+	Login(typing.Context, entity.User) (string, exception.Exception)
 }
 
 type authServiceImpl struct {
@@ -29,7 +30,7 @@ func NewAuthService(userRepo repository.AuthRepository, bcryptService auth.Bcryp
 	}
 }
 
-func (s authServiceImpl) Register(ctx context.Context, userWrite entity.User) (entity.User, exception.Exception) {
+func (s authServiceImpl) Register(ctx typing.Context, userWrite entity.User) (entity.User, exception.Exception) {
 	emailExist, err := s.repo.IsExistByEmail(ctx, userWrite.Email)
 	if err != nil {
 		return entity.User{}, err
@@ -60,7 +61,7 @@ func (s authServiceImpl) Register(ctx context.Context, userWrite entity.User) (e
 	return user, nil
 }
 
-func (s authServiceImpl) Login(ctx context.Context, userWrite entity.User) (string, exception.Exception) {
+func (s authServiceImpl) Login(ctx typing.Context, userWrite entity.User) (string, exception.Exception) {
 	user, err := s.repo.FindByEmail(ctx, userWrite.Email)
 	if err != nil {
 		if err.Cause() == exception.CAUSE_NOT_FOUND {

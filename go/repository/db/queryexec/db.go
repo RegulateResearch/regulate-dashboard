@@ -18,7 +18,7 @@ type dbExecutorImpl struct {
 	db *sql.DB
 }
 
-func NewQueryExecutor(db *sql.DB) DbExecutor {
+func NewDbExecutor(db *sql.DB) DbExecutor {
 	return dbExecutorImpl{db: db}
 }
 

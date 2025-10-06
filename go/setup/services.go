@@ -2,7 +2,7 @@ package setup
 
 import (
 	"frascati/service"
-	"frascati/service/auth"
+	"frascati/util/auth"
 )
 
 type services struct {

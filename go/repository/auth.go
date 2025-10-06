@@ -1,19 +1,19 @@
 package repository
 
 import (
-	"context"
 	"database/sql"
 	"errors"
 	"frascati/constants"
 	"frascati/exception"
 	"frascati/obj/entity"
 	repository_exception "frascati/repository/exception"
+	"frascati/typing"
 )
 
 type AuthRepository interface {
-	Add(ctx context.Context, newUserData entity.User) (entity.User, exception.Exception)
-	FindByEmail(ctx context.Context, email string) (entity.User, exception.Exception)
-	IsExistByEmail(ctx context.Context, email string) (bool, exception.Exception)
+	Add(ctx typing.Context, newUserData entity.User) (entity.User, exception.Exception)
+	FindByEmail(ctx typing.Context, email string) (entity.User, exception.Exception)
+	IsExistByEmail(ctx typing.Context, email string) (bool, exception.Exception)
 }
 
 type authRepositoryImpl struct {
@@ -24,7 +24,7 @@ func NewAuthRepository(db *sql.DB) AuthRepository {
 	return authRepositoryImpl{db: db}
 }
 
-func (r authRepositoryImpl) Add(ctx context.Context, newUserData entity.User) (entity.User, exception.Exception) {
+func (r authRepositoryImpl) Add(ctx typing.Context, newUserData entity.User) (entity.User, exception.Exception) {
 	query := `
 		INSERT INTO users(email, username, password, user_role, created_at, updated_at)
 		VALUES
@@ -43,7 +43,7 @@ func (r authRepositoryImpl) Add(ctx context.Context, newUserData entity.User) (e
 	return user, nil
 }
 
-func (r authRepositoryImpl) FindByEmail(ctx context.Context, email string) (entity.User, exception.Exception) {
+func (r authRepositoryImpl) FindByEmail(ctx typing.Context, email string) (entity.User, exception.Exception) {
 	query := `
 		SELECT id, username, password, user_role
 		FROM users
@@ -67,7 +67,7 @@ func (r authRepositoryImpl) FindByEmail(ctx context.Context, email string) (enti
 	return user, nil
 }
 
-func (r authRepositoryImpl) IsExistByEmail(ctx context.Context, email string) (bool, exception.Exception) {
+func (r authRepositoryImpl) IsExistByEmail(ctx typing.Context, email string) (bool, exception.Exception) {
 	query := `SELECT 1 FROM users WHERE email = $1`
 	res, err := r.db.ExecContext(ctx, query, email)
 	if err != nil {

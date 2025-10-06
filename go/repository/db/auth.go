@@ -11,7 +11,7 @@ import (
 	"frascati/typing"
 )
 
-type AuthRepositoryDb interface {
+type AuthRepository interface {
 	Add(ctx typing.Context, newUserData entity.User) (entity.User, exception.Exception)
 	FindByEmail(ctx typing.Context, email string) (entity.User, exception.Exception)
 	IsExistByEmail(ctx typing.Context, email string) (bool, exception.Exception)
@@ -21,7 +21,7 @@ type authRepositoryDbImpl struct {
 	executor queryexec.QueryExecutor
 }
 
-func NewAuthRepositoryDb(executor queryexec.QueryExecutor) AuthRepositoryDb {
+func NewAuthRepositoryDb(executor queryexec.QueryExecutor) AuthRepository {
 	return authRepositoryDbImpl{executor: executor}
 }
 

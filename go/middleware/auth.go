@@ -4,8 +4,8 @@ import (
 	"frascati/exception"
 	middleware_exception "frascati/middleware/exception"
 	"frascati/obj/entity"
-	"frascati/service/auth"
 	"frascati/session"
+	"frascati/util/auth"
 	"strings"
 
 	"github.com/gin-gonic/gin"

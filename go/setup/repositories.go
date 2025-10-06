@@ -11,6 +11,8 @@ type repositories struct {
 }
 
 func setupRepositories(db *sql.DB) repositories {
+	// executor := queryexec.NewDbExecutor(db)
+
 	return repositories{
 		auth: repository.NewAuthRepository(db),
 		user: repository.NewUserRepository(db),

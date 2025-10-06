@@ -4,7 +4,7 @@ import (
 	"errors"
 	"frascati/exception"
 	"frascati/obj/entity"
-	auth_exception "frascati/service/auth/exception"
+	auth_exception "frascati/util/auth/exception"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"

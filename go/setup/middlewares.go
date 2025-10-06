@@ -3,7 +3,7 @@ package setup
 import (
 	"frascati/middleware"
 	"frascati/prep/logger"
-	"frascati/service/auth"
+	"frascati/util/auth"
 )
 
 type Middlewares struct {
