@@ -2,10 +2,10 @@ package setup
 
 import (
 	"fmt"
+	"frascati/comp/logger"
 	"frascati/config"
 	"frascati/listener"
 	"frascati/pbuf"
-	"frascati/prep/logger"
 	"log"
 	"net"
 

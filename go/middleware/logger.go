@@ -2,8 +2,8 @@ package middleware
 
 import (
 	"errors"
+	"frascati/comp/logger"
 	"frascati/exception"
-	"frascati/prep/logger"
 	"time"
 
 	"github.com/gin-gonic/gin"

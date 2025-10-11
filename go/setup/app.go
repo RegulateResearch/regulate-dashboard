@@ -2,7 +2,7 @@ package setup
 
 import (
 	"database/sql"
-	"frascati/prep/logger"
+	"frascati/comp/logger"
 )
 
 func SetupApplication(db *sql.DB) (logger.EnhancedLogger, Handlers, Middlewares) {

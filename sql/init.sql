@@ -30,13 +30,3 @@ CREATE TABLE records(
     rand_num BIGINT NOT NULL,
     description VARCHAR
 );
-
-CREATE TABLE records(
-    id BIGSERIAL PRIMARY KEY,
-    created_at TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP NOT NULL,
-    deleted_at TIMESTAMP,
-    name VARCHAR NOT NULL,
-    rand_num BIGINT NOT NULL,
-    description VARCHAR
-);

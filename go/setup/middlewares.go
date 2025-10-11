@@ -1,8 +1,8 @@
 package setup
 
 import (
+	"frascati/comp/logger"
 	"frascati/middleware"
-	"frascati/prep/logger"
 	"frascati/util/auth"
 )
 

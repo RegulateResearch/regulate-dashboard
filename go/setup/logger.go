@@ -1,8 +1,8 @@
 package setup
 
 import (
+	"frascati/comp/logger"
 	"frascati/prep"
-	"frascati/prep/logger"
 	"os"
 
 	"github.com/sirupsen/logrus"
