@@ -1,9 +1,9 @@
 package setup
 
 import (
+	"frascati/comp/auth"
 	"frascati/comp/logger"
 	"frascati/middleware"
-	"frascati/util/auth"
 )
 
 type Middlewares struct {

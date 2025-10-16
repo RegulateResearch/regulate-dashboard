@@ -1,8 +1,8 @@
 package setup
 
 import (
+	"frascati/comp/auth"
 	"frascati/config"
-	"frascati/util/auth"
 )
 
 func setupAuthUtils() (auth.JwtService, auth.BcryptService) {

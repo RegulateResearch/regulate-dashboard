@@ -2,11 +2,11 @@ package service
 
 import (
 	"errors"
+	"frascati/comp/auth"
+	auth_exception "frascati/comp/auth/exception"
 	"frascati/exception"
 	"frascati/obj/entity"
 	"frascati/repository"
-	"frascati/util/auth"
-	auth_exception "frascati/util/auth/exception"
 
 	"frascati/typing"
 )

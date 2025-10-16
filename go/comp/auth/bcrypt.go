@@ -1,8 +1,8 @@
 package auth
 
 import (
+	auth_exception "frascati/comp/auth/exception"
 	"frascati/exception"
-	auth_exception "frascati/util/auth/exception"
 
 	"golang.org/x/crypto/bcrypt"
 )

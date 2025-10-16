@@ -1,11 +1,11 @@
 package middleware
 
 import (
+	"frascati/comp/auth"
 	"frascati/exception"
 	middleware_exception "frascati/middleware/exception"
 	"frascati/obj/entity"
 	"frascati/session"
-	"frascati/util/auth"
 	"strings"
 
 	"github.com/gin-gonic/gin"
