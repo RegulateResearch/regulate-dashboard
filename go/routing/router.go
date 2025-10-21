@@ -8,15 +8,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SetupRouter(handlers setup.Handlers, middlewares setup.Middlewares) *gin.Engine {
+func SetupRouter(app setup.App) *gin.Engine {
 	r := gin.New()
-	r.Use(middlewares.Logger.LogActivities)
+	r.Use(app.Middlewares.Logger.LogActivities)
 	r.Use(gin.Recovery())
 	r.Use(middleware.HandleError)
 
-	routes := grouping.AllRoutes(r, middlewares)
+	routes := grouping.AllRoutes(r, app.Middlewares)
 
-	setupEndpoints(routes, handlers)
+	setupEndpoints(routes, app.Handlers)
 	return r
 }
 

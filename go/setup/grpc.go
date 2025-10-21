@@ -2,7 +2,6 @@ package setup
 
 import (
 	"fmt"
-	"frascati/comp/logger"
 	"frascati/config"
 	"frascati/listener"
 	"frascati/pbuf"
@@ -12,7 +11,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-func SetupGrpc(logger logger.EnhancedLogger) (*grpc.Server, net.Listener) {
+func SetupGrpc(app App) (*grpc.Server, net.Listener) {
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", config.GetListenerPort()))
 	if err != nil {
 		log.Fatalf("cannot initiate GRCP listener: %v\n", err)
@@ -20,7 +19,7 @@ func SetupGrpc(logger logger.EnhancedLogger) (*grpc.Server, net.Listener) {
 
 	grpcServer := grpc.NewServer()
 
-	pbuf.RegisterGreeterServer(grpcServer, listener.NewCobaListener(logger))
+	pbuf.RegisterGreeterServer(grpcServer, listener.NewCobaListener(app.Logger))
 
 	return grpcServer, lis
 }

@@ -2,16 +2,10 @@ package setup
 
 import (
 	"frascati/comp/logger"
-	"frascati/prep"
 	"os"
 
 	"github.com/sirupsen/logrus"
 )
-
-func setupLogger() logger.EnhancedLogger {
-	warnLogFile, errLogFile := prep.PrepFile()
-	return setupEnhanceLogger(warnLogFile, errLogFile)
-}
 
 func setupEnhanceLogger(warnLogFile *os.File, errLogFile *os.File) logger.EnhancedLogger {
 	infoLogger := logger.NewLogrusLogger(logrus.InfoLevel, os.Stdout)

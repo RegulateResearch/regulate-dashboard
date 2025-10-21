@@ -3,30 +3,28 @@ package main
 import (
 	"fmt"
 	"frascati/config"
-	"frascati/prep"
 	"frascati/routing"
 	"frascati/setup"
 	"log"
 )
 
 func main() {
-	config.InitEnv()
-	db, err := prep.ConnectDB()
+	app, err := setup.SetupApp()
 	if err != nil {
-		log.Fatalln("cannot start db, err: ", err.Error())
+		log.Fatalln(err.ToMap())
 	}
+
 	defer func() {
-		err := db.Close()
+		err := app.Close()
 		if err != nil {
-			log.Fatalf("cannot close db: %v", err)
+			log.Fatalln(err)
 		}
 	}()
 
-	logger, handlers, middlewares := setup.SetupApplication(db)
-	router := routing.SetupRouter(handlers, middlewares)
+	router := routing.SetupRouter(app)
 
 	go func() {
-		grpcServer, netListener := setup.SetupGrpc(logger)
+		grpcServer, netListener := setup.SetupGrpc(app)
 		if err := grpcServer.Serve(netListener); err != nil {
 			log.Fatalf("failed to serve: %v", err)
 		} else {
