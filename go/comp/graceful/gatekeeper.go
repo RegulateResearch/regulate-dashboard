@@ -33,8 +33,9 @@ func (k *gatekeeper) Process(fun func()) exception.Exception {
 		return exception.NewBaseException(exception.CAUSE_CLOSURE, "gatekeeper", "we are not accepting request at this moment", errors.New("gate is closed for graceful shutdown"))
 	}
 
-	defer k.waitGroup.Done()
 	k.waitGroup.Add(1)
+	defer k.waitGroup.Done()
+
 	fun()
 
 	return nil
