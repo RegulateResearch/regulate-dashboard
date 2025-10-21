@@ -13,13 +13,7 @@ func main() {
 	if err != nil {
 		log.Fatalln(err.ToMap())
 	}
-
-	defer func() {
-		err := app.Close()
-		if err != nil {
-			log.Fatalln(err)
-		}
-	}()
+	defer closeApp(app)
 
 	router := routing.SetupRouter(app)
 
@@ -33,4 +27,11 @@ func main() {
 	}()
 
 	router.Run(fmt.Sprintf(":%s", config.GetServerPort()))
+}
+
+func closeApp(app setup.App) {
+	err := app.Close()
+	if err != nil {
+		log.Fatalln(err)
+	}
 }
