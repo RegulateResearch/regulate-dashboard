@@ -10,6 +10,7 @@ const (
 	CAUSE_FORBIDDEN
 	CAUSE_NOT_FOUND
 	CAUSE_INTERNAL
+	CAUSE_CLOSURE
 )
 
 type causeStatusMapping struct {
@@ -56,6 +57,7 @@ func getCauseStatusMapping() []causeStatusMapping {
 		NewCauseStatusMapping(CAUSE_FORBIDDEN, http.StatusNotFound),
 		NewCauseStatusMapping(CAUSE_NOT_FOUND, http.StatusNotFound),
 		NewCauseStatusMapping(CAUSE_INTERNAL, http.StatusInternalServerError),
+		NewCauseStatusMapping(CAUSE_CLOSURE, http.StatusServiceUnavailable),
 	}
 
 	return cause_mappings
