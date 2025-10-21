@@ -8,6 +8,8 @@ import (
 
 type Gatekeeper interface {
 	IsOpen() bool
+	Process(fun func()) exception.Exception
+	Close()
 }
 
 type gatekeeper struct {
