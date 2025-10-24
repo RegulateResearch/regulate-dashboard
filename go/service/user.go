@@ -1,14 +1,14 @@
 package service
 
 import (
-	"context"
 	"frascati/exception"
 	"frascati/obj/entity"
 	"frascati/repository"
+	"frascati/typing"
 )
 
 type UserService interface {
-	FindAll(ctx context.Context) ([]entity.User, exception.Exception)
+	FindAll(ctx typing.Context) ([]entity.User, exception.Exception)
 }
 
 type userServiceImpl struct {
@@ -21,7 +21,7 @@ func NewUserService(userRepo repository.UserRepository) UserService {
 	}
 }
 
-func (s userServiceImpl) FindAll(ctx context.Context) ([]entity.User, exception.Exception) {
+func (s userServiceImpl) FindAll(ctx typing.Context) ([]entity.User, exception.Exception) {
 	res, err := s.userRepo.FindAll(ctx)
 	return res, err
 }

@@ -1,12 +1,9 @@
 package repository
 
 import (
-	"database/sql"
-	"errors"
-	"frascati/constants"
 	"frascati/exception"
 	"frascati/obj/entity"
-	repository_exception "frascati/repository/exception"
+	repo_db "frascati/repository/db"
 	"frascati/typing"
 )
 
@@ -17,67 +14,24 @@ type AuthRepository interface {
 }
 
 type authRepositoryImpl struct {
-	db *sql.DB
+	repoDb repo_db.AuthRepository
 }
 
-func NewAuthRepository(db *sql.DB) AuthRepository {
-	return authRepositoryImpl{db: db}
+func NewAuthRepository(repoDb repo_db.AuthRepository) AuthRepository {
+	return authRepositoryImpl{repoDb: repoDb}
 }
 
 func (r authRepositoryImpl) Add(ctx typing.Context, newUserData entity.User) (entity.User, exception.Exception) {
-	query := `
-		INSERT INTO users(email, username, password, user_role, created_at, updated_at)
-		VALUES
-			($1, $2, $3, $4, NOW(), NOW())
-		RETURNING id, email, username, user_role
-	`
-
-	var user entity.User
-	err := r.db.QueryRowContext(ctx, query,
-		newUserData.Email, newUserData.Username, newUserData.Password, constants.ROLE_USER).
-		Scan(&user.ID, &user.Email, &user.Username, &user.Role)
-	if err != nil {
-		return entity.User{}, repository_exception.CreateDBException(err, "auth", "something is wrong in our end")
-	}
-
-	return user, nil
+	res, err := r.repoDb.Add(ctx, newUserData)
+	return res, err
 }
 
 func (r authRepositoryImpl) FindByEmail(ctx typing.Context, email string) (entity.User, exception.Exception) {
-	query := `
-		SELECT id, username, password, user_role
-		FROM users
-		WHERE email = $1
-		LIMIT 1
-	`
-
-	var user entity.User
-	err := r.db.QueryRowContext(ctx, query, email).Scan(&user.ID, &user.Username, &user.Password, &user.Role)
-	if err != nil {
-		var empty entity.User
-		if errors.Is(err, sql.ErrNoRows) {
-			return empty, repository_exception.CreateRecordNotFoundException(err, "auth", "record not found")
-		}
-
-		return empty, repository_exception.CreateDBException(err, "auth", "something is wrong in our end")
-	}
-
-	user.Email = email
-
-	return user, nil
+	res, err := r.repoDb.FindByEmail(ctx, email)
+	return res, err
 }
 
 func (r authRepositoryImpl) IsExistByEmail(ctx typing.Context, email string) (bool, exception.Exception) {
-	query := `SELECT 1 FROM users WHERE email = $1`
-	res, err := r.db.ExecContext(ctx, query, email)
-	if err != nil {
-		return false, repository_exception.CreateDBException(err, "auth", "something is wrong in our end")
-	}
-
-	rowsAffected, err := res.RowsAffected()
-	if err != nil {
-		return false, repository_exception.CreateDBException(err, "auth", "something is wrong in our end")
-	}
-
-	return rowsAffected > 0, nil
+	res, err := r.repoDb.IsExistByEmail(ctx, email)
+	return res, err
 }

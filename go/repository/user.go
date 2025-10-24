@@ -1,54 +1,27 @@
 package repository
 
 import (
-	"context"
-	"database/sql"
 	"frascati/exception"
 	"frascati/obj/entity"
-	repository_exception "frascati/repository/exception"
-	"log"
+	repo_db "frascati/repository/db"
+	"frascati/typing"
 )
 
 type UserRepository interface {
-	FindAll(context.Context) ([]entity.User, exception.Exception)
+	FindAll(typing.Context) ([]entity.User, exception.Exception)
 }
 
 type userRepositoryImpl struct {
-	db *sql.DB
+	repoDb repo_db.UserRepository
 }
 
-func NewUserRepository(db *sql.DB) UserRepository {
+func NewUserRepository(repoDb repo_db.UserRepository) UserRepository {
 	return userRepositoryImpl{
-		db: db,
+		repoDb: repoDb,
 	}
 }
 
-func (r userRepositoryImpl) FindAll(ctx context.Context) ([]entity.User, exception.Exception) {
-	res := make([]entity.User, 0)
-	query :=
-		`SELECT id, username, user_role
-		FROM users`
-
-	rows, err := r.db.Query(query)
-	if err != nil {
-		return nil, repository_exception.CreateDBException(err, "user", "something is wrong in our end")
-	}
-	defer func() {
-		err := rows.Close()
-		if err != nil {
-			log.Println("cannot close rows, ", err.Error())
-		}
-	}()
-
-	for rows.Next() {
-		var user entity.User
-		err := rows.Scan(&user.ID, &user.Username, &user.Role)
-		if err != nil {
-			return nil, repository_exception.CreateDBException(err, "user", "something is wrong in our end")
-		}
-
-		res = append(res, user)
-	}
-
-	return res, nil
+func (r userRepositoryImpl) FindAll(ctx typing.Context) ([]entity.User, exception.Exception) {
+	res, err := r.repoDb.FindAll(ctx)
+	return res, err
 }
