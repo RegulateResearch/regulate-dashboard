@@ -10,13 +10,16 @@ import (
 
 func SetupRouter(app setup.App) *gin.Engine {
 	r := gin.New()
-	r.Use(app.Middlewares.Logger.LogActivities)
+
+	middlewares := app.Middlewares()
+	r.Use(middlewares.Gatekeeper.Process)
+	r.Use(middlewares.Logger.LogActivities)
 	r.Use(gin.Recovery())
 	r.Use(middleware.HandleError)
 
-	routes := grouping.AllRoutes(r, app.Middlewares)
+	routes := grouping.AllRoutes(r, middlewares)
 
-	setupEndpoints(routes, app.Handlers)
+	setupEndpoints(routes, app.Handlers())
 	return r
 }
 
@@ -24,4 +27,5 @@ func setupEndpoints(routes grouping.Routes, handlers setup.Handlers) {
 	setupAuthRouting(routes, handlers)
 	setupSessionRouting(routes, handlers)
 	setupTryGetUser(routes, handlers)
+	setupTryRoutes(routes, handlers)
 }

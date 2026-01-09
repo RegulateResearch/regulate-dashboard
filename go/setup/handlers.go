@@ -7,6 +7,7 @@ type Handlers struct {
 	Session handler.SessionHandler
 	Admin   handler.AdminHandler
 	User    handler.UserHandler
+	Try     handler.TryHandler
 }
 
 func setupHandlers(services services) Handlers {
@@ -15,5 +16,6 @@ func setupHandlers(services services) Handlers {
 		Session: handler.NewSessionHandler(),
 		Admin:   handler.NewAdminHandler(services.user),
 		User:    handler.NewUserHandler(services.user),
+		Try:     handler.NewTryHandler(),
 	}
 }

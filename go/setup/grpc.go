@@ -19,7 +19,7 @@ func SetupGrpc(app App) (*grpc.Server, net.Listener) {
 
 	grpcServer := grpc.NewServer()
 
-	pbuf.RegisterGreeterServer(grpcServer, listener.NewCobaListener(app.Logger))
+	pbuf.RegisterGreeterServer(grpcServer, listener.NewCobaListener(app.Logger()))
 
 	return grpcServer, lis
 }

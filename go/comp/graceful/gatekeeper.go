@@ -9,7 +9,9 @@ import (
 type Gatekeeper interface {
 	IsOpen() bool
 	Process(fun func()) exception.Exception
+	Open()
 	Close()
+	Wait()
 }
 
 type gatekeeper struct {
@@ -19,7 +21,7 @@ type gatekeeper struct {
 
 func NewGateKeeper() Gatekeeper {
 	return &gatekeeper{
-		isOpen:    true,
+		isOpen:    false,
 		waitGroup: sync.WaitGroup{},
 	}
 }
@@ -41,6 +43,14 @@ func (k *gatekeeper) Process(fun func()) exception.Exception {
 	return nil
 }
 
+func (k *gatekeeper) Open() {
+	k.isOpen = true
+}
+
 func (k *gatekeeper) Close() {
 	k.isOpen = false
+}
+
+func (k *gatekeeper) Wait() {
+	k.waitGroup.Wait()
 }
