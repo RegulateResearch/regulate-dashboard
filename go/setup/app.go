@@ -3,7 +3,7 @@ package setup
 import (
 	"database/sql"
 	"frascati/comp/graceful"
-	"frascati/comp/logger"
+	"frascati/comp/logging"
 	"frascati/config"
 	"frascati/exception"
 	"frascati/lambda"
@@ -17,14 +17,14 @@ type App interface {
 	CloseComp() exception.Exception
 	Handlers() Handlers
 	Middlewares() Middlewares
-	Logger() logger.EnhancedLogger
+	Logger() logging.EnhancedLogger
 }
 
 type app struct {
 	db          *sql.DB
 	warnFile    *os.File
 	errFile     *os.File
-	logger      logger.EnhancedLogger
+	logger      logging.EnhancedLogger
 	gatekeeper  graceful.Gatekeeper
 	handlers    Handlers
 	middlewares Middlewares
@@ -71,7 +71,7 @@ func (a *app) Middlewares() Middlewares {
 	return a.middlewares
 }
 
-func (a *app) Logger() logger.EnhancedLogger {
+func (a *app) Logger() logging.EnhancedLogger {
 	return a.logger
 }
 

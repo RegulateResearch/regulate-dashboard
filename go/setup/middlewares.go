@@ -3,7 +3,7 @@ package setup
 import (
 	"frascati/comp/auth"
 	"frascati/comp/graceful"
-	"frascati/comp/logger"
+	"frascati/comp/logging"
 	"frascati/middleware"
 )
 
@@ -13,7 +13,7 @@ type Middlewares struct {
 	Gatekeeper middleware.GatekeeperMiddleware
 }
 
-func setupMiddlewares(jwt auth.JwtService, logger logger.EnhancedLogger, gatekeeper graceful.Gatekeeper) Middlewares {
+func setupMiddlewares(jwt auth.JwtService, logger logging.EnhancedLogger, gatekeeper graceful.Gatekeeper) Middlewares {
 	return Middlewares{
 		Auth:       middleware.NewAuthMiddleware(jwt),
 		Logger:     middleware.NewLoggerMiddleware(logger),

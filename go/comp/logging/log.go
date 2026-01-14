@@ -1,4 +1,4 @@
-package logger
+package logging
 
 type Logger interface {
 	Info(args ...any)

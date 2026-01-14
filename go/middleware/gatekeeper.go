@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"frascati/comp/graceful"
-	"frascati/comp/logger"
+	"frascati/comp/logging"
 	"frascati/exception"
 	"frascati/response"
 
@@ -11,10 +11,10 @@ import (
 
 type GatekeeperMiddleware struct {
 	gatekeeper graceful.Gatekeeper
-	logger     logger.EnhancedLogger
+	logger     logging.EnhancedLogger
 }
 
-func NewGatekeeperMiddleware(gatekeeper graceful.Gatekeeper, logger logger.EnhancedLogger) GatekeeperMiddleware {
+func NewGatekeeperMiddleware(gatekeeper graceful.Gatekeeper, logger logging.EnhancedLogger) GatekeeperMiddleware {
 	return GatekeeperMiddleware{
 		gatekeeper: gatekeeper,
 		logger:     logger,

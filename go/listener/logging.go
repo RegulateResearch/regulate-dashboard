@@ -2,12 +2,12 @@ package listener
 
 import (
 	"context"
-	"frascati/comp/logger"
+	"frascati/comp/logging"
 	"frascati/exception"
 	"time"
 )
 
-func execAndLog[Req any, Res any](ctx context.Context, req Req, reqName string, logger logger.EnhancedLogger, proc func(context.Context, Req) (Res, exception.Exception)) (Res, exception.Exception) {
+func execAndLog[Req any, Res any](ctx context.Context, req Req, reqName string, logger logging.EnhancedLogger, proc func(context.Context, Req) (Res, exception.Exception)) (Res, exception.Exception) {
 	start := time.Now()
 	res, exc := proc(ctx, req)
 	end := time.Now()

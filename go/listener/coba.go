@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"frascati/comp/logger"
+	"frascati/comp/logging"
 	"frascati/exception"
 	"frascati/lambda"
 	"frascati/pbuf"
@@ -14,10 +14,10 @@ import (
 
 type CobaListener struct {
 	pbuf.UnimplementedGreeterServer
-	logger logger.EnhancedLogger
+	logger logging.EnhancedLogger
 }
 
-func NewCobaListener(logger logger.EnhancedLogger) *CobaListener {
+func NewCobaListener(logger logging.EnhancedLogger) *CobaListener {
 	lis := CobaListener{
 		logger: logger,
 	}

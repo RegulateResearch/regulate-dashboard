@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"errors"
-	"frascati/comp/logger"
+	"frascati/comp/logging"
 	"frascati/exception"
 	"time"
 
@@ -10,10 +10,10 @@ import (
 )
 
 type LoggerMiddleware struct {
-	logger logger.EnhancedLogger
+	logger logging.EnhancedLogger
 }
 
-func NewLoggerMiddleware(logger logger.EnhancedLogger) LoggerMiddleware {
+func NewLoggerMiddleware(logger logging.EnhancedLogger) LoggerMiddleware {
 	return LoggerMiddleware{logger: logger}
 }
 
