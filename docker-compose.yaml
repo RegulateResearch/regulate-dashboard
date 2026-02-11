@@ -41,9 +41,6 @@ services:
       BCRYPT_COST: ${BACKEND_BCRYPT_COST}
       JWT_SECRET: ${BACKEND_JWT_SECRET}
       JWT_ISSUER: ${BACKEND_JWT_ISSUER}
-    ports:
-      - 8080:8080
-      - 9090:9090
     depends_on:
       db:
         condition: service_healthy
