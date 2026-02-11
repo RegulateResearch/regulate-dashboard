@@ -3,7 +3,7 @@ FROM alpine:3.21.0
 WORKDIR /app
 
 COPY ./backend-binary /app/backend-binary
-COPY ./env /app/env
+COPY ./env.empty /app/env
 
 EXPOSE 8080 9090
 

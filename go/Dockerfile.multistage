@@ -16,7 +16,7 @@ FROM alpine:3.21.0 AS build-release-stage
 WORKDIR /app
 
 COPY --from=build-stage /backend/backend-binary /app/backend-binary
-COPY --from=build-stage /backend/.env /app/.env 
+COPY --from=build-stage /backend/.env.empty /app/.env 
 
 EXPOSE 8080 9090
 
