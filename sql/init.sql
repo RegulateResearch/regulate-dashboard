@@ -1,4 +1,9 @@
 -- for docker
+SELECT 'CREATE DATABASE frascati'
+WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'frascati')
+\gexec
+;
+
 \c frascati
 
 -- table def
