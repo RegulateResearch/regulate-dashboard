@@ -7,7 +7,7 @@ WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'frascati')
 \c frascati
 
 -- table def
-CREATE TABLE users(
+CREATE TABLE IF NOT EXISTS users(
     id BIGSERIAL PRIMARY KEY,
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL,
@@ -18,7 +18,7 @@ CREATE TABLE users(
     user_role SMALLINT NOT NULL
 );
 
-CREATE TABLE samples(
+CREATE TABLE IF NOT EXISTS samples(
     id BIGSERIAL PRIMARY KEY,
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL,
@@ -26,7 +26,7 @@ CREATE TABLE samples(
     data_str VARCHAR NOT NULL
 );
 
-CREATE TABLE records(
+CREATE TABLE IF NOT EXISTS records(
     id BIGSERIAL PRIMARY KEY,
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL,
