@@ -4,7 +4,7 @@ WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'frascati')
 \gexec
 ;
 
-\c frascati
+\c frascati;
 
 -- table def
 CREATE TABLE IF NOT EXISTS users(
