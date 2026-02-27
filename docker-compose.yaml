@@ -44,6 +44,11 @@ services:
     depends_on:
       db:
         condition: service_healthy
+  frontend:
+    container_name: frontend
+    build:
+      context: ./sveltekit
+      dockerfile: Dockerfile.multistage
   nginx:
     container_name: nginx
     image: nginx:1.27.3-bookworm-perl
