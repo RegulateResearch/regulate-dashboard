@@ -1,6 +1,5 @@
 services:
   db:
-    container_name: db
     image: postgres:16
     restart: "always"
     volumes:
@@ -17,7 +16,6 @@ services:
       timeout: 10s
       retries: 10
   pgadmin:
-    container_name: pgadmin
     image: dpage/pgadmin4:8.14
     restart: always
     environment:
@@ -29,7 +27,6 @@ services:
       db:
         condition: service_healthy
   backend:
-    container_name: backend
     build:
       context: ./go
       dockerfile: Dockerfile.multistage
@@ -45,7 +42,6 @@ services:
       db:
         condition: service_healthy
   nginx:
-    container_name: nginx
     image: nginx:1.27.3-bookworm-perl
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
