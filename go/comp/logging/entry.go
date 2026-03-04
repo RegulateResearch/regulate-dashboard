@@ -2,56 +2,54 @@ package logging
 
 import "github.com/sirupsen/logrus"
 
-type LogrusEntry struct {
+type logrusEntry struct {
 	entry *logrus.Entry
 }
 
-func (l *LogrusEntry) Debugf(format string, args ...interface{}) {
+func (l *logrusEntry) Debugf(format string, args ...interface{}) {
 	l.entry.Debugf(format, args...)
 }
 
-func (l *LogrusEntry) Debug(args ...interface{}) {
+func (l *logrusEntry) Debug(args ...interface{}) {
 	l.entry.Debug(args...)
 }
 
-func (l *LogrusEntry) Infof(format string, args ...interface{}) {
+func (l *logrusEntry) Infof(format string, args ...interface{}) {
 	l.entry.Infof(format, args...)
 }
 
-func (l *LogrusEntry) Info(args ...interface{}) {
+func (l *logrusEntry) Info(args ...interface{}) {
 	l.entry.Info(args...)
 }
 
-func (l *LogrusEntry) Warn(args ...interface{}) {
+func (l *logrusEntry) Warn(args ...interface{}) {
 	l.entry.Warn(args...)
 }
 
-func (l *LogrusEntry) Warnf(format string, args ...interface{}) {
+func (l *logrusEntry) Warnf(format string, args ...interface{}) {
 	l.entry.Warnf(format, args...)
 }
 
-func (l *LogrusEntry) Errorf(format string, args ...interface{}) {
+func (l *logrusEntry) Errorf(format string, args ...interface{}) {
 	l.entry.Errorf(format, args...)
 }
 
-func (l *LogrusEntry) Error(args ...interface{}) {
+func (l *logrusEntry) Error(args ...interface{}) {
 	l.entry.Error(args...)
 }
 
-func (l *LogrusEntry) Fatalf(format string, args ...interface{}) {
+func (l *logrusEntry) Fatalf(format string, args ...interface{}) {
 	l.entry.Fatalf(format, args...)
 }
 
-func (l *LogrusEntry) Fatal(args ...interface{}) {
+func (l *logrusEntry) Fatal(args ...interface{}) {
 	l.entry.Fatal(args...)
 }
 
-func (l *LogrusEntry) WithField(key string, value interface{}) (entry Logger) {
-	entry = &LogrusEntry{l.entry.WithField(key, value)}
-	return
+func (l *logrusEntry) WithField(key string, value interface{}) FieldSupportLogger {
+	return &logrusEntry{l.entry.WithField(key, value)}
 }
 
-func (l *LogrusEntry) WithFields(args map[string]interface{}) (entry Logger) {
-	entry = &LogrusEntry{l.entry.WithFields(args)}
-	return
+func (l *logrusEntry) WithFields(args map[string]interface{}) FieldSupportLogger {
+	return &logrusEntry{l.entry.WithFields(args)}
 }

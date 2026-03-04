@@ -10,10 +10,10 @@ import (
 )
 
 type LoggerMiddleware struct {
-	logger logging.EnhancedLogger
+	logger logging.ExceptionSupportLogger
 }
 
-func NewLoggerMiddleware(logger logging.EnhancedLogger) LoggerMiddleware {
+func NewLoggerMiddleware(logger logging.ExceptionSupportLogger) LoggerMiddleware {
 	return LoggerMiddleware{logger: logger}
 }
 
@@ -38,21 +38,17 @@ func (m LoggerMiddleware) LogActivities(ctx *gin.Context) {
 		"host":      reqHost,
 	}
 
-	if lastErr := ctx.Errors.Last(); lastErr != nil {
-		m.logger.WithFieldsInfo(fields).Error(lastErr)
+	logger := m.logger.WithFields(fields)
 
+	if lastErr := ctx.Errors.Last(); lastErr != nil {
 		var exc exception.Exception
 		if errors.As(lastErr, &exc) {
-			if exc.Cause() == exception.CAUSE_INTERNAL {
-				m.logger.WithFieldsError(fields).WithField("errorObj", exc.ToMap()).Errorf("error:\n%s", exc.Error())
-			} else {
-				m.logger.WithFieldsWarn(fields).WithField("errorObj", exc.ToMap()).Warnf("warning:\n%s", exc.Error())
-			}
+			logger.LogException(exc)
+		} else {
+			logger.Errorf("uncaught error: %v", lastErr.Err)
 		}
-
-		return
+	} else {
+		logger.Info("SUCCESS")
 	}
-
-	m.logger.WithFieldsInfo(fields).Infof("REQUEST %s %s SUCCESS", reqMethod, reqURI)
 
 }

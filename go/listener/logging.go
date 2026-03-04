@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func execAndLog[Req any, Res any](ctx context.Context, req Req, reqName string, logger logging.EnhancedLogger, proc func(context.Context, Req) (Res, exception.Exception)) (Res, exception.Exception) {
+func execAndLog[Req any, Res any](ctx context.Context, req Req, reqName string, logger logging.ExceptionSupportLogger, proc func(context.Context, Req) (Res, exception.Exception)) (Res, exception.Exception) {
 	start := time.Now()
 	res, exc := proc(ctx, req)
 	end := time.Now()
@@ -19,14 +19,12 @@ func execAndLog[Req any, Res any](ctx context.Context, req Req, reqName string, 
 		"latency": latency,
 	}
 
+	logger = logger.WithFields(entry)
+
 	if exc != nil {
-		if exc.Cause() == exception.CAUSE_INTERNAL {
-			logger.WithFieldsError(entry).WithField("errorObj", exc.ToMap()).Errorf("error:\n%s", exc.Error())
-		} else {
-			logger.WithFieldsWarn(entry).WithField("errorObj", exc.ToMap()).Warnf("warning:\n%s", exc.Error())
-		}
+		logger.LogException(exc)
 	} else {
-		logger.WithFieldsInfo(entry).Infof("REQUEST %s SUCCESS", reqName)
+		logger.Infof("REQUEST %s SUCCESS", reqName)
 	}
 
 	return res, exc

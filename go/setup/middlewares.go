@@ -13,7 +13,7 @@ type Middlewares struct {
 	Gatekeeper middleware.GatekeeperMiddleware
 }
 
-func setupMiddlewares(jwt auth.JwtService, logger logging.EnhancedLogger, gatekeeper graceful.Gatekeeper) Middlewares {
+func setupMiddlewares(jwt auth.JwtService, logger logging.ExceptionSupportLogger, gatekeeper graceful.Gatekeeper) Middlewares {
 	return Middlewares{
 		Auth:       middleware.NewAuthMiddleware(jwt),
 		Logger:     middleware.NewLoggerMiddleware(logger),

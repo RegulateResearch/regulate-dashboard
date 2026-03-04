@@ -17,14 +17,14 @@ type App interface {
 	CloseComp() exception.Exception
 	Handlers() Handlers
 	Middlewares() Middlewares
-	Logger() logging.EnhancedLogger
+	Logger() logging.ExceptionSupportLogger
 }
 
 type app struct {
 	db          *sql.DB
 	warnFile    *os.File
 	errFile     *os.File
-	logger      logging.EnhancedLogger
+	logger      logging.ExceptionSupportLogger
 	gatekeeper  graceful.Gatekeeper
 	handlers    Handlers
 	middlewares Middlewares
@@ -40,7 +40,7 @@ func SetupApp() (App, exception.Exception) {
 	}
 
 	warnFile, errFile := prep.PrepFile()
-	logger := setupEnhanceLogger(warnFile, errFile)
+	logger := setupLogger(warnFile, errFile)
 	gatekeeper := graceful.NewGateKeeper()
 	jwtService, bcryptService := setupAuthUtils()
 
@@ -71,7 +71,7 @@ func (a *app) Middlewares() Middlewares {
 	return a.middlewares
 }
 
-func (a *app) Logger() logging.EnhancedLogger {
+func (a *app) Logger() logging.ExceptionSupportLogger {
 	return a.logger
 }
 
