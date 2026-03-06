@@ -1,10 +1,10 @@
 -- for docker
-SELECT 'CREATE DATABASE frascati'
-WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'frascati')
+SELECT 'CREATE DATABASE regulatedb'
+WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'regulatedb')
 \gexec
 ;
 
-\c frascati;
+\c regulatedb;
 
 -- table def
 CREATE TABLE IF NOT EXISTS users(
