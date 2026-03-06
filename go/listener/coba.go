@@ -14,10 +14,10 @@ import (
 
 type CobaListener struct {
 	pbuf.UnimplementedGreeterServer
-	logger logging.EnhancedLogger
+	logger logging.ExceptionSupportLogger
 }
 
-func NewCobaListener(logger logging.EnhancedLogger) *CobaListener {
+func NewCobaListener(logger logging.ExceptionSupportLogger) *CobaListener {
 	lis := CobaListener{
 		logger: logger,
 	}

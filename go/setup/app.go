@@ -2,6 +2,7 @@ package setup
 
 import (
 	"database/sql"
+	"frascati/comp/background"
 	"frascati/comp/graceful"
 	"frascati/comp/logging"
 	"frascati/config"
@@ -17,18 +18,19 @@ type App interface {
 	CloseComp() exception.Exception
 	Handlers() Handlers
 	Middlewares() Middlewares
-	Logger() logging.EnhancedLogger
+	Logger() logging.ExceptionSupportLogger
 }
 
 type app struct {
-	db          *sql.DB
-	warnFile    *os.File
-	errFile     *os.File
-	logger      logging.EnhancedLogger
-	gatekeeper  graceful.Gatekeeper
-	handlers    Handlers
-	middlewares Middlewares
-	isClosed    bool
+	db                  *sql.DB
+	warnFile            *os.File
+	errFile             *os.File
+	logger              logging.ExceptionSupportLogger
+	backgroundProcessor background.Processor
+	gatekeeper          graceful.Gatekeeper
+	handlers            Handlers
+	middlewares         Middlewares
+	isClosed            bool
 }
 
 func SetupApp() (App, exception.Exception) {
@@ -40,24 +42,26 @@ func SetupApp() (App, exception.Exception) {
 	}
 
 	warnFile, errFile := prep.PrepFile()
-	logger := setupEnhanceLogger(warnFile, errFile)
+	logger := setupLogger(warnFile, errFile)
+	backgroundProcessor := setupBackgroundProcessor(logger)
 	gatekeeper := graceful.NewGateKeeper()
 	jwtService, bcryptService := setupAuthUtils()
 
 	repos := setupRepositories(db)
-	services := setupServices(repos, jwtService, bcryptService)
+	services := setupServices(repos, jwtService, bcryptService, backgroundProcessor)
 	middlewares := setupMiddlewares(jwtService, logger, gatekeeper)
 	handlers := setupHandlers(services)
 
 	app := &app{
-		db:          db,
-		warnFile:    warnFile,
-		errFile:     errFile,
-		logger:      logger,
-		gatekeeper:  gatekeeper,
-		middlewares: middlewares,
-		handlers:    handlers,
-		isClosed:    false,
+		db:                  db,
+		warnFile:            warnFile,
+		errFile:             errFile,
+		logger:              logger,
+		backgroundProcessor: backgroundProcessor,
+		gatekeeper:          gatekeeper,
+		middlewares:         middlewares,
+		handlers:            handlers,
+		isClosed:            false,
 	}
 
 	return app, nil
@@ -71,11 +75,12 @@ func (a *app) Middlewares() Middlewares {
 	return a.middlewares
 }
 
-func (a *app) Logger() logging.EnhancedLogger {
+func (a *app) Logger() logging.ExceptionSupportLogger {
 	return a.logger
 }
 
 func (a *app) Open() {
+	a.backgroundProcessor.Open()
 	a.gatekeeper.Open()
 }
 
@@ -83,6 +88,7 @@ func (a *app) Close(appCloseSig chan struct{}, serverCloseSig chan struct{}, gat
 	defer func() { appCloseSig <- struct{}{} }()
 	a.gatekeeper.Close()
 	a.gatekeeper.Wait()
+	a.backgroundProcessor.Wait()
 
 	gateClosedSig <- struct{}{}
 

@@ -16,6 +16,6 @@ func setupHandlers(services services) Handlers {
 		Session: handler.NewSessionHandler(),
 		Admin:   handler.NewAdminHandler(services.user),
 		User:    handler.NewUserHandler(services.user),
-		Try:     handler.NewTryHandler(),
+		Try:     handler.NewTryHandler(services.try),
 	}
 }

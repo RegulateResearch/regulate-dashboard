@@ -11,10 +11,10 @@ import (
 
 type GatekeeperMiddleware struct {
 	gatekeeper graceful.Gatekeeper
-	logger     logging.EnhancedLogger
+	logger     logging.ExceptionSupportLogger
 }
 
-func NewGatekeeperMiddleware(gatekeeper graceful.Gatekeeper, logger logging.EnhancedLogger) GatekeeperMiddleware {
+func NewGatekeeperMiddleware(gatekeeper graceful.Gatekeeper, logger logging.ExceptionSupportLogger) GatekeeperMiddleware {
 	return GatekeeperMiddleware{
 		gatekeeper: gatekeeper,
 		logger:     logger,
