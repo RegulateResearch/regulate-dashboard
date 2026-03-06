@@ -62,6 +62,7 @@ func (l compositeLogger) WithFields(args map[string]any) ExceptionSupportLogger 
 
 func (l compositeLogger) LogException(exc exception.Exception) {
 	if exc == nil {
+		l.generalLogger.Infof("success")
 		return
 	}
 
