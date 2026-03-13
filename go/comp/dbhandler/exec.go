@@ -1,17 +1,18 @@
-package queryexec
+package dbhandler
 
 import (
 	"context"
 	"database/sql"
-	"fmt"
+	"frascati/comp/queryexec"
+	"frascati/comp/txhandler"
+	tx_exception "frascati/comp/txhandler/exception"
 	"frascati/exception"
-	repository_exception "frascati/repository/exception"
 	"frascati/typing"
 )
 
 type DbExecutor interface {
-	QueryExecutor
-	Transactor
+	queryexec.QueryExecutor
+	txhandler.Transactor
 }
 
 type dbExecutorImpl struct {
@@ -53,13 +54,15 @@ func (e dbExecutorImpl) ExecContext(ctx typing.Context, query string, args ...an
 	return result, err
 }
 
-func (q dbExecutorImpl) WithTransaction(ctx typing.Context, txOption TxOption, readOnly bool, fn func(typing.Context) exception.Exception) exception.Exception {
+func (q dbExecutorImpl) WithTransaction(ctx typing.Context, txOption txhandler.TxOption, readOnly bool, fn func(typing.Context) exception.Exception) exception.Exception {
 	tx, err := q.db.BeginTx(ctx, &sql.TxOptions{
-		Isolation: txOption.toSqlIsolationLevel(),
+		Isolation: transformTxOptionToIsolationLevel(txOption),
 		ReadOnly:  readOnly,
 	})
+
 	if err != nil {
-		return repository_exception.CreateDBException(err, "transactor", "cannot begin transaction")
+		// return repository_exception.CreateDBException(err, "transactor", "cannot begin transaction")
+		return tx_exception.TransactionError(err, "cannot begin transaction")
 	}
 	defer tx.Rollback()
 
@@ -68,13 +71,15 @@ func (q dbExecutorImpl) WithTransaction(ctx typing.Context, txOption TxOption, r
 	exc := fn(ctx)
 	if exc != nil {
 		if errRollback := tx.Rollback(); errRollback != nil {
-			return repository_exception.CreateDBException(errRollback, "transactor", fmt.Sprintf("cannot rollback transaction: %s", exc.Error()))
+			// return repository_exception.CreateDBException(errRollback, "transactor", fmt.Sprintf("cannot rollback transaction: %s", exc.Error()))
+			return tx_exception.TransactionError(errRollback, "cannot rollback transaction")
 		}
 		return exc
 	}
 
 	if err := tx.Commit(); err != nil {
-		return repository_exception.CreateDBException(err, "transactor", "cannot commit transaction")
+		// return repository_exception.CreateDBException(err, "transactor", "cannot commit transaction")
+		return tx_exception.TransactionError(err, "cannot commit transaction")
 	}
 
 	return nil

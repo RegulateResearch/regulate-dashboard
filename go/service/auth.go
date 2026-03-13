@@ -51,6 +51,7 @@ func (s authServiceImpl) Register(ctx typing.Context, userWrite entity.User) (en
 		Email:    userWrite.Email,
 		Username: userWrite.Username,
 		Password: string(hashedPassword),
+		Role:     userWrite.Role,
 	}
 
 	user, err := s.repo.Add(ctx, newUserData)

@@ -28,6 +28,7 @@ type app struct {
 	logger              logging.ExceptionSupportLogger
 	backgroundProcessor background.Processor
 	gatekeeper          graceful.Gatekeeper
+	startupTask         startupTask
 	handlers            Handlers
 	middlewares         Middlewares
 	isClosed            bool
@@ -52,6 +53,8 @@ func SetupApp() (App, exception.Exception) {
 	middlewares := setupMiddlewares(jwtService, logger, gatekeeper)
 	handlers := setupHandlers(services)
 
+	startupTask := initStartupTask(services, backgroundProcessor)
+
 	app := &app{
 		db:                  db,
 		warnFile:            warnFile,
@@ -59,6 +62,7 @@ func SetupApp() (App, exception.Exception) {
 		logger:              logger,
 		backgroundProcessor: backgroundProcessor,
 		gatekeeper:          gatekeeper,
+		startupTask:         startupTask,
 		middlewares:         middlewares,
 		handlers:            handlers,
 		isClosed:            false,
@@ -82,6 +86,7 @@ func (a *app) Logger() logging.ExceptionSupportLogger {
 func (a *app) Open() {
 	a.backgroundProcessor.Open()
 	a.gatekeeper.Open()
+	a.startupTask.execute()
 }
 
 func (a *app) Close(appCloseSig chan struct{}, serverCloseSig chan struct{}, gateClosedSig chan struct{}) exception.Exception {
