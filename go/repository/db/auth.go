@@ -3,10 +3,9 @@ package repo_db
 import (
 	"database/sql"
 	"errors"
-	"frascati/constants"
+	"frascati/comp/queryexec"
 	"frascati/exception"
 	"frascati/obj/entity"
-	"frascati/repository/db/queryexec"
 	repository_exception "frascati/repository/exception"
 	"frascati/typing"
 )
@@ -35,7 +34,7 @@ func (r authRepositoryDbImpl) Add(ctx typing.Context, newUserData entity.User) (
 
 	var user entity.User
 	err := r.executor.QueryRowContext(ctx, query,
-		newUserData.Email, newUserData.Username, newUserData.Password, constants.ROLE_USER).
+		newUserData.Email, newUserData.Username, newUserData.Password, newUserData.Role).
 		Scan(&user.ID, &user.Email, &user.Username, &user.Role)
 	if err != nil {
 		return entity.User{}, repository_exception.CreateDBException(err, "auth", "something is wrong in our end")

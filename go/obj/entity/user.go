@@ -1,6 +1,8 @@
 package entity
 
-import "frascati/constants"
+import (
+	"frascati/constants"
+)
 
 type User struct {
 	Base

@@ -1,9 +1,9 @@
 package repo_db
 
 import (
+	"frascati/comp/queryexec"
 	"frascati/exception"
 	"frascati/obj/entity"
-	"frascati/repository/db/queryexec"
 	repository_exception "frascati/repository/exception"
 	"frascati/typing"
 	"log"

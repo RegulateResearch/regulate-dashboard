@@ -13,3 +13,7 @@ var envListenerPort = "LISTENER_PORT"
 var envJwtSecret = "JWT_SECRET"
 var envJwtIssuer = "JWT_ISSUER"
 var envBcryptCost = "BCRYPT_COST"
+
+var envAdminEmail = "ADMIN_EMAIL"
+var envAdminUsername = "ADMIN_USERNAME"
+var envAdminPassword = "ADMIN_PASSWORD"

@@ -2,19 +2,20 @@ package setup
 
 import (
 	"database/sql"
+	"frascati/comp/dbhandler"
+	"frascati/comp/txhandler"
 	"frascati/repository"
 	repo_db "frascati/repository/db"
-	"frascati/repository/db/queryexec"
 )
 
 type repositories struct {
 	auth       repository.AuthRepository
 	user       repository.UserRepository
-	transactor queryexec.Transactor
+	transactor txhandler.Transactor
 }
 
 func setupRepositories(db *sql.DB) repositories {
-	executor := queryexec.NewDbExecutor(db)
+	executor := dbhandler.NewDbExecutor(db)
 	authRepoDb := repo_db.NewAuthRepositoryDb(executor)
 	userRepoDb := repo_db.NewUserRepository(executor)
 
