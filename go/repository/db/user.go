@@ -6,7 +6,6 @@ import (
 	"frascati/obj/entity"
 	repository_exception "frascati/repository/exception"
 	"frascati/typing"
-	"log"
 )
 
 type UserRepository interface {
@@ -33,18 +32,13 @@ func (r userRepositoryImpl) FindAll(ctx typing.Context) ([]entity.User, exceptio
 	if err != nil {
 		return nil, repository_exception.CreateDBException(err, "user", "something is wrong in our end")
 	}
-	defer func() {
-		err := rows.Close()
-		if err != nil {
-			log.Println("cannot close rows, ", err.Error())
-		}
-	}()
+	defer r.executor.CloseRows(rows, "user - FindAll")
 
 	for rows.Next() {
 		var user entity.User
 		err := rows.Scan(&user.ID, &user.Username, &user.Role)
 		if err != nil {
-			return nil, repository_exception.CreateDBException(err, "user", "something is wrong in our end")
+			return nil, repository_exception.WrapQueryexecException(err, "user")
 		}
 
 		res = append(res, user)
