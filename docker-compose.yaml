@@ -45,7 +45,6 @@ services:
       db:
         condition: service_healthy
   frontend:
-    container_name: frontend
     build:
       context: ./sveltekit
       dockerfile: Dockerfile.multistage

@@ -25,6 +25,7 @@ func SetupRouter(app setup.App) *gin.Engine {
 
 func setupEndpoints(routes grouping.Routes, handlers setup.Handlers) {
 	setupAuthRouting(routes, handlers)
+	setupCourseRouter(routes, handlers)
 	setupSessionRouting(routes, handlers)
 	setupTryGetUser(routes, handlers)
 	setupTryRoutes(routes, handlers)
