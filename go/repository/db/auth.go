@@ -1,8 +1,6 @@
 package repo_db
 
 import (
-	"database/sql"
-	"errors"
 	"frascati/comp/queryexec"
 	"frascati/exception"
 	"frascati/obj/entity"
@@ -21,7 +19,9 @@ type authRepositoryDbImpl struct {
 }
 
 func NewAuthRepositoryDb(executor queryexec.QueryExecutor) AuthRepository {
-	return authRepositoryDbImpl{executor: executor}
+	return authRepositoryDbImpl{
+		executor: executor,
+	}
 }
 
 func (r authRepositoryDbImpl) Add(ctx typing.Context, newUserData entity.User) (entity.User, exception.Exception) {
@@ -37,7 +37,7 @@ func (r authRepositoryDbImpl) Add(ctx typing.Context, newUserData entity.User) (
 		newUserData.Email, newUserData.Username, newUserData.Password, newUserData.Role).
 		Scan(&user.ID, &user.Email, &user.Username, &user.Role)
 	if err != nil {
-		return entity.User{}, repository_exception.CreateDBException(err, "auth", "something is wrong in our end")
+		return entity.User{}, repository_exception.WrapQueryexecException(err, "auth")
 	}
 
 	return user, nil
@@ -54,12 +54,7 @@ func (r authRepositoryDbImpl) FindByEmail(ctx typing.Context, email string) (ent
 	var user entity.User
 	err := r.executor.QueryRowContext(ctx, query, email).Scan(&user.ID, &user.Username, &user.Password, &user.Role)
 	if err != nil {
-		var empty entity.User
-		if errors.Is(err, sql.ErrNoRows) {
-			return empty, repository_exception.CreateRecordNotFoundException(err, "auth", "record not found")
-		}
-
-		return empty, repository_exception.CreateDBException(err, "auth", "something is wrong in our end")
+		return entity.User{}, repository_exception.WrapQueryexecException(err, "auth")
 	}
 
 	user.Email = email
@@ -71,12 +66,12 @@ func (r authRepositoryDbImpl) IsExistByEmail(ctx typing.Context, email string) (
 	query := `SELECT 1 FROM users WHERE email = $1`
 	res, err := r.executor.ExecContext(ctx, query, email)
 	if err != nil {
-		return false, repository_exception.CreateDBException(err, "auth", "something is wrong in our end")
+		return false, repository_exception.WrapQueryexecException(err, "auth")
 	}
 
 	rowsAffected, err := res.RowsAffected()
 	if err != nil {
-		return false, repository_exception.CreateDBException(err, "auth", "something is wrong in our end")
+		return false, repository_exception.WrapQueryexecException(err, "auth")
 	}
 
 	return rowsAffected > 0, nil

@@ -1,12 +1,13 @@
 package queryexec
 
 import (
-	"database/sql"
+	"frascati/exception"
 	"frascati/typing"
 )
 
 type QueryExecutor interface {
-	QueryContext(ctx typing.Context, query string, args ...any) (*sql.Rows, error)
-	QueryRowContext(ctx typing.Context, query string, args ...any) *sql.Row
-	ExecContext(ctx typing.Context, query string, args ...any) (sql.Result, error)
+	QueryContext(ctx typing.Context, query string, args ...any) (Rows, exception.Exception)
+	QueryRowContext(ctx typing.Context, query string, args ...any) Row
+	ExecContext(ctx typing.Context, query string, args ...any) (Result, exception.Exception)
+	CloseRows(rows Rows, identifier string)
 }

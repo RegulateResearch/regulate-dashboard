@@ -2,6 +2,7 @@ package setup
 
 import (
 	"database/sql"
+	"frascati/comp/background"
 	"frascati/comp/dbhandler"
 	"frascati/comp/txhandler"
 	"frascati/repository"
@@ -14,8 +15,8 @@ type repositories struct {
 	transactor txhandler.Transactor
 }
 
-func setupRepositories(db *sql.DB) repositories {
-	executor := dbhandler.NewDbExecutor(db)
+func setupRepositories(db *sql.DB, processor background.Processor) repositories {
+	executor := dbhandler.NewDbExecutor(db, processor)
 	authRepoDb := repo_db.NewAuthRepositoryDb(executor)
 	userRepoDb := repo_db.NewUserRepository(executor)
 

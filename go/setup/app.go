@@ -48,7 +48,7 @@ func SetupApp() (App, exception.Exception) {
 	gatekeeper := graceful.NewGateKeeper()
 	jwtService, bcryptService := setupAuthUtils()
 
-	repos := setupRepositories(db)
+	repos := setupRepositories(db, backgroundProcessor)
 	services := setupServices(repos, jwtService, bcryptService, backgroundProcessor)
 	middlewares := setupMiddlewares(jwtService, logger, gatekeeper)
 	handlers := setupHandlers(services)
