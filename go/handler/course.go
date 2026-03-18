@@ -6,7 +6,9 @@ import (
 	"frascati/obj/dto"
 	"frascati/response"
 	"frascati/service"
+	"frascati/typing"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -51,4 +53,74 @@ func (h CourseHandler) AllCourse(ctx *gin.Context) {
 
 	resDto := lambda.MapList(res, converter.CourseEntityToDto)
 	ctx.JSON(http.StatusOK, response.NewSuccessResponse(resDto, "success"))
+}
+
+func (h CourseHandler) CourseById(ctx *gin.Context) {
+	idstr := ctx.Param("id")
+
+	// should be defined in typing.ID
+	// but right now too close with biweekly
+	// will be updated in frascati later
+	var id typing.ID
+	idnum, converr := strconv.Atoi(idstr)
+	if converr == nil {
+		id = typing.ID(idnum)
+	}
+
+	data, err := h.serv.FindById(ctx, id)
+	if err != nil {
+		ctx.Error(err)
+		return
+	}
+
+	dataDto := converter.CourseEntityToDto(data)
+	ctx.JSON(http.StatusOK, response.NewSuccessResponse(dataDto, "success"))
+}
+
+func (h CourseHandler) UpdateById(ctx *gin.Context) {
+	var updateDataDto dto.Course
+	bindingErr := ctx.ShouldBindBodyWithJSON(&updateDataDto)
+	if bindingErr != nil {
+		ctx.Error(bindingErr)
+		return
+	}
+
+	idstr := ctx.Param("id")
+	// should be defined in typing.ID
+	// but right now too close with biweekly
+	// will be updated in frascati later
+	var id typing.ID
+	idnum, converr := strconv.Atoi(idstr)
+	if converr == nil {
+		id = typing.ID(idnum)
+	}
+
+	updateData := converter.CourseDtoToEntity(updateDataDto)
+	err := h.serv.UpdateById(ctx, id, updateData)
+	if err != nil {
+		ctx.Error(err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, response.NewSuccessResponse("", "success"))
+}
+
+func (h CourseHandler) DeleteById(ctx *gin.Context) {
+	idstr := ctx.Param("id")
+	// should be defined in typing.ID
+	// but right now too close with biweekly
+	// will be updated in frascati later
+	var id typing.ID
+	idnum, converr := strconv.Atoi(idstr)
+	if converr == nil {
+		id = typing.ID(idnum)
+	}
+
+	err := h.serv.DeleteById(ctx, id)
+	if err != nil {
+		ctx.Error(err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, response.NewSuccessResponse("", "success"))
 }

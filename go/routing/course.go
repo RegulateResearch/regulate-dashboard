@@ -11,4 +11,8 @@ func setupCourseRouter(routers grouping.Routes, handlers setup.Handlers) {
 
 	adminCourseGroup.GET("", courseHandler.AllCourse)
 	adminCourseGroup.POST("", courseHandler.NewCourse)
+
+	adminCourseGroup.GET("/:id", courseHandler.CourseById)
+	adminCourseGroup.PUT("/:id", courseHandler.UpdateById)
+	adminCourseGroup.DELETE("/:id", courseHandler.DeleteById)
 }

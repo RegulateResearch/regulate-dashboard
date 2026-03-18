@@ -18,7 +18,7 @@ func (s Semester) ToString() string {
 	semesterInt := int(s)
 	semesterStr := "undefined"
 	if semesterInt >= 0 && semesterInt < len(roleStrArr) {
-		semesterStr = courseRoleStrArr[semesterInt]
+		semesterStr = semesterStrArr[semesterInt]
 	}
 
 	return semesterStr
