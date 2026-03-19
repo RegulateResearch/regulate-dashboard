@@ -8,7 +8,6 @@ import (
 	"frascati/service"
 	"frascati/typing"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -56,16 +55,7 @@ func (h CourseHandler) AllCourse(ctx *gin.Context) {
 }
 
 func (h CourseHandler) CourseById(ctx *gin.Context) {
-	idstr := ctx.Param("id")
-
-	// should be defined in typing.ID
-	// but right now too close with biweekly
-	// will be updated in frascati later
-	var id typing.ID
-	idnum, converr := strconv.Atoi(idstr)
-	if converr == nil {
-		id = typing.ID(idnum)
-	}
+	id := typing.IDFromString(ctx.Param("id"))
 
 	data, err := h.serv.FindById(ctx, id)
 	if err != nil {
@@ -85,16 +75,7 @@ func (h CourseHandler) UpdateById(ctx *gin.Context) {
 		return
 	}
 
-	idstr := ctx.Param("id")
-	// should be defined in typing.ID
-	// but right now too close with biweekly
-	// will be updated in frascati later
-	var id typing.ID
-	idnum, converr := strconv.Atoi(idstr)
-	if converr == nil {
-		id = typing.ID(idnum)
-	}
-
+	id := typing.IDFromString(ctx.Param("id"))
 	updateData := converter.CourseDtoToEntity(updateDataDto)
 	err := h.serv.UpdateById(ctx, id, updateData)
 	if err != nil {
@@ -106,15 +87,7 @@ func (h CourseHandler) UpdateById(ctx *gin.Context) {
 }
 
 func (h CourseHandler) DeleteById(ctx *gin.Context) {
-	idstr := ctx.Param("id")
-	// should be defined in typing.ID
-	// but right now too close with biweekly
-	// will be updated in frascati later
-	var id typing.ID
-	idnum, converr := strconv.Atoi(idstr)
-	if converr == nil {
-		id = typing.ID(idnum)
-	}
+	id := typing.IDFromString(ctx.Param("id"))
 
 	err := h.serv.DeleteById(ctx, id)
 	if err != nil {
