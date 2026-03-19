@@ -5,6 +5,7 @@ import (
 	"frascati/obj/converter"
 	"frascati/response"
 	"frascati/service"
+	"frascati/typing"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -30,4 +31,16 @@ func (h UserHandler) GetAll(ctx *gin.Context) {
 	resDto := lambda.MapList(res, converter.UserEntityToDTO)
 
 	ctx.JSON(http.StatusOK, response.NewSuccessResponse(resDto, "success user"))
+}
+
+func (h UserHandler) GetById(ctx *gin.Context) {
+	id := typing.IDFromString(ctx.Param("id"))
+	res, err := h.userService.FindById(ctx, id)
+	if err != nil {
+		ctx.Error(err)
+		return
+	}
+
+	resDto := converter.UserEntityToDTO(res)
+	ctx.JSON(http.StatusOK, response.NewSuccessResponse(resDto, "success"))
 }
