@@ -9,6 +9,7 @@ import (
 
 type UserRepository interface {
 	FindAll(typing.Context) ([]entity.User, exception.Exception)
+	FindById(ctx typing.Context, id typing.ID) (entity.User, exception.Exception)
 }
 
 type userRepositoryImpl struct {
@@ -23,5 +24,10 @@ func NewUserRepository(repoDb repo_db.UserRepository) UserRepository {
 
 func (r userRepositoryImpl) FindAll(ctx typing.Context) ([]entity.User, exception.Exception) {
 	res, err := r.repoDb.FindAll(ctx)
+	return res, err
+}
+
+func (r userRepositoryImpl) FindById(ctx typing.Context, id typing.ID) (entity.User, exception.Exception) {
+	res, err := r.repoDb.FindById(ctx, id)
 	return res, err
 }
