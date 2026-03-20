@@ -7,11 +7,11 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type LogrusLogger struct {
+type logrusLogger struct {
 	logger *logrus.Logger
 }
 
-func NewLogrusLogger(level logrus.Level, out io.Writer) LogrusLogger {
+func newLogrusLogger(level logrus.Level, out io.Writer) logrusLogger {
 	logger := logrus.New()
 	logger.SetLevel(level)
 	logger.SetOutput(out)
@@ -20,41 +20,41 @@ func NewLogrusLogger(level logrus.Level, out io.Writer) LogrusLogger {
 		PrettyPrint:     true,
 	})
 
-	return LogrusLogger{logger: logger}
+	return logrusLogger{logger: logger}
 }
 
-func (l *LogrusLogger) Info(args ...any) {
+func (l *logrusLogger) Info(args ...any) {
 	l.logger.Info(args...)
 }
 
-func (l *LogrusLogger) Infof(format string, args ...any) {
+func (l *logrusLogger) Infof(format string, args ...any) {
 	l.logger.Infof(format, args...)
 }
 
-func (l *LogrusLogger) Warn(args ...any) {
+func (l *logrusLogger) Warn(args ...any) {
 	l.logger.Warn(args...)
 }
 
-func (l *LogrusLogger) Warnf(format string, args ...any) {
+func (l *logrusLogger) Warnf(format string, args ...any) {
 	l.logger.Warnf(format, args...)
 }
 
-func (l *LogrusLogger) Error(args ...any) {
+func (l *logrusLogger) Error(args ...any) {
 	l.logger.Error(args...)
 }
 
-func (l *LogrusLogger) Errorf(format string, args ...any) {
+func (l *logrusLogger) Errorf(format string, args ...any) {
 	l.logger.Errorf(format, args...)
 }
 
-func (l *LogrusLogger) WithField(key string, value any) Logger {
-	return &LogrusEntry{
+func (l *logrusLogger) WithField(key string, value any) FieldSupportLogger {
+	return &logrusEntry{
 		entry: l.logger.WithField(key, value),
 	}
 }
 
-func (l *LogrusLogger) WithFields(fields map[string]any) Logger {
-	return &LogrusEntry{
+func (l *logrusLogger) WithFields(fields map[string]any) FieldSupportLogger {
+	return &logrusEntry{
 		entry: l.logger.WithFields(fields),
 	}
 }

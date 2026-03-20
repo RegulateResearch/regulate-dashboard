@@ -1,6 +1,5 @@
 services:
   db:
-    container_name: db
     image: postgres:16
     restart: "always"
     volumes:
@@ -17,7 +16,6 @@ services:
       timeout: 10s
       retries: 10
   pgadmin:
-    container_name: pgadmin
     image: dpage/pgadmin4:8.14
     restart: always
     environment:
@@ -29,11 +27,13 @@ services:
       db:
         condition: service_healthy
   backend:
-    container_name: backend
     build:
       context: ./go
       dockerfile: Dockerfile.multistage
     environment:
+      ADMIN_EMAIL: ${BACKEND_ADMIN_EMAIL}
+      ADMIN_USERNAME: ${BACKEND_ADMIN_USERNAME}
+      ADMIN_PASSWORD: ${BACKEND_ADMIN_PASSWORD}
       DATABASE_USERNAME: ${BACKEND_DB_USERNAME}
       DATABASE_PASSWORD: ${BACKEND_DB_PASSWORD}
       DATABASE_HOST: db
@@ -45,7 +45,6 @@ services:
       db:
         condition: service_healthy
   frontend:
-    container_name: frontend
     build:
       context: ./sveltekit
       dockerfile: Dockerfile.multistage
@@ -59,7 +58,6 @@ services:
         condition: service_started
     tty: true
   nginx:
-    container_name: nginx
     image: nginx:1.27.3-bookworm-perl
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf

@@ -1,6 +1,7 @@
 package converter
 
 import (
+	"frascati/constants"
 	"frascati/obj/dto"
 	"frascati/obj/entity"
 )
@@ -26,5 +27,6 @@ func UserRegisterToEntity(data dto.UserRegister) entity.User {
 		Email:    data.Email,
 		Password: data.Password,
 		Username: data.Username,
+		Role:     constants.ROLE_USER,
 	}
 }

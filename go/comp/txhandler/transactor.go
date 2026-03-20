@@ -1,4 +1,4 @@
-package queryexec
+package txhandler
 
 import (
 	"frascati/exception"

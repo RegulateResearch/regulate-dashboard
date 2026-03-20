@@ -12,3 +12,7 @@ func CreateDBException(err error, domain string, message string) exception.Excep
 func CreateRecordNotFoundException(err error, domain string, message string) exception.Exception {
 	return exception.NewBaseException(exception.CAUSE_NOT_FOUND, fmt.Sprintf("%s/repository", domain), message, err)
 }
+
+func WrapQueryexecException(err exception.Exception, domain string) exception.Exception {
+	return exception.NewCompositeException(err.Cause(), fmt.Sprintf("%s/repository", domain), err.Error(), err)
+}
