@@ -4,6 +4,7 @@ import (
 	"errors"
 	"frascati/comp/auth"
 	auth_exception "frascati/comp/auth/exception"
+	"frascati/comp/txhandler"
 	"frascati/exception"
 	"frascati/obj/entity"
 	"frascati/repository"
@@ -20,46 +21,54 @@ type authServiceImpl struct {
 	repo          repository.AuthRepository
 	bcryptService auth.BcryptService
 	jwtService    auth.JwtService
+	txHandler     txhandler.Transactor
 }
 
-func NewAuthService(userRepo repository.AuthRepository, bcryptService auth.BcryptService, jwtService auth.JwtService) AuthService {
+func NewAuthService(userRepo repository.AuthRepository, bcryptService auth.BcryptService, jwtService auth.JwtService, txHandler txhandler.Transactor) AuthService {
 	return authServiceImpl{
 		repo:          userRepo,
 		bcryptService: bcryptService,
 		jwtService:    jwtService,
+		txHandler:     txHandler,
 	}
 }
 
 func (s authServiceImpl) Register(ctx typing.Context, userWrite entity.User) (entity.User, exception.Exception) {
-	emailExist, err := s.repo.IsExistByEmail(ctx, userWrite.Email)
-	if err != nil {
-		return entity.User{}, err
-	}
+	var res entity.User
+	err := s.txHandler.WithTransaction(ctx, txhandler.TxOptionDefault, false, func(ctx typing.Context) exception.Exception {
+		emailExist, err := s.repo.IsExistByEmail(ctx, userWrite.Email)
+		if err != nil {
+			return err
+		}
 
-	if emailExist {
-		return entity.User{}, auth_exception.GenerateErrUserAlreadyExist()
-	}
+		if emailExist {
+			return auth_exception.GenerateErrUserAlreadyExist()
+		}
 
-	plainPassword := userWrite.Password
+		plainPassword := userWrite.Password
 
-	hashedPassword, err := s.bcryptService.HashPassword(plainPassword)
-	if err != nil {
-		return entity.User{}, err
-	}
+		hashedPassword, err := s.bcryptService.HashPassword(plainPassword)
+		if err != nil {
+			return err
+		}
 
-	newUserData := entity.User{
-		Email:    userWrite.Email,
-		Username: userWrite.Username,
-		Password: string(hashedPassword),
-		Role:     userWrite.Role,
-	}
+		newUserData := entity.User{
+			Email:    userWrite.Email,
+			Username: userWrite.Username,
+			Password: string(hashedPassword),
+			Role:     userWrite.Role,
+		}
 
-	user, err := s.repo.Add(ctx, newUserData)
-	if err != nil {
-		return entity.User{}, err
-	}
+		user, err := s.repo.Add(ctx, newUserData)
+		if err != nil {
+			return err
+		}
 
-	return user, nil
+		res = user
+		return nil
+	})
+
+	return res, err
 }
 
 func (s authServiceImpl) Login(ctx typing.Context, userWrite entity.User) (string, exception.Exception) {
