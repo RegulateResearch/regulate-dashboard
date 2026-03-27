@@ -10,6 +10,7 @@ import (
 type UserRepository interface {
 	FindAll(typing.Context) ([]entity.User, exception.Exception)
 	FindById(ctx typing.Context, id typing.ID) (entity.User, exception.Exception)
+	FilterExistingId(ctx typing.Context, ids []typing.ID) ([]typing.ID, exception.Exception)
 }
 
 type userRepositoryImpl struct {
@@ -29,5 +30,10 @@ func (r userRepositoryImpl) FindAll(ctx typing.Context) ([]entity.User, exceptio
 
 func (r userRepositoryImpl) FindById(ctx typing.Context, id typing.ID) (entity.User, exception.Exception) {
 	res, err := r.repoDb.FindById(ctx, id)
+	return res, err
+}
+
+func (r userRepositoryImpl) FilterExistingId(ctx typing.Context, ids []typing.ID) ([]typing.ID, exception.Exception) {
+	res, err := r.repoDb.FilterExistingId(ctx, ids)
 	return res, err
 }

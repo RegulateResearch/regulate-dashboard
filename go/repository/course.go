@@ -13,6 +13,7 @@ type CourseRepository interface {
 	Add(ctx typing.Context, course entity.Course) (entity.Course, exception.Exception)
 	UpdateById(ctx typing.Context, id typing.ID, updateDate entity.Course) (bool, exception.Exception)
 	DeleteById(ctx typing.Context, id typing.ID) (bool, exception.Exception)
+	IsExistById(ctx typing.Context, id typing.ID) (bool, exception.Exception)
 }
 
 type courseRepositoryImpl struct {
@@ -47,5 +48,10 @@ func (r courseRepositoryImpl) DeleteById(ctx typing.Context, id typing.ID) (bool
 
 func (r courseRepositoryImpl) Add(ctx typing.Context, course entity.Course) (entity.Course, exception.Exception) {
 	res, err := r.dbRepo.Add(ctx, course)
+	return res, err
+}
+
+func (r courseRepositoryImpl) IsExistById(ctx typing.Context, id typing.ID) (bool, exception.Exception) {
+	res, err := r.dbRepo.IsExistById(ctx, id)
 	return res, err
 }

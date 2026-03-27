@@ -6,7 +6,7 @@ type User struct {
 	Base
 	Email    string         `json:"email"`
 	Username string         `json:"username"`
-	Role     constants.Role `json:"role"`
+	Role     constants.Role `json:"role,omitempty"`
 }
 
 type UserLogin struct {
