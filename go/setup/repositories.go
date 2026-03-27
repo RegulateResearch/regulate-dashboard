@@ -12,6 +12,7 @@ import (
 type repositories struct {
 	auth       repository.AuthRepository
 	user       repository.UserRepository
+	record     repository.RecordRepository
 	transactor txhandler.Transactor
 }
 
@@ -19,10 +20,12 @@ func setupRepositories(db *sql.DB, processor background.Processor) repositories 
 	executor := dbhandler.NewDbExecutor(db, processor)
 	authRepoDb := repo_db.NewAuthRepositoryDb(executor)
 	userRepoDb := repo_db.NewUserRepository(executor)
+	recordRepoDb := repo_db.NewRecordRepository(executor)
 
 	return repositories{
 		auth:       repository.NewAuthRepository(authRepoDb),
 		user:       repository.NewUserRepository(userRepoDb),
+		record:     repository.NewRecordRepository(recordRepoDb),
 		transactor: executor,
 	}
 }

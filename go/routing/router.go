@@ -26,5 +26,6 @@ func SetupRouter(app setup.App) *gin.Engine {
 func setupEndpoints(routes grouping.Routes, handlers setup.Handlers) {
 	setupAuthRouting(routes, handlers)
 	setupUsersRouting(routes, handlers)
+	setupRecordRoutes(routes, handlers)
 	setupTryRoutes(routes, handlers)
 }

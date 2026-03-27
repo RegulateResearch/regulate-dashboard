@@ -11,3 +11,7 @@ type User struct {
 	Username string
 	Role     constants.Role
 }
+
+func NewUser() User {
+	return User{}
+}

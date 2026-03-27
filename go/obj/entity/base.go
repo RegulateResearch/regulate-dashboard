@@ -11,3 +11,7 @@ type Base struct {
 	UpdatedAt time.Time
 	DeletedAt time.Time
 }
+
+func newBase() Base {
+	return Base{}
+}
