@@ -20,7 +20,7 @@
 	const popUpLogin = () => {
 		const SSOWindow = window.open(
 			new URL(
-				'https://sso.ui.ac.id/cas2/login?service=http%3A%2F%2Flocalhost%3A5173%2Fsso'
+				`https://sso.ui.ac.id/cas2/login?service=${encodeURIComponent('http://localhost:5173/')}`
 			).toString(),
 			'SSO UI Login',
 			'left=50, top=50, width=480, height=480'
