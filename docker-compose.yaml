@@ -49,10 +49,8 @@ services:
       context: ./sveltekit
       dockerfile: Dockerfile.multistage
     environment:
-      DB_HOST: db
-      DB_NAME: ${BACKEND_DB_NAME}
-      DB_USERNAME: ${BACKEND_DB_USERNAME}
-      DB_PASSWORD: ${BACKEND_DB_PASSWORD}
+      API_BASE_URL: ${API_BASE_URL}
+      ORIGIN: ${ORIGIN}
     depends_on:
       backend:
         condition: service_started
