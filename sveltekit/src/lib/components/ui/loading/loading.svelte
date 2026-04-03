@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Logo } from '$lib/components/ui/logo/index';
+	import { Logo } from '$lib/components/contents/logo/index';
 </script>
 
 <div

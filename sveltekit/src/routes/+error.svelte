@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { Button } from '$lib/components/ui/button';
-	import { Logo } from '$lib/components/ui/logo/index';
+	import { Logo } from '$lib/components/contents/logo/index';
 	import * as Tooltip from '$lib/components/ui/tooltip';
 	import DoorOpen from '@lucide/svelte/icons/door-open';
 

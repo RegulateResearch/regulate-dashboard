@@ -2,7 +2,7 @@
 	import * as Card from '$lib/components/ui/card/index';
 	import type { Snippet } from 'svelte';
 	import { Button } from '$lib/components/ui/button';
-	import { Logo } from '$lib/components/ui/logo';
+	import { Logo } from '$lib/components/contents/logo';
 
 	type AuthFormContent = {
 		formTitle: String;

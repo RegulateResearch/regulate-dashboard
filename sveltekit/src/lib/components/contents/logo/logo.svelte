@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { draw, fade, type TransitionConfig } from 'svelte/transition';
+	import { draw, fade } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
 	import { onMount } from 'svelte';
-	import type { ClassValue } from 'clsx';
+	import type { ClassValue } from 'svelte/elements';
 	import { cn } from '$lib/utils';
 
 	type Props = {
@@ -11,7 +11,7 @@
 		active?: boolean;
 		withTitle?: boolean;
 		withSubTitle?: boolean;
-		class?: ClassValue;
+		class?: ClassValue | null;
 	};
 
 	let {
@@ -111,11 +111,11 @@
 			{/if}
 		</svg>
 		{#if withTitle}
-			<div class="flex h-full flex-col items-start justify-center">
+			<div class="flex h-full flex-col items-start justify-center gap-[2.5cqw]">
 				<h1
 					class={cn(
-						'font-cal-sans text-[15cqw]',
-						withSubTitle ? 'underline underline-offset-4' : ''
+						'font-cal-sans text-[15cqw] leading-none',
+						withSubTitle ? 'underline underline-offset-[2cqw]' : ''
 					)}
 				>
 					reguLAte!

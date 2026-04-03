@@ -1,8 +1,8 @@
 <script lang="ts">
 	import DoorOpen from '@lucide/svelte/icons/door-open';
-	import { Button, buttonVariants } from '$lib/components/ui/button';
+	import { Button } from '$lib/components/ui/button';
 	import * as Tooltip from '$lib/components/ui/tooltip';
-	import { SRLContent } from '$lib/components/interactiveContents/srlContents';
+	import { SRL } from '$lib/components/contents/srl';
 
 	let { children } = $props();
 </script>
@@ -22,7 +22,7 @@
 	class="flex h-screen w-full flex-row items-center justify-center gap-16 lg:gap-32 lg:px-16"
 >
 	<div class="regulate-logo-content hidden lg:block">
-		<SRLContent class="w-0.8 max-h-0.8 h-100"></SRLContent>
+		<SRL class="w-0.8 max-h-0.8 h-100"></SRL>
 	</div>
 	{@render children()}
 </section>
