@@ -35,3 +35,12 @@ export const registerResponseSchema = z.object({
   role: z.number()
 })
 export type RegisterResponse = z.infer<typeof registerResponseSchema>;
+
+export const ssoRequestSchema = z.object({
+  ticket: z.string(),
+  service: z.string(),
+})
+export type SSORequest = z.infer<typeof ssoRequestSchema>;
+
+export const ssoResponseSchema = loginResponseSchema
+export type SSOResponse = z.infer<typeof ssoResponseSchema>;

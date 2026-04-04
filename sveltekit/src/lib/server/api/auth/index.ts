@@ -56,3 +56,27 @@ export const register = async (body: Schema.RegisterRequest) => {
     throw error
   }
 }
+
+export const sso = async (body: Schema.SSORequest) => {
+  try {
+    const { cookies } = getRequestEvent()
+    const response = await typedFetch(
+      '/auth/sso',
+      Schema.ssoResponseSchema,
+      {
+        method: 'POST',
+        body,
+        bodySchema: Schema.ssoRequestSchema,
+        requireAuthentication: false
+      })
+    cookies.set("authToken", response.data, {
+      path: '/',
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+      maxAge: 60 * 60 * 24
+    })
+  } catch (error) {
+    throw error
+  }
+}
