@@ -108,3 +108,18 @@ func (r courseMemberRepositoryImpl) AddMultiple(ctx typing.Context, newMembers [
 
 	return res, nil
 }
+
+func (r courseMemberRepositoryImpl) DeleteMultiple(ctx typing.Context, ids []typing.ID) (int, exception.Exception) {
+	querystr := `
+		UPDATE course_members cm
+		SET deleted_at = NOW()
+		FROM (
+			VALUES
+			%s
+		) AS delete_data(id)
+		WHERE
+			delete_data.id = cm.id AND
+			cm.deleted_at IS NULL
+		RETURNING cm.id
+	`
+}
