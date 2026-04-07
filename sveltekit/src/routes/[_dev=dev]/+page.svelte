@@ -18,6 +18,6 @@
 	<Logo animated loop withTitle withSubTitle class="w-128"></Logo> -->
 	<SRL animated class="w-4/5 max-w-100"></SRL>
 	<h1 class="text-center text-2xl xl:text-left xl:text-4xl">
-		Kendalikan belajarmu dan jadilah <br /><em class="font-bold">Self-Regulated Learners!</em>
+		DEV Kendalikan belajarmu dan jadilah <br /><em class="font-bold">Self-Regulated Learners!</em>
 	</h1>
 </section>

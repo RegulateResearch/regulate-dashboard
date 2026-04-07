@@ -23,12 +23,8 @@
 
 <Card.Root class="-my-4 w-full max-w-sm py-10 shadow-none ring-0 md:shadow-xs md:ring-1 ">
 	<Card.Header class="w-full justify-center gap-1 px-10">
-		{#if showLogo}
-			<Logo withTitle withSubTitle class="w-48"></Logo>
-		{/if}
-		{#if formTitle}
-			<Card.Title class="text-center">{formTitle}</Card.Title>
-		{/if}
+		<Logo withTitle withSubTitle class="h-16"></Logo>
+		<Card.Title class="text-center">{formTitle}</Card.Title>
 	</Card.Header>
 	<Card.Content class="px-10">
 		{@render formBody()}
