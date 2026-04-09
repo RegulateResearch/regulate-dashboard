@@ -17,3 +17,5 @@ var envBcryptCost = "BCRYPT_COST"
 var envAdminEmail = "ADMIN_EMAIL"
 var envAdminUsername = "ADMIN_USERNAME"
 var envAdminPassword = "ADMIN_PASSWORD"
+
+var envSsoUiUrl = "SSO_UI_URL"
