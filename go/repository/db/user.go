@@ -3,6 +3,8 @@ package repo_db
 import (
 	"frascati/comp/queryexec"
 	"frascati/exception"
+	"frascati/obj/converter"
+	"frascati/obj/dao"
 	"frascati/obj/entity"
 	repository_exception "frascati/repository/exception"
 	"frascati/typing"
@@ -35,12 +37,13 @@ func (r userRepositoryImpl) FindAll(ctx typing.Context) ([]entity.User, exceptio
 	}
 	defer r.executor.CloseRows(rows, "user - FindAll")
 
-	res, err := querying.ScanForRows(
-		rows, entity.NewUser,
-		func(rows queryexec.Rows, elem entity.User) (entity.User, exception.Exception) {
+	res, err := querying.ScanForRowsThenTransform(
+		rows, dao.NewUserDb,
+		func(rows queryexec.Rows, elem dao.UserDb) (dao.UserDb, exception.Exception) {
 			err := rows.Scan(&elem.ID, &elem.Email, &elem.Username, &elem.Role)
 			return elem, err
 		},
+		converter.UserDbToEntity,
 	)
 
 	if err != nil {
@@ -51,7 +54,7 @@ func (r userRepositoryImpl) FindAll(ctx typing.Context) ([]entity.User, exceptio
 }
 
 func (r userRepositoryImpl) FindById(ctx typing.Context, id typing.ID) (entity.User, exception.Exception) {
-	var res entity.User
+	var res dao.UserDb
 	querystr := `
 		SELECT id, email, username, user_role
 		FROM users
@@ -63,5 +66,5 @@ func (r userRepositoryImpl) FindById(ctx typing.Context, id typing.ID) (entity.U
 		return entity.User{}, repository_exception.WrapQueryexecException(err, "user")
 	}
 
-	return res, nil
+	return converter.UserDbToEntity(res), nil
 }

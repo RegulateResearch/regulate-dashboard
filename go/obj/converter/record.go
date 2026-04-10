@@ -1,6 +1,7 @@
 package converter
 
 import (
+	"frascati/obj/dao"
 	"frascati/obj/dto"
 	"frascati/obj/entity"
 )
@@ -8,6 +9,15 @@ import (
 func RecordEntityToDto(data entity.Record) dto.Record {
 	return dto.Record{
 		Base:        BaseEntityToDto(data.Base),
+		Name:        data.Name,
+		RandNum:     data.RandNum,
+		Description: data.Description,
+	}
+}
+
+func RecordDbToEntity(data dao.RecordDb) entity.Record {
+	return entity.Record{
+		Base:        BaseDbToEntity(data.BaseDb),
 		Name:        data.Name,
 		RandNum:     data.RandNum,
 		Description: data.Description,

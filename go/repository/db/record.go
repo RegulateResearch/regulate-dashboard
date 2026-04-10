@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"frascati/comp/queryexec"
 	"frascati/exception"
+	"frascati/obj/converter"
+	"frascati/obj/dao"
 	"frascati/obj/entity"
 	repository_exception "frascati/repository/exception"
 	"frascati/typing"
@@ -38,14 +40,13 @@ func (r recordRepositoryImpl) FindAll(ctx typing.Context) ([]entity.Record, exce
 	}
 	defer r.executor.CloseRows(rows, "record - FindAll")
 
-	fmt.Println(querystr)
-
-	res, err := querying.ScanForRows(
-		rows, entity.NewRecord,
-		func(rows queryexec.Rows, elem entity.Record) (entity.Record, exception.Exception) {
+	res, err := querying.ScanForRowsThenTransform(
+		rows, dao.NewRecordDb,
+		func(rows queryexec.Rows, elem dao.RecordDb) (dao.RecordDb, exception.Exception) {
 			err := rows.Scan(&elem.ID, &elem.Name, &elem.RandNum, &elem.Description)
 			return elem, err
 		},
+		converter.RecordDbToEntity,
 	)
 
 	if err != nil {
@@ -74,7 +75,6 @@ func (r recordRepositoryImpl) AddBulk(ctx typing.Context, newData []entity.Recor
 	)
 
 	querystr = fmt.Sprintf(querystr, rowstr)
-	fmt.Println(querystr)
 	rows, err := r.executor.QueryContext(ctx, querystr, args...)
 	if err != nil {
 		return nil, repository_exception.WrapQueryexecException(err, "record")
