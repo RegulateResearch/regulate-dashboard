@@ -2,6 +2,7 @@ package converter
 
 import (
 	"frascati/constants"
+	"frascati/obj/dao"
 	"frascati/obj/dto"
 	"frascati/obj/entity"
 )
@@ -9,6 +10,15 @@ import (
 func UserEntityToDTO(user entity.User) dto.User {
 	return dto.User{
 		Base:     BaseEntityToDto(user.Base),
+		Email:    user.Email,
+		Username: user.Username,
+		Role:     user.Role,
+	}
+}
+
+func UserDbToEntity(user dao.UserDb) entity.User {
+	return entity.User{
+		Base:     BaseDbToEntity(user.BaseDb),
 		Email:    user.Email,
 		Username: user.Username,
 		Role:     user.Role,

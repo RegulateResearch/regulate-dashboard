@@ -1,7 +1,6 @@
 package dbhandler
 
 import (
-	"context"
 	"database/sql"
 	"fmt"
 	"frascati/comp/background"
@@ -77,36 +76,35 @@ func (e dbExecutorImpl) CloseRows(rows queryexec.Rows, identifier string) {
 	}
 }
 
-func (q dbExecutorImpl) WithTransaction(ctx typing.Context, txOption txhandler.TxOption, readOnly bool, fn func(typing.Context) exception.Exception) exception.Exception {
-	tx, err := q.db.BeginTx(ctx, &sql.TxOptions{
+func (e dbExecutorImpl) WithTransaction(ctx typing.Context, txOption txhandler.TxOption, readOnly bool, fn func(typing.Context) exception.Exception) exception.Exception {
+	tx, err := e.db.BeginTx(ctx, &sql.TxOptions{
 		Isolation: transformTxOptionToIsolationLevel(txOption),
 		ReadOnly:  readOnly,
 	})
 
 	if err != nil {
-		return tx_exception.TransactionError(err, "cannot begin transaction")
+		return tx_exception.TransactionError(fmt.Errorf("cannot begin transaction: %w", err))
 	}
-	defer tx.Rollback()
+	defer e.handleTxRollback(tx)
 
 	setTx(ctx, tx)
 
 	exc := fn(ctx)
 	if exc != nil {
-		if errRollback := tx.Rollback(); errRollback != nil {
-			return tx_exception.TransactionError(errRollback, "cannot rollback transaction")
-		}
 		return exc
 	}
 
 	if err := tx.Commit(); err != nil {
-		return tx_exception.TransactionError(err, "cannot commit transaction")
+		return tx_exception.TransactionError(fmt.Errorf("cannot commit transaction: %w", err))
 	}
 
 	return nil
 }
 
-type queryRunner interface {
-	QueryContext(ctx context.Context, query string, args ...any) (*sql.Rows, error)
-	QueryRowContext(ctx context.Context, query string, args ...any) *sql.Row
-	ExecContext(ctx context.Context, query string, args ...any) (sql.Result, error)
+func (e dbExecutorImpl) handleTxRollback(tx *sql.Tx) {
+	err := tx.Rollback()
+	if err != nil && err != sql.ErrTxDone {
+		exc := tx_exception.TransactionError(fmt.Errorf("cannot rollback transaction: %w", err))
+		e.processor.AddException("tx - rollback", exc)
+	}
 }

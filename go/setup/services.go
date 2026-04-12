@@ -12,15 +12,17 @@ type services struct {
 	course service.CourseService
 	user   service.UserService
 	sso    service.SsoUiService
+	record service.RecordService
 	try    service.TryService
 }
 
 func setupServices(repos repositories, jwt auth.JwtService, bcrypt auth.BcryptService, backgroundProcessor background.Processor, ssoClient ssoui.Client) services {
 	return services{
-		auth:   service.NewAuthService(repos.auth, bcrypt, jwt),
+		auth:   service.NewAuthService(repos.auth, bcrypt, jwt, repos.transactor),
 		course: service.NewCourseService(repos.course),
 		user:   service.NewUserService(repos.user),
-		try:    service.NewTryService(backgroundProcessor),
 		sso:    service.NewSsoUiService(ssoClient),
+		record: service.NewRecordService(repos.record),
+		try:    service.NewTryService(backgroundProcessor),
 	}
 }
