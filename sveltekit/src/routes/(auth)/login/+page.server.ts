@@ -24,7 +24,7 @@ export const actions: Actions = {
 
     try {
       await login(form.data)
-    } catch (error) {
+    } catch {
       return fail(400, {
         form, message: 'failed'
       });
