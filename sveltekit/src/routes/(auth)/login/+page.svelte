@@ -10,6 +10,7 @@
 	import Eye from '@lucide/svelte/icons/eye';
 	import EyeOff from '@lucide/svelte/icons/eye-off';
 	import * as Tooltip from '$lib/components/ui/tooltip';
+	import { resolve } from '$app/paths';
 
 	type FormValidationData = {
 		data: { form: SuperValidated<Infer<FormSchema>> };
@@ -95,5 +96,5 @@
 {/snippet}
 
 {#snippet switchFormBtn()}
-	<span>Belum punya akun? <a href="/register" class="text-yellow-500">Daftar</a></span>
+	<span>Belum punya akun? <a href={resolve("/register")} class="text-yellow-500">Daftar</a></span>
 {/snippet}
