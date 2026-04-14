@@ -3,9 +3,12 @@ package repo_db
 import (
 	"frascati/comp/queryexec"
 	"frascati/exception"
+	"frascati/obj/converter"
+	"frascati/obj/dao"
 	"frascati/obj/entity"
 	repository_exception "frascati/repository/exception"
 	"frascati/typing"
+	"frascati/utils/querying"
 )
 
 type UserRepository interface {
@@ -24,42 +27,44 @@ func NewUserRepository(executor queryexec.QueryExecutor) UserRepository {
 }
 
 func (r userRepositoryImpl) FindAll(ctx typing.Context) ([]entity.User, exception.Exception) {
-	res := make([]entity.User, 0)
 	query :=
-		`SELECT id, email, username, user_role
+		`SELECT id, email, username, display_name, user_role
 		FROM users`
 
 	rows, err := r.executor.QueryContext(ctx, query)
 	if err != nil {
-		return nil, repository_exception.CreateDBException(err, "user", "something is wrong in our end")
+		return nil, repository_exception.WrapQueryexecException(err, "user")
 	}
 	defer r.executor.CloseRows(rows, "user - FindAll")
 
-	for rows.Next() {
-		var user entity.User
-		err := rows.Scan(&user.ID, &user.Email, &user.Username, &user.Role)
-		if err != nil {
-			return nil, repository_exception.WrapQueryexecException(err, "user")
-		}
+	res, err := querying.ScanForRowsThenTransform(
+		rows, dao.NewUserDb,
+		func(rows queryexec.Rows, elem dao.UserDb) (dao.UserDb, exception.Exception) {
+			err := rows.Scan(&elem.ID, &elem.Email, &elem.Username, &elem.DisplayName, &elem.Role)
+			return elem, err
+		},
+		converter.UserDbToEntity,
+	)
 
-		res = append(res, user)
+	if err != nil {
+		return nil, repository_exception.WrapQueryexecException(err, "user")
 	}
 
 	return res, nil
 }
 
 func (r userRepositoryImpl) FindById(ctx typing.Context, id typing.ID) (entity.User, exception.Exception) {
-	var res entity.User
+	var res dao.UserDb
 	querystr := `
-		SELECT id, email, username, user_role
+		SELECT id, email, username, display_name, user_role
 		FROM users
 		WHERE id = $1 AND deleted_at IS NULL
 	`
 
-	err := r.executor.QueryRowContext(ctx, querystr, id).Scan(&res.ID, &res.Email, &res.Username, &res.Role)
+	err := r.executor.QueryRowContext(ctx, querystr, id).Scan(&res.ID, &res.Email, &res.Username, &res.DisplayName, &res.Role)
 	if err != nil {
 		return entity.User{}, repository_exception.WrapQueryexecException(err, "user")
 	}
 
-	return res, nil
+	return converter.UserDbToEntity(res), nil
 }

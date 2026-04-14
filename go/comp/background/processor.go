@@ -13,6 +13,7 @@ type Processor interface {
 	Close()
 	Wait()
 	AddTask(taskName string, taskFunction func() (any, exception.Exception))
+	AddException(identifier string, err exception.Exception)
 }
 
 type processor struct {
@@ -69,4 +70,12 @@ func (p *processor) AddTask(taskName string, taskFunction func() (any, exception
 
 		logger.LogException(err)
 	}()
+}
+
+func (p *processor) AddException(identifier string, err exception.Exception) {
+	if err != nil {
+		p.AddTask(identifier, func() (any, exception.Exception) {
+			return nil, err
+		})
+	}
 }
