@@ -36,7 +36,7 @@ func NewAuthService(userRepo repository.AuthRepository, bcryptService auth.Bcryp
 func (s authServiceImpl) Register(ctx typing.Context, userWrite entity.User) (entity.User, exception.Exception) {
 	var res entity.User
 	err := s.txHandler.WithTransaction(ctx, txhandler.TxOptionDefault, false, func(ctx typing.Context) exception.Exception {
-		emailExist, err := s.repo.IsExistByEmail(ctx, userWrite.Email)
+		emailExist, err := s.repo.IsExistByEmailOrUsername(ctx, userWrite.Email, userWrite.Username)
 		if err != nil {
 			return err
 		}
