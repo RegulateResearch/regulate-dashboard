@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"frascati/comp/auth"
 	"frascati/comp/ssoui"
+	"frascati/constants"
 	"frascati/exception"
 	"frascati/obj/entity"
 	"frascati/repository"
@@ -41,7 +42,10 @@ func (s ssoUiServiceImpl) Validate(ctx typing.Context, ticket string, callbackSe
 			return "", nil
 		}
 
-		newUserData, err := s.authRepo.AddBySsoData(ctx, ssoData)
+		ssoDataCopy := ssoData
+		ssoDataCopy.Role = constants.ROLE_USER
+
+		newUserData, err := s.authRepo.AddBySsoData(ctx, ssoDataCopy)
 		if err != nil {
 			return "", err
 		}

@@ -9,20 +9,22 @@ import (
 
 func UserEntityToDTO(user entity.User) dto.User {
 	return dto.User{
-		Base:     BaseEntityToDto(user.Base),
-		Email:    user.Email,
-		Username: user.Username,
-		Role:     user.Role,
+		Base:        BaseEntityToDto(user.Base),
+		Email:       user.Email,
+		Username:    user.Username,
+		DisplayName: user.DisplayName,
+		Role:        user.Role,
 	}
 }
 
 func UserDbToEntity(user dao.UserDb) entity.User {
 	return entity.User{
-		Base:     BaseDbToEntity(user.BaseDb),
-		Email:    user.Email.String,
-		Username: user.Username,
-		Password: user.Password,
-		Role:     user.Role,
+		Base:        BaseDbToEntity(user.BaseDb),
+		Email:       user.Email.String,
+		Username:    user.Username,
+		DisplayName: user.DisplayName,
+		Password:    user.Password,
+		Role:        user.Role,
 	}
 }
 
@@ -35,9 +37,10 @@ func UserLoginToEntity(data dto.UserLogin) entity.User {
 
 func UserRegisterToEntity(data dto.UserRegister) entity.User {
 	return entity.User{
-		Email:    data.Email,
-		Password: data.Password,
-		Username: data.Username,
-		Role:     constants.ROLE_USER,
+		Email:       data.Email,
+		Password:    data.Password,
+		Username:    data.Username,
+		DisplayName: data.DisplayName,
+		Role:        constants.ROLE_USER,
 	}
 }

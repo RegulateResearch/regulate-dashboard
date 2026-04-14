@@ -2,7 +2,6 @@ package repo_db
 
 import (
 	"frascati/comp/queryexec"
-	"frascati/constants"
 	"frascati/exception"
 	"frascati/obj/converter"
 	"frascati/obj/dao"
@@ -115,7 +114,7 @@ func (r authRepositoryDbImpl) AddBySsoData(ctx typing.Context, userData entity.U
 	userDao := dao.UserDb{}
 	err := r.executor.QueryRowContext(
 		ctx, query,
-		userData.Username, userData.DisplayName, userData.CivitasID, constants.ROLE_USER, true,
+		userData.Username, userData.DisplayName, userData.CivitasID, userData.Role, true,
 	).Scan(
 		&userDao.ID, &userDao.Username, &userDao.DisplayName, &userDao.CivitasID, &userDao.Role, &userDao.HasSsoLogin,
 	)
