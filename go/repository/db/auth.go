@@ -3,6 +3,8 @@ package repo_db
 import (
 	"frascati/comp/queryexec"
 	"frascati/exception"
+	"frascati/obj/converter"
+	"frascati/obj/dao"
 	"frascati/obj/entity"
 	repository_exception "frascati/repository/exception"
 	"frascati/typing"
@@ -11,7 +13,7 @@ import (
 type AuthRepository interface {
 	Add(ctx typing.Context, newUserData entity.User) (entity.User, exception.Exception)
 	FindByEmail(ctx typing.Context, email string) (entity.User, exception.Exception)
-	IsExistByEmail(ctx typing.Context, email string) (bool, exception.Exception)
+	IsExistByEmailOrUsername(ctx typing.Context, email string, username string) (bool, exception.Exception)
 }
 
 type authRepositoryDbImpl struct {
@@ -45,26 +47,27 @@ func (r authRepositoryDbImpl) Add(ctx typing.Context, newUserData entity.User) (
 
 func (r authRepositoryDbImpl) FindByEmail(ctx typing.Context, email string) (entity.User, exception.Exception) {
 	query := `
-		SELECT id, username, password, user_role
+		SELECT id, email, username, password, user_role
 		FROM users
 		WHERE email = $1
 		LIMIT 1
 	`
-
-	var user entity.User
-	err := r.executor.QueryRowContext(ctx, query, email).Scan(&user.ID, &user.Username, &user.Password, &user.Role)
+	var userDao dao.UserDb
+	err := r.executor.QueryRowContext(ctx, query, email).Scan(
+		&userDao.ID, &userDao.Email, &userDao.Username, &userDao.Password, &userDao.Role,
+	)
 	if err != nil {
 		return entity.User{}, repository_exception.WrapQueryexecException(err, "auth")
 	}
 
-	user.Email = email
+	user := converter.UserDbToEntity(userDao)
 
 	return user, nil
 }
 
-func (r authRepositoryDbImpl) IsExistByEmail(ctx typing.Context, email string) (bool, exception.Exception) {
-	query := `SELECT 1 FROM users WHERE email = $1`
-	res, err := r.executor.ExecContext(ctx, query, email)
+func (r authRepositoryDbImpl) IsExistByEmailOrUsername(ctx typing.Context, email string, username string) (bool, exception.Exception) {
+	query := `SELECT 1 FROM users WHERE email = $1 OR username = $2`
+	res, err := r.executor.ExecContext(ctx, query, email, username)
 	if err != nil {
 		return false, repository_exception.WrapQueryexecException(err, "auth")
 	}

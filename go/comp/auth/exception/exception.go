@@ -6,14 +6,14 @@ import (
 	"frascati/exception"
 )
 
-var errEmailAlreadyExists = errors.New("email is already registered")
+var errEmailAlreadyExists = errors.New("email/username is already registered")
 
 func GenerateErrPasswordFailure(err error) exception.Exception {
 	return exception.NewBaseException(exception.CAUSE_INTERNAL, "auth/bcrypt", "bcrypt hashing error", err)
 }
 
 func GenerateErrUserAlreadyExist() exception.Exception {
-	return exception.NewBaseException(exception.CAUSE_USER, "auth/service", "email already used", errEmailAlreadyExists)
+	return exception.NewBaseException(exception.CAUSE_USER, "auth/service", "email or username is already used", errEmailAlreadyExists)
 }
 
 func GenerateErrLoginFail(err error) exception.Exception {
