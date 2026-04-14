@@ -3,13 +3,14 @@ package ssoui
 import (
 	"fmt"
 	"frascati/exception"
+	"frascati/obj/entity"
 	xmlutils "frascati/utils/xml"
 	"io"
 	"net/http"
 )
 
 type Client interface {
-	Validate(ticket string, callbackServ string) (any, exception.Exception)
+	Validate(ticket string, callbackServ string) (entity.User, exception.Exception)
 }
 
 type client struct {
@@ -22,12 +23,12 @@ func NewSsoClient(ssoUrl string) Client {
 	}
 }
 
-func (c client) Validate(ticket string, callbackServ string) (any, exception.Exception) {
+func (c client) Validate(ticket string, callbackServ string) (entity.User, exception.Exception) {
 	link := fmt.Sprintf("%s/serviceValidate?ticket=%s&service=%s", c.url, ticket, callbackServ)
 	resp, err := http.Get(link)
 	if err != nil {
 		newErr := fmt.Errorf("cannot access SSO UI: %w", err)
-		return nil, exception.NewBaseException(exception.CAUSE_INTERNAL, "ssoui", exception.INTERNAL, newErr)
+		return entity.User{}, exception.NewBaseException(exception.CAUSE_INTERNAL, "ssoui", exception.INTERNAL, newErr)
 	}
 
 	body := resp.Body
@@ -36,23 +37,22 @@ func (c client) Validate(ticket string, callbackServ string) (any, exception.Exc
 	data, err := io.ReadAll(body)
 	if err != nil {
 		newErr := fmt.Errorf("cannot read SSO response: %w", err)
-		return nil, exception.NewBaseException(exception.CAUSE_INTERNAL, "ssoui", exception.INTERNAL, newErr)
+		return entity.User{}, exception.NewBaseException(exception.CAUSE_INTERNAL, "ssoui", exception.INTERNAL, newErr)
 	}
 
-	fmt.Println("ticket ", ticket)
-	fmt.Println("service ", callbackServ)
-	fmt.Println("xml ", string(data))
-
 	res, parseErr := c.parse(data)
-	fmt.Println(res)
 
 	username := res.AuthSuccess.Username
 	fullname := res.AuthSuccess.Attr.Name
 	npm := res.AuthSuccess.Attr.Npm
 
-	resStr := fmt.Sprintf("username: %s, full name: %s, npm: %s", username, fullname, npm)
+	userData := entity.User{
+		Username:    username,
+		DisplayName: fullname,
+		CivitasID:   npm,
+	}
 
-	return resStr, parseErr
+	return userData, parseErr
 }
 
 func (c client) parse(data []byte) (successResponse, exception.Exception) {

@@ -25,10 +25,11 @@ func initStartupTask(services services, processor background.Processor) startupT
 				ctx := typing.NewDictionaryContext(context.Background())
 				adminConfig := config.GetAdminConfig()
 				res, exc := services.auth.Register(ctx, entity.User{
-					Email:    adminConfig.Email,
-					Username: adminConfig.Username,
-					Password: adminConfig.Password,
-					Role:     constants.ROLE_ADMIN,
+					Email:       adminConfig.Email,
+					Username:    adminConfig.Username,
+					DisplayName: "First Admin",
+					Password:    adminConfig.Password,
+					Role:        constants.ROLE_ADMIN,
 				})
 
 				return res, exc

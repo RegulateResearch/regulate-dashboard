@@ -27,7 +27,7 @@ func (h SsoHandler) Validate(ctx *gin.Context) {
 		return
 	}
 
-	res, exc := h.serv.Validate(validateData.Ticket, validateData.Service)
+	res, exc := h.serv.Validate(ctx, validateData.Ticket, validateData.Service)
 	if exc != nil {
 		ctx.Error(exc)
 		return

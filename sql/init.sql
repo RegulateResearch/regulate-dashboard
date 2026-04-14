@@ -14,11 +14,11 @@ CREATE TABLE IF NOT EXISTS users(
     deleted_at TIMESTAMP,
     email VARCHAR UNIQUE,
     username VARCHAR UNIQUE NOT NULL,
-    password VARCHAR NOT NULL,
+    password VARCHAR,
     display_name VARCHAR NOT NULL,
-    civitas_id VARCHAR NOT NULL,
-    has_sso_login BOOLEAN NOT NULL DEFAULT 0,
-    user_role SMALLINT NOT NULL
+    user_role SMALLINT NOT NULL,
+    civitas_id VARCHAR UNIQUE,
+    has_sso_login BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE IF NOT EXISTS samples(

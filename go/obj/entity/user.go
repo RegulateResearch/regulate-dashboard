@@ -6,10 +6,13 @@ import (
 
 type User struct {
 	Base
-	Email    string
-	Password string
-	Username string
-	Role     constants.Role
+	Email       string
+	Password    string
+	Username    string
+	DisplayName string
+	HasSsoLogin bool
+	CivitasID   string
+	Role        constants.Role
 }
 
 func NewUser() User {

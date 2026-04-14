@@ -1,25 +1,73 @@
 package service
 
 import (
+	"fmt"
+	"frascati/comp/auth"
 	"frascati/comp/ssoui"
 	"frascati/exception"
+	"frascati/obj/entity"
+	"frascati/repository"
+	"frascati/typing"
 )
 
 type SsoUiService interface {
-	Validate(ticket string, callbackServ string) (any, exception.Exception)
+	Validate(ctx typing.Context, ticket string, callbackServ string) (string, exception.Exception)
 }
 
 type ssoUiServiceImpl struct {
-	ssoClient ssoui.Client
+	ssoClient  ssoui.Client
+	authRepo   repository.AuthRepository
+	jwtService auth.JwtService
 }
 
-func NewSsoUiService(ssoClient ssoui.Client) SsoUiService {
+func NewSsoUiService(ssoClient ssoui.Client, authRepo repository.AuthRepository, jwtService auth.JwtService) SsoUiService {
 	return ssoUiServiceImpl{
-		ssoClient: ssoClient,
+		ssoClient:  ssoClient,
+		authRepo:   authRepo,
+		jwtService: jwtService,
 	}
 }
 
-func (s ssoUiServiceImpl) Validate(ticket string, callbackServ string) (any, exception.Exception) {
-	res, err := s.ssoClient.Validate(ticket, callbackServ)
-	return res, err
+func (s ssoUiServiceImpl) Validate(ctx typing.Context, ticket string, callbackServ string) (string, exception.Exception) {
+	ssoData, err := s.ssoClient.Validate(ticket, callbackServ)
+	if err != nil {
+		return "", err
+	}
+
+	res := entity.User{}
+	userData, err := s.authRepo.FindBySsoData(ctx, ssoData.Username, ssoData.CivitasID)
+	if err != nil {
+		if err.Cause() != exception.CAUSE_NOT_FOUND {
+			return "", nil
+		}
+
+		newUserData, err := s.authRepo.AddBySsoData(ctx, ssoData)
+		if err != nil {
+			return "", err
+		}
+
+		res = newUserData
+	}
+
+	if !userData.HasSsoLogin {
+		success, err := s.authRepo.UpdateSsoData(ctx, userData)
+		if err != nil {
+			return "", nil
+		}
+
+		if !success {
+			newErr := fmt.Errorf("cannot update sso data for existing user without prior sso login")
+			return "", exception.NewBaseException(exception.CAUSE_INTERNAL, "sso/service", exception.INTERNAL, newErr)
+		}
+
+		res = userData
+	}
+
+	sessionData := entity.Session{
+		ID:   res.ID,
+		Role: res.Role,
+	}
+
+	token, err := s.jwtService.GenerateToken(sessionData)
+	return token, err
 }

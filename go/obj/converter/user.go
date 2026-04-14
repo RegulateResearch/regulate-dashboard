@@ -19,8 +19,9 @@ func UserEntityToDTO(user entity.User) dto.User {
 func UserDbToEntity(user dao.UserDb) entity.User {
 	return entity.User{
 		Base:     BaseDbToEntity(user.BaseDb),
-		Email:    user.Email,
+		Email:    user.Email.String,
 		Username: user.Username,
+		Password: user.Password,
 		Role:     user.Role,
 	}
 }
