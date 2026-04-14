@@ -1,5 +1,5 @@
 import { getRequestEvent } from '$app/server';
-import { API_BASE_URL } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 import { ApiError, AuthorizationError, NetworkError } from '$lib/server/api/errors';
 import { ZodError, type z } from 'zod';
 
@@ -35,7 +35,7 @@ export const typedFetch = async <TResponse extends z.ZodTypeAny, TBody extends z
       }
     }
 
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    const response = await fetch(`${env.API_BASE_URL}${endpoint}`, {
       ...options,
       body: requestBody,
       headers: requestHeaders
