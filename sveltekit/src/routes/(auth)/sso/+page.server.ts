@@ -1,6 +1,6 @@
 import type { PageServerLoad } from "./$types"
 import { sso } from '$lib/server/api/auth';
-import { fail } from "@sveltejs/kit";
+import { redirect } from "@sveltejs/kit";
 
 export const load: PageServerLoad = async ({ url }) => {
   const ticket = url.searchParams.get('ticket')
@@ -16,7 +16,6 @@ export const load: PageServerLoad = async ({ url }) => {
       message: 'SSO failed: ' + (err instanceof Error ? err.message : 'Unknown error')
     }
   }
-  return {
-    message: 'SSO success'
-  }
+  const redirectTo = url.searchParams.get('redirectTo') || 'after-login'
+  throw redirect(301, redirectTo)
 }
