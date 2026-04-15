@@ -8,7 +8,7 @@ export const getSession = async () => {
     Schema.sessionResponseSchema,
     {
       method: 'GET',
-      requireAuthentication: false
+      requireAuthentication: true
     })
 }
 
