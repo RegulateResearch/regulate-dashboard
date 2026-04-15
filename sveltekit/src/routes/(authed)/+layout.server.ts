@@ -1,8 +1,13 @@
+import { getSession, logout } from '$lib/server/api/auth';
 import type { LayoutServerLoad } from './$types';
-import { redirect, type Actions } from '@sveltejs/kit';
 
-export const load: LayoutServerLoad = async ({ url, cookies }) => {
-  const authToken = cookies.get('authToken')
-  if (!authToken) throw redirect(301, `/login?redirectTo=${encodeURIComponent(url.pathname)}`)
-  return { status: 'success' }
+export const load: LayoutServerLoad = async () => {
+  try {
+    const session = await getSession()
+    if (session && session.message === 'token is valid') {
+      return { userInfo: session.data }
+    }
+  } catch {
+    return logout()
+  }
 }

@@ -24,7 +24,8 @@ export type LoginResponse = z.infer<typeof loginResponseSchema>;
 export const registerRequestSchema = z.object({
   email: z.email(),
   username: z.string(),
-  password: z.string()
+  displayName: z.string(),
+  password: z.string(),
 })
 export type RegisterRequest = z.infer<typeof registerRequestSchema>;
 
@@ -32,6 +33,16 @@ export const registerResponseSchema = z.object({
   id: z.number(),
   email: z.email(),
   username: z.string(),
+  displayName: z.string(),
   role: z.number()
 })
 export type RegisterResponse = z.infer<typeof registerResponseSchema>;
+
+export const ssoRequestSchema = z.object({
+  ticket: z.string(),
+  service: z.string(),
+})
+export type SSORequest = z.infer<typeof ssoRequestSchema>;
+
+export const ssoResponseSchema = loginResponseSchema
+export type SSOResponse = z.infer<typeof ssoResponseSchema>;

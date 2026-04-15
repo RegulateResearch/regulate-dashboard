@@ -41,6 +41,7 @@ services:
       BCRYPT_COST: ${BACKEND_BCRYPT_COST}
       JWT_SECRET: ${BACKEND_JWT_SECRET}
       JWT_ISSUER: ${BACKEND_JWT_ISSUER}
+      SSO_UI_URL: ${SSO_UI_URL}
     depends_on:
       db:
         condition: service_healthy
@@ -51,6 +52,7 @@ services:
     environment:
       API_BASE_URL: ${API_BASE_URL}
       ORIGIN: ${ORIGIN}
+      PUBLIC_SSO_UI_URL: ${SSO_UI_URL}
     depends_on:
       backend:
         condition: service_started

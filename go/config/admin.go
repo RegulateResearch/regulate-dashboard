@@ -3,9 +3,10 @@ package config
 import "os"
 
 type AdminConfig struct {
-	Email    string
-	Username string
-	Password string
+	Email       string
+	Username    string
+	DisplayName string
+	Password    string
 }
 
 func GetAdminConfig() AdminConfig {
