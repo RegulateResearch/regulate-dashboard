@@ -13,9 +13,8 @@ export const load: PageServerLoad = async ({ url }) => {
     })
   } catch (err) {
     return {
-      message: 'SSO failed: ' + (err instanceof Error ? err.message : 'Unknown error')
+      error: err instanceof Error ? err.message : 'Unknown error'
     }
   }
-  const redirectTo = url.searchParams.get('redirectTo') || 'after-login'
-  throw redirect(301, redirectTo)
+  throw redirect(303, '/after-login')
 }

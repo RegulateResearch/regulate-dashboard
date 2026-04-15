@@ -1,9 +1,8 @@
+import { logout } from '$lib/server/api/auth';
 import type { Actions } from './$types';
 
 export const actions: Actions = {
-  default: ({ cookies }) => {
-    cookies.delete('authToken', {
-      path: '/'
-    })
+  default: () => {
+    logout()
   }
 } satisfies Actions;

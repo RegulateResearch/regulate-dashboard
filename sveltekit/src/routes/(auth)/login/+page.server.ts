@@ -5,16 +5,16 @@ import { zod4 } from "sveltekit-superforms/adapters";
 import { fail, redirect } from "@sveltejs/kit";
 import { login } from '$lib/server/api/auth';
 
-export const load: PageServerLoad = async ({ url, cookies }) => {
+export const load: PageServerLoad = async ({ cookies }) => {
   const authToken = cookies.get('authToken')
-  if (authToken) throw redirect(301, url.searchParams.get('redirectTo') || 'after-login')
+  if (authToken) throw redirect(303, '/after-login')
   return {
     form: await superValidate(zod4(formSchema)),
   };
 };
 
 export const actions: Actions = {
-  default: async ({ request, url }) => {
+  default: async ({ request }) => {
     const form = await superValidate(request, zod4(formSchema));
     if (!form.valid) {
       return fail(400, {
@@ -30,7 +30,6 @@ export const actions: Actions = {
       });
     }
 
-    const redirectTo = url.searchParams.get('redirectTo') || 'after-login'
-    throw redirect(301, redirectTo)
+    throw redirect(303, '/after-login')
   },
 } satisfies Actions;
