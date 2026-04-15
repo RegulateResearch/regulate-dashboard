@@ -70,7 +70,7 @@ export const typedFetch = async <TResponse extends z.ZodTypeAny, TBody extends z
       message = `[ERROR] ${error.name}: ${error.message}`
       devOnly = false;
     } else {
-      message = `[ERROR] Unknown error: An unexpected error occurred`
+      message = `[ERROR] Unknown error: An unexpected error occurred ${error}`
       devOnly = false;
     }
     serverLog({
