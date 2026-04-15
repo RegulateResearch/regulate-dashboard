@@ -2,25 +2,42 @@ import type { Actions, PageServerLoad } from './$types';
 import { superValidate } from "sveltekit-superforms";
 import { formSchema } from "./schema";
 import { zod4 } from "sveltekit-superforms/adapters";
-import { fail } from "@sveltejs/kit";
+import { fail, redirect } from "@sveltejs/kit";
+import { register } from '$lib/server/api/auth';
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({ url, cookies }) => {
+  const authToken = cookies.get('authToken')
+  if (authToken) throw redirect(301, url.searchParams.get('redirectTo') || 'after-login')
   return {
     form: await superValidate(zod4(formSchema)),
   };
 };
 
 export const actions: Actions = {
-  default: async (event) => {
-    const form = await superValidate(event, zod4(formSchema));
+  default: async ({ request, url }) => {
+    const form = await superValidate(request, zod4(formSchema));
     if (!form.valid) {
       return fail(400, {
-        form,
+        form, message: 'failed'
       });
     }
 
-    return {
-      form,
-    };
+    const requestBody = {
+      email: form.data.email,
+      username: form.data.username,
+      displayName: form.data.displayName,
+      password: form.data.password,
+    }
+
+    try {
+      await register(requestBody)
+    } catch {
+      return fail(400, {
+        form, message: 'failed'
+      });
+    }
+
+    const redirectTo = url.searchParams.get('redirectTo') || 'login'
+    throw redirect(301, redirectTo)
   },
 } satisfies Actions;

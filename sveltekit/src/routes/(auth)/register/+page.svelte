@@ -4,13 +4,21 @@
 	import { formSchema, type FormSchema } from './schema';
 	import { zod4Client } from 'sveltekit-superforms/adapters';
 	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
+	import { resolve } from '$app/paths';
 	import AuthForm from '../authForm.svelte';
+	import Eye from '@lucide/svelte/icons/eye';
+	import EyeOff from '@lucide/svelte/icons/eye-off';
+	import * as Tooltip from '$lib/components/ui/tooltip';
+	import { Button } from '$lib/components/ui/button';
 
 	let {
 		data
 	}: {
 		data: { form: SuperValidated<Infer<FormSchema>> };
 	} = $props();
+
+	let showPassword = $state(false);
+	let showPasswordConfirmation = $state(false);
 
 	// svelte-ignore state_referenced_locally
 	const form = superForm(data.form, {
@@ -40,18 +48,71 @@
 			</Form.Control>
 			<Form.FieldErrors />
 		</Form.Field>
+		<Form.Field {form} name="username">
+			<Form.Control>
+				{#snippet children({ props })}
+					<Form.Label>Username</Form.Label>
+					<Input
+						{...props}
+						id="username"
+						type="text"
+						placeholder="Username"
+						required
+						bind:value={$formData.username}
+					/>
+				{/snippet}
+			</Form.Control>
+			<Form.FieldErrors />
+		</Form.Field>
+		<Form.Field {form} name="displayName">
+			<Form.Control>
+				{#snippet children({ props })}
+					<Form.Label>Nama Lengkap</Form.Label>
+					<Input
+						{...props}
+						id="displayName"
+						type="text"
+						placeholder="Nama Lengkap"
+						required
+						bind:value={$formData.displayName}
+					/>
+				{/snippet}
+			</Form.Control>
+			<Form.FieldErrors />
+		</Form.Field>
 		<Form.Field {form} name="password">
 			<Form.Control>
 				{#snippet children({ props })}
-					<Form.Label>Kata Sandi</Form.Label>
+				<Form.Label>Kata Sandi</Form.Label>
+				<div class="flex items-center gap-2">
 					<Input
 						{...props}
 						id="password"
-						type="password"
+						type={showPassword ? 'text' : 'password'}
 						placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;"
 						required
 						bind:value={$formData.password}
 					/>
+					<Tooltip.Root>
+							<Tooltip.Trigger>
+								<Button
+									variant="outline"
+									size="icon"
+									type="button"
+									onclick={() => (showPassword = !showPassword)}
+								>
+									{#if showPassword}
+										<EyeOff />
+									{:else}
+										<Eye />
+									{/if}
+								</Button>
+							</Tooltip.Trigger>
+							<Tooltip.Content collisionPadding={16}>
+								<p>{showPassword ? 'Sembunyikan' : 'Tampilkan'} kata sandi</p>
+							</Tooltip.Content>
+						</Tooltip.Root>
+					</div>
 				{/snippet}
 			</Form.Control>
 			<Form.FieldErrors />
@@ -59,15 +120,36 @@
 		<Form.Field {form} name="passwordConfirmation">
 			<Form.Control>
 				{#snippet children({ props })}
-					<Form.Label>Ulangi Kata Sandi</Form.Label>
+				<Form.Label>Ulangi Kata Sandi</Form.Label>
+				<div class="flex items-center gap-2">
 					<Input
 						{...props}
-						id="password"
-						type="password"
+						id="passwordConfirmation"
+						type={showPasswordConfirmation ? 'text' : 'password'}
 						placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;"
 						required
 						bind:value={$formData.passwordConfirmation}
 					/>
+					<Tooltip.Root>
+							<Tooltip.Trigger>
+								<Button
+									variant="outline"
+									size="icon"
+									type="button"
+									onclick={() => (showPasswordConfirmation = !showPasswordConfirmation)}
+								>
+									{#if showPasswordConfirmation}
+										<EyeOff />
+									{:else}
+										<Eye />
+									{/if}
+								</Button>
+							</Tooltip.Trigger>
+							<Tooltip.Content collisionPadding={16}>
+								<p>{showPasswordConfirmation ? 'Sembunyikan' : 'Tampilkan'} kata sandi</p>
+							</Tooltip.Content>
+						</Tooltip.Root>
+					</div>
 				{/snippet}
 			</Form.Control>
 			<Form.FieldErrors />
@@ -77,5 +159,5 @@
 {/snippet}
 
 {#snippet switchFormBtn()}
-	<span>Sudah punya akun? <a href="/login" class="text-yellow-500">Masuk</a></span>
+	<span>Sudah punya akun? <a href={resolve('/login')} class="text-yellow-500">Masuk</a></span>
 {/snippet}
