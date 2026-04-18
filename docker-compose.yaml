@@ -3,7 +3,7 @@ services:
     image: postgres:16
     restart: "always"
     volumes:
-      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/initdb.sql
       - postgres_data:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=${BACKEND_DB_NAME}
