@@ -7,7 +7,7 @@ init:
 
 build-run:
 	docker compose build
-	docker compose --env-file .env up
+	docker compose up
 
 run:
 	docker compose up
