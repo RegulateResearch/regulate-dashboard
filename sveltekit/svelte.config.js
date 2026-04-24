@@ -2,6 +2,13 @@ import adapter from '@sveltejs/adapter-node';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
+	vitePlugin: {
+		inspector: {
+			toggleKeyCombo: 'alt-x',
+			showToggleButton: 'always',
+			toggleButtonPos: 'bottom-right'
+		}
+	},
 	kit: {
 		// adapter-auto only supports some environments, see https://svelte.dev/docs/kit/adapter-auto for a list.
 		// If your environment is not supported, or you settled on a specific environment, switch out the adapter.
@@ -9,8 +16,11 @@ const config = {
 		adapter: adapter({
 			out: 'build',
 			host: '0.0.0.0',
-			port: 3000,
-		})
+			port: 3000
+		}),
+		alias: {
+			'@/*': './path/to/lib/*'
+		}
 	}
 };
 

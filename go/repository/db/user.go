@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"frascati/comp/queryexec"
 	"frascati/exception"
+	"frascati/obj/converter"
+	"frascati/obj/dao"
 	"frascati/obj/entity"
 	repository_exception "frascati/repository/exception"
 	"frascati/typing"
@@ -28,7 +30,7 @@ func NewUserRepository(executor queryexec.QueryExecutor) UserRepository {
 
 func (r userRepositoryImpl) FindAll(ctx typing.Context) ([]entity.User, exception.Exception) {
 	query :=
-		`SELECT id, email, username, user_role
+		`SELECT id, email, username, display_name, user_role
 		FROM users`
 
 	rows, err := r.executor.QueryContext(ctx, query)
@@ -37,12 +39,13 @@ func (r userRepositoryImpl) FindAll(ctx typing.Context) ([]entity.User, exceptio
 	}
 	defer r.executor.CloseRows(rows, "user - FindAll")
 
-	res, err := querying.ScanForRows(
-		rows, entity.NewUser,
-		func(rows queryexec.Rows, elem entity.User) (entity.User, exception.Exception) {
-			err := rows.Scan(&elem.ID, &elem.Email, &elem.Username, &elem.Role)
+	res, err := querying.ScanForRowsThenTransform(
+		rows, dao.NewUserDb,
+		func(rows queryexec.Rows, elem dao.UserDb) (dao.UserDb, exception.Exception) {
+			err := rows.Scan(&elem.ID, &elem.Email, &elem.Username, &elem.DisplayName, &elem.Role)
 			return elem, err
 		},
+		converter.UserDbToEntity,
 	)
 
 	if err != nil {
@@ -53,19 +56,19 @@ func (r userRepositoryImpl) FindAll(ctx typing.Context) ([]entity.User, exceptio
 }
 
 func (r userRepositoryImpl) FindById(ctx typing.Context, id typing.ID) (entity.User, exception.Exception) {
-	var res entity.User
+	var res dao.UserDb
 	querystr := `
-		SELECT id, email, username, user_role
+		SELECT id, email, username, display_name, user_role
 		FROM users
 		WHERE id = $1 AND deleted_at IS NULL
 	`
 
-	err := r.executor.QueryRowContext(ctx, querystr, id).Scan(&res.ID, &res.Email, &res.Username, &res.Role)
+	err := r.executor.QueryRowContext(ctx, querystr, id).Scan(&res.ID, &res.Email, &res.Username, &res.DisplayName, &res.Role)
 	if err != nil {
 		return entity.User{}, repository_exception.WrapQueryexecException(err, "user")
 	}
 
-	return res, nil
+	return converter.UserDbToEntity(res), nil
 }
 
 func (r userRepositoryImpl) FilterExistingId(ctx typing.Context, ids []typing.ID) ([]typing.ID, exception.Exception) {
