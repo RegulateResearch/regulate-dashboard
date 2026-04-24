@@ -7,6 +7,7 @@ import (
 
 func setupCourseRouter(routers grouping.Routes, handlers setup.Handlers) {
 	courseHandler := handlers.Course
+	courseMemberHandler := handlers.CourseMember
 	adminCourseGroup := routers.Admin.Group("/courses")
 
 	adminCourseGroup.GET("", courseHandler.AllCourse)
@@ -15,4 +16,7 @@ func setupCourseRouter(routers grouping.Routes, handlers setup.Handlers) {
 	adminCourseGroup.GET("/:id", courseHandler.CourseById)
 	adminCourseGroup.PUT("/:id", courseHandler.UpdateById)
 	adminCourseGroup.DELETE("/:id", courseHandler.DeleteById)
+
+	adminCourseGroup.GET("/:id/members", courseMemberHandler.FindByCourse)
+	adminCourseGroup.POST("/:id/members", courseMemberHandler.AddNewMember)
 }

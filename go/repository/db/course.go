@@ -14,6 +14,7 @@ type CourseRepository interface {
 	FindById(ctx typing.Context, id typing.ID) (entity.Course, exception.Exception)
 	UpdateById(ctx typing.Context, id typing.ID, updateData entity.Course) (bool, exception.Exception)
 	DeleteById(ctx typing.Context, id typing.ID) (bool, exception.Exception)
+	IsExistById(ctx typing.Context, id typing.ID) (bool, exception.Exception)
 }
 
 type courseRepositoryImpl struct {
@@ -135,4 +136,24 @@ func (r courseRepositoryImpl) DeleteById(ctx typing.Context, id typing.ID) (bool
 	}
 
 	return rowsAffected > 0, nil
+}
+
+func (r courseRepositoryImpl) IsExistById(ctx typing.Context, id typing.ID) (bool, exception.Exception) {
+	querystr := `
+		SELECT 1
+		FROM courses
+		WHERE id = $1 AND deleted_at IS NULL
+	`
+
+	res, err := r.executor.ExecContext(ctx, querystr, id)
+	if err != nil {
+		return false, repository_exception.WrapQueryexecException(err, "course")
+	}
+
+	rows, err := res.RowsAffected()
+	if err != nil {
+		return false, repository_exception.WrapQueryexecException(err, "course")
+	}
+
+	return rows > 0, nil
 }

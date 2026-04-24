@@ -8,6 +8,10 @@ func (id ID) String() string {
 	return strconv.FormatInt(int64(id), 10)
 }
 
+func IDDefault() ID {
+	return ID(0)
+}
+
 func IDFromString(idstr string) ID {
 	var id int64 = -1
 	idnum, err := strconv.ParseInt(idstr, 10, 64)

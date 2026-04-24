@@ -5,7 +5,7 @@ import "frascati/constants"
 type User struct {
 	Base
 	Email       string         `json:"email,omitempty"`
-	Username    string         `json:"username"`
+	Username    string         `json:"username,omitempty"`
 	DisplayName string         `json:"displayName"`
 	Role        constants.Role `json:"role"`
 }

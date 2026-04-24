@@ -30,3 +30,9 @@ func BulkValues[T any](values []T, idxStart int, genFn func(value T, currentIdx 
 	idxNext = lastIdx
 	return rowstr, args, idxNext
 }
+
+func BulkValuesFromBeginning[T any](values []T, genFn func(value T, currentIdx int) DataStrArgs) (rowstr string, args []any, idxNext int) {
+	paramIdxStart := 1
+	rowstr, args, idxNext = BulkValues(values, paramIdxStart, genFn)
+	return rowstr, args, idxNext
+}
