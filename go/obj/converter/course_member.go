@@ -32,3 +32,10 @@ func CourseMemberEntityToSimpleDto(memberEntity entity.CourseMember) dto.CourseM
 		Role:   memberEntity.Role.ToString(),
 	}
 }
+
+func CourseMemberUpdateDataToEntity(updateData dto.CourseMemberUpdateData) entity.CourseMember {
+	return entity.CourseMember{
+		Base: entity.Base{ID: updateData.MemberId},
+		Role: constants.CourseRoleFromString(updateData.Role),
+	}
+}

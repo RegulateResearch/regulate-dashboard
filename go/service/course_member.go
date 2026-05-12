@@ -13,6 +13,8 @@ import (
 type CourseMemberService interface {
 	FindByCourseId(ctx typing.Context, courseId typing.ID) ([]entity.CourseMember, exception.Exception)
 	AddMultiple(ctx typing.Context, courseId typing.ID, newMember []entity.CourseMember) ([]entity.CourseMember, exception.Exception)
+	DeleteMultiple(ctx typing.Context, courseId typing.ID, memberIds []typing.ID) (int64, exception.Exception)
+	Update(ctx typing.Context, courseId typing.ID, members []entity.CourseMember) ([]entity.CourseMember, exception.Exception)
 }
 
 type courseMemberServiceImpl struct {
@@ -62,18 +64,9 @@ func (s courseMemberServiceImpl) AddMultiple(ctx typing.Context, courseId typing
 }
 
 func (s courseMemberServiceImpl) addMultiple(ctx typing.Context, courseId typing.ID, newMember []entity.CourseMember) ([]entity.CourseMember, exception.Exception) {
-	isExist, err := s.courseRepo.IsExistById(ctx, courseId)
-	if err != nil {
-		return nil, err
-	}
-
-	if !isExist {
-		return nil, exception.NewBaseException(
-			exception.CAUSE_NOT_FOUND,
-			"course_member/service",
-			"record not found",
-			errors.New("course not found"),
-		)
+	isExistErr := s.checkCourse(ctx, courseId)
+	if isExistErr != nil {
+		return nil, isExistErr
 	}
 
 	validIds, err := s.userRepo.FilterExistingId(
@@ -102,4 +95,42 @@ func (s courseMemberServiceImpl) addMultiple(ctx typing.Context, courseId typing
 
 	res, err := s.memberRepo.AddMultiple(ctx, validMember)
 	return res, err
+}
+
+func (s courseMemberServiceImpl) DeleteMultiple(ctx typing.Context, courseId typing.ID, memberIds []typing.ID) (int64, exception.Exception) {
+	isExistErr := s.checkCourse(ctx, courseId)
+	if isExistErr != nil {
+		return -1, isExistErr
+	}
+
+	res, err := s.memberRepo.DeleteMultiple(ctx, courseId, memberIds)
+	return res, err
+}
+
+func (s courseMemberServiceImpl) Update(ctx typing.Context, courseId typing.ID, members []entity.CourseMember) ([]entity.CourseMember, exception.Exception) {
+	isExistErr := s.checkCourse(ctx, courseId)
+	if isExistErr != nil {
+		return nil, isExistErr
+	}
+
+	res, err := s.memberRepo.Update(ctx, courseId, members)
+	return res, err
+}
+
+func (s courseMemberServiceImpl) checkCourse(ctx typing.Context, courseId typing.ID) exception.Exception {
+	isExist, err := s.courseRepo.IsExistById(ctx, courseId)
+	if err != nil {
+		return err
+	}
+
+	if !isExist {
+		return exception.NewBaseException(
+			exception.CAUSE_NOT_FOUND,
+			"course_member/service",
+			"record not found",
+			errors.New("course not found"),
+		)
+	}
+
+	return nil
 }

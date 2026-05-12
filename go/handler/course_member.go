@@ -53,3 +53,44 @@ func (h CourseMemberHandler) AddNewMember(ctx *gin.Context) {
 	resDto := lambda.MapList(res, converter.CourseMemberEntityToDto)
 	ctx.JSON(http.StatusOK, response.NewSuccessResponse(resDto, "success"))
 }
+
+func (h CourseMemberHandler) DeleteMember(ctx *gin.Context) {
+	var idsToBeDeleted dto.MultipleIDs
+	err := ctx.ShouldBindBodyWithJSON(&idsToBeDeleted)
+	if err != nil {
+		ctx.Error(err)
+		return
+	}
+
+	courseId := typing.IDFromString(ctx.Param("id"))
+	count, exc := h.memberService.DeleteMultiple(ctx, courseId, idsToBeDeleted.IDs)
+	if exc != nil {
+		ctx.Error(exc)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, response.NewSuccessResponse(gin.H{
+		"deleted_count": count,
+	}, "success"))
+}
+
+func (h CourseMemberHandler) UpdateMember(ctx *gin.Context) {
+	var updateData dto.CourseMemberUpdateBulk
+	err := ctx.ShouldBindBodyWithJSON(&updateData)
+	if err != nil {
+		ctx.Error(err)
+		return
+	}
+
+	members := lambda.MapList(updateData.Members, converter.CourseMemberUpdateDataToEntity)
+
+	courseId := typing.IDFromString(ctx.Param("id"))
+	res, err := h.memberService.Update(ctx, courseId, members)
+	if err != nil {
+		ctx.Error(err)
+		return
+	}
+
+	resDto := lambda.MapList(res, converter.CourseMemberEntityToSimpleDto)
+	ctx.JSON(http.StatusOK, response.NewSuccessResponse(resDto, "success"))
+}

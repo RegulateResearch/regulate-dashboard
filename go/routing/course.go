@@ -19,4 +19,6 @@ func setupCourseRouter(routers grouping.Routes, handlers setup.Handlers) {
 
 	adminCourseGroup.GET("/:id/members", courseMemberHandler.FindByCourse)
 	adminCourseGroup.POST("/:id/members", courseMemberHandler.AddNewMember)
+	adminCourseGroup.PUT("/:id/members", courseMemberHandler.UpdateMember)
+	adminCourseGroup.DELETE("/:id/members", courseMemberHandler.DeleteMember)
 }
