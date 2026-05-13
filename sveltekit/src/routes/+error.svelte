@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { Button } from '$lib/components/ui/button';
-	import { Logo } from '$lib/components/contents/logo/index';
+	import { RegulateLogo } from '$lib/components/contents/logo/index';
 	import * as Tooltip from '$lib/components/ui/tooltip';
 	import DoorOpen from '@lucide/svelte/icons/door-open';
 
@@ -15,9 +15,9 @@
 	);
 </script>
 
-<div class="fixed top-0 right-0 bottom-0 left-0 flex items-center justify-center bg-white">
+<div class="fixed top-0 right-0 bottom-0 left-0 flex items-center justify-center bg-yellow-50/25">
 	<div class="flex flex-row items-center justify-center gap-6">
-		<Logo active={false} class="w-20"></Logo>
+		<RegulateLogo active={false} class="w-20" />
 		<div class="flex max-w-3xl flex-col">
 			<h1 class="text-2xl text-neutral-500">{message.title}</h1>
 			<p>
