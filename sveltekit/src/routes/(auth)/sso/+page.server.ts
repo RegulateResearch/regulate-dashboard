@@ -13,8 +13,9 @@ export const load: PageServerLoad = async ({ url }) => {
     })
   } catch (err) {
     return {
+      pageTitle: 'Single Sign-on Universitas Indonesia',
       error: err instanceof Error ? err.message : 'Unknown error'
     }
   }
-  throw redirect(303, '/after-login')
+  throw redirect(303, '/my-dashboard')
 }
