@@ -5,9 +5,18 @@ declare global {
 		// interface Error {}
 		// interface Locals {}
 		// interface PageData {}
+		interface PageData {
+			userInfo?: {
+				id: number,
+				name: string;
+				email: string;
+				role: string;
+			};
+			pageTitle?: string;
+		}
 		// interface PageState {}
 		// interface Platform {}
 	}
 }
 
-export {};
+export { };

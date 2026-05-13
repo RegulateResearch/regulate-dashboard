@@ -5,8 +5,9 @@ export const load: LayoutServerLoad = async () => {
   try {
     const session = await getSession()
     if (session && session.message === 'token is valid') {
-      return { userInfo: session.data }
+      return { userInfo: { ...session.data } }
     }
+    return logout()
   } catch {
     return logout()
   }

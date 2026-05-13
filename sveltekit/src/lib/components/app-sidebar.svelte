@@ -10,11 +10,6 @@
 	import SquareTerminalIcon from '@lucide/svelte/icons/square-terminal';
 
 	const data = {
-		user: {
-			name: 'shadcn',
-			email: 'm@example.com',
-			avatar: '/avatars/shadcn.jpg'
-		},
 		navMain: [
 			{
 				title: 'Playground',
@@ -140,7 +135,7 @@
 	import NavSecondary from './nav-secondary.svelte';
 	import NavUser from './nav-user.svelte';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-	import Logo from './contents/logo/logo.svelte';
+	import { RegulateLogo } from './contents/logo/index';
 	import type { ComponentProps } from 'svelte';
 
 	let { ref = $bindable(null), ...restProps }: ComponentProps<typeof Sidebar.Root> = $props();
@@ -151,10 +146,10 @@
 		<Sidebar.Menu>
 			<Sidebar.MenuItem>
 				<Sidebar.MenuButton size="lg">
-					{#snippet child({ props })}
-						<a href="##" {...props}>
-							<Logo withTitle withSubTitle class="h-8 [&>svg]:h-auto [&>svg]:w-1/4" />
-						</a>
+					{#snippet child()}
+						<div class="flex h-10 w-full items-center justify-center">
+							<RegulateLogo withTitle class="h-auto w-3/4" />
+						</div>
 					{/snippet}
 				</Sidebar.MenuButton>
 			</Sidebar.MenuItem>
@@ -166,6 +161,6 @@
 		<NavSecondary items={data.navSecondary} class="mt-auto" />
 	</Sidebar.Content>
 	<Sidebar.Footer>
-		<NavUser user={data.user} />
+		<NavUser />
 	</Sidebar.Footer>
 </Sidebar.Root>
