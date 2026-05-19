@@ -139,7 +139,7 @@ func (r authRepositoryDbImpl) UpdateSsoData(ctx typing.Context, userData entity.
 			deleted_at IS NULL
 	`
 
-	res, err := r.executor.ExecContext(ctx, query, userData.ID, userData.CivitasID, userData.HasSsoLogin)
+	res, err := r.executor.ExecContext(ctx, query, userData.ID, userData.CivitasID, true)
 	if err != nil {
 		return false, repository_exception.WrapQueryexecException(err, "auth")
 	}
