@@ -35,11 +35,10 @@ func (s ssoUiServiceImpl) Validate(ctx typing.Context, ticket string, callbackSe
 		return "", err
 	}
 
-	res := entity.User{}
 	userData, err := s.authRepo.FindBySsoData(ctx, ssoData.Username, ssoData.CivitasID)
 	if err != nil {
 		if err.Cause() != exception.CAUSE_NOT_FOUND {
-			return "", nil
+			return "", err
 		}
 
 		ssoDataCopy := ssoData
@@ -50,26 +49,24 @@ func (s ssoUiServiceImpl) Validate(ctx typing.Context, ticket string, callbackSe
 			return "", err
 		}
 
-		res = newUserData
+		userData = newUserData
 	}
 
 	if !userData.HasSsoLogin {
 		success, err := s.authRepo.UpdateSsoData(ctx, userData)
 		if err != nil {
-			return "", nil
+			return "", err
 		}
 
 		if !success {
-			newErr := fmt.Errorf("cannot update sso data for existing user without prior sso login")
+			newErr := fmt.Errorf("failure to update sso data for registered user without prior sso login")
 			return "", exception.NewBaseException(exception.CAUSE_INTERNAL, "sso/service", exception.INTERNAL, newErr)
 		}
-
-		res = userData
 	}
 
 	sessionData := entity.Session{
-		ID:   res.ID,
-		Role: res.Role,
+		ID:   userData.ID,
+		Role: userData.Role,
 	}
 
 	token, err := s.jwtService.GenerateToken(sessionData)
