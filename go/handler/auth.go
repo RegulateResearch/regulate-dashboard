@@ -37,7 +37,8 @@ func (h AuthHandler) Register(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, converter.UserEntityToDTO(userReturn))
+	userReturnDto := converter.UserEntityToDTO(userReturn)
+	ctx.JSON(http.StatusCreated, response.NewSuccessResponse(userReturnDto, "success create"))
 }
 
 func (h AuthHandler) Login(ctx *gin.Context) {
