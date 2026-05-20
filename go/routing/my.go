@@ -11,4 +11,5 @@ func setupMyRouter(routers grouping.Routes, handlers setup.Handlers) {
 	group := route.Group("/my")
 
 	group.GET("/profile", myHandler.MyProfile)
+	group.GET("/courses", myHandler.MyCourses)
 }

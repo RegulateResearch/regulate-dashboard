@@ -16,6 +16,7 @@ type UserRepository interface {
 	FindAll(typing.Context) ([]entity.User, exception.Exception)
 	FindById(ctx typing.Context, id typing.ID) (entity.User, exception.Exception)
 	FilterExistingId(ctx typing.Context, ids []typing.ID) ([]typing.ID, exception.Exception)
+	IsExistById(ctx typing.Context, id typing.ID) (bool, exception.Exception)
 }
 
 type userRepositoryImpl struct {
@@ -119,4 +120,26 @@ func (r userRepositoryImpl) FilterExistingId(ctx typing.Context, ids []typing.ID
 	}
 
 	return res, nil
+}
+
+func (r userRepositoryImpl) IsExistById(ctx typing.Context, id typing.ID) (bool, exception.Exception) {
+	querystr := `
+		SELECT 1
+		FROM users
+		WHERE
+			id = $1 AND
+			deleted_at IS NULL
+	`
+
+	res, err := r.executor.ExecContext(ctx, querystr, id)
+	if err != nil {
+		return false, repository_exception.WrapQueryexecException(err, "user")
+	}
+
+	rowsCount, err := res.RowsAffected()
+	if err != nil {
+		return false, repository_exception.WrapQueryexecException(err, "user")
+	}
+
+	return rowsCount > 0, nil
 }

@@ -13,6 +13,7 @@ type services struct {
 	courseMember service.CourseMemberService
 	user         service.UserService
 	sso          service.SsoUiService
+	my           service.MyService
 	record       service.RecordService
 	try          service.TryService
 }
@@ -24,6 +25,7 @@ func setupServices(repos repositories, jwt auth.JwtService, bcrypt auth.BcryptSe
 		courseMember: service.NewCourseMemberService(repos.courseMember, repos.course, repos.user, repos.transactor),
 		user:         service.NewUserService(repos.user),
 		sso:          service.NewSsoUiService(ssoClient, repos.auth, jwt),
+		my:           service.NewMyService(repos.user, repos.course),
 		record:       service.NewRecordService(repos.record),
 		try:          service.NewTryService(backgroundProcessor),
 	}

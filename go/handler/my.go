@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"frascati/lambda"
 	"frascati/obj/converter"
 	"frascati/response"
 	"frascati/service"
@@ -11,14 +12,12 @@ import (
 )
 
 type MyHandler struct {
-	userService   service.UserService
-	courseService service.CourseService
+	myService service.MyService
 }
 
-func NewMyHandler(userService service.UserService, courseService service.CourseService) MyHandler {
+func NewMyHandler(myService service.MyService) MyHandler {
 	return MyHandler{
-		userService:   userService,
-		courseService: courseService,
+		myService: myService,
 	}
 }
 
@@ -30,12 +29,30 @@ func (h MyHandler) MyProfile(ctx *gin.Context) {
 	}
 
 	userID := userData.ID
-	res, err := h.userService.FindById(ctx, userID)
+	res, err := h.myService.MyProfile(ctx, userID)
 	if err != nil {
 		ctx.Error(err)
 		return
 	}
 
 	resDto := converter.UserEntityToDTO(res)
+	ctx.JSON(http.StatusOK, response.NewSuccessResponse(resDto, "success"))
+}
+
+func (h MyHandler) MyCourses(ctx *gin.Context) {
+	userData, err := session.PassAuthValue(ctx)
+	if err != nil {
+		ctx.Error(err)
+		return
+	}
+
+	userID := userData.ID
+	res, err := h.myService.MyCourses(ctx, userID)
+	if err != nil {
+		ctx.Error(err)
+		return
+	}
+
+	resDto := lambda.MapList(res, converter.CourseEntityToDto)
 	ctx.JSON(http.StatusOK, response.NewSuccessResponse(resDto, "success"))
 }
