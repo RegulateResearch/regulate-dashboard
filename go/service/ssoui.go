@@ -53,6 +53,8 @@ func (s ssoUiServiceImpl) Validate(ctx typing.Context, ticket string, callbackSe
 	}
 
 	if !userData.HasSsoLogin {
+		userData.Username = ssoData.Username
+		userData.CivitasID = ssoData.CivitasID
 		success, err := s.authRepo.UpdateSsoData(ctx, userData)
 		if err != nil {
 			return "", err

@@ -27,6 +27,7 @@ func UserDbToEntity(user dao.UserDb) entity.User {
 		Password:    user.Password,
 		Role:        user.Role,
 		CivitasID:   user.CivitasID.String,
+		HasSsoLogin: user.HasSsoLogin,
 	}
 }
 
