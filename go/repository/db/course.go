@@ -3,14 +3,18 @@ package repo_db
 import (
 	"frascati/comp/queryexec"
 	"frascati/exception"
+	"frascati/obj/converter"
+	"frascati/obj/dao"
 	"frascati/obj/entity"
 	repository_exception "frascati/repository/exception"
 	"frascati/typing"
+	"frascati/utils/querying"
 )
 
 type CourseRepository interface {
 	Add(ctx typing.Context, course entity.Course) (entity.Course, exception.Exception)
 	FindAll(ctx typing.Context) ([]entity.Course, exception.Exception)
+	FindAllByEnrollingUserId(ctx typing.Context, user entity.User) ([]entity.Course, exception.Exception)
 	FindById(ctx typing.Context, id typing.ID) (entity.Course, exception.Exception)
 	UpdateById(ctx typing.Context, id typing.ID, updateData entity.Course) (bool, exception.Exception)
 	DeleteById(ctx typing.Context, id typing.ID) (bool, exception.Exception)
@@ -48,7 +52,6 @@ func (r courseRepositoryImpl) Add(ctx typing.Context, course entity.Course) (ent
 }
 
 func (r courseRepositoryImpl) FindAll(ctx typing.Context) ([]entity.Course, exception.Exception) {
-	res := make([]entity.Course, 0)
 	query := `
 		SELECT id, name, course_year, semester
 		FROM courses
@@ -61,14 +64,55 @@ func (r courseRepositoryImpl) FindAll(ctx typing.Context) ([]entity.Course, exce
 	}
 	defer r.executor.CloseRows(rows, "course - FindAll")
 
-	for rows.Next() {
-		var course entity.Course
-		err := rows.Scan(&course.ID, &course.Name, &course.Year, &course.Term)
-		if err != nil {
-			return nil, repository_exception.WrapQueryexecException(err, "course")
-		}
+	res, err := querying.ScanForRowsThenTransform(
+		rows, dao.NewCourseDb,
+		func(rows queryexec.Rows, elem dao.CourseDb) (dao.CourseDb, exception.Exception) {
+			err := rows.Scan(&elem.ID, &elem.Name, &elem.Year, &elem.Term)
+			return elem, err
+		},
+		converter.CourseDbToEntity,
+	)
 
-		res = append(res, course)
+	if err != nil {
+		return nil, repository_exception.WrapQueryexecException(err, "course")
+	}
+
+	return res, nil
+}
+
+func (r courseRepositoryImpl) FindAllByEnrollingUserId(ctx typing.Context, user entity.User) ([]entity.Course, exception.Exception) {
+	query := `
+		SELECT id, name, course_year, semester
+		FROM courses
+		WHERE 
+			deleted_at IS NULL AND
+			EXISTS (
+				SELECT 1
+				FROM course_members
+				WHERE
+					user_id = $1 AND
+					courses.id = course_members.course_id AND
+					deleted_at IS NULL
+			)
+	`
+
+	rows, err := r.executor.QueryContext(ctx, query, user.ID)
+	if err != nil {
+		return nil, repository_exception.CreateDBException(err, "courses", "something is wrong in our end")
+	}
+	defer r.executor.CloseRows(rows, "course - FindAll")
+
+	res, err := querying.ScanForRowsThenTransform(
+		rows, dao.NewCourseDb,
+		func(rows queryexec.Rows, elem dao.CourseDb) (dao.CourseDb, exception.Exception) {
+			err := rows.Scan(&elem.ID, &elem.Name, &elem.Year, &elem.Term)
+			return elem, err
+		},
+		converter.CourseDbToEntity,
+	)
+
+	if err != nil {
+		return nil, repository_exception.WrapQueryexecException(err, "course")
 	}
 
 	return res, nil

@@ -2,6 +2,7 @@ package converter
 
 import (
 	"frascati/constants"
+	"frascati/obj/dao"
 	"frascati/obj/dto"
 	"frascati/obj/entity"
 )
@@ -20,5 +21,14 @@ func CourseDtoToEntity(courseDto dto.Course) entity.Course {
 		Name: courseDto.Name,
 		Year: courseDto.Year,
 		Term: constants.SemesterFromString(courseDto.Term),
+	}
+}
+
+func CourseDbToEntity(courseDb dao.CourseDb) entity.Course {
+	return entity.Course{
+		Base: BaseDbToEntity(courseDb.BaseDb),
+		Name: courseDb.Name,
+		Year: courseDb.Year,
+		Term: courseDb.Term,
 	}
 }

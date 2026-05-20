@@ -10,6 +10,7 @@ import (
 type CourseRepository interface {
 	FindAll(ctx typing.Context) ([]entity.Course, exception.Exception)
 	FindById(ctx typing.Context, id typing.ID) (entity.Course, exception.Exception)
+	FindAllByEnrollingUserId(ctx typing.Context, user entity.User) ([]entity.Course, exception.Exception)
 	Add(ctx typing.Context, course entity.Course) (entity.Course, exception.Exception)
 	UpdateById(ctx typing.Context, id typing.ID, updateDate entity.Course) (bool, exception.Exception)
 	DeleteById(ctx typing.Context, id typing.ID) (bool, exception.Exception)
@@ -33,6 +34,11 @@ func (r courseRepositoryImpl) FindAll(ctx typing.Context) ([]entity.Course, exce
 
 func (r courseRepositoryImpl) FindById(ctx typing.Context, id typing.ID) (entity.Course, exception.Exception) {
 	res, err := r.dbRepo.FindById(ctx, id)
+	return res, err
+}
+
+func (r courseRepositoryImpl) FindAllByEnrollingUserId(ctx typing.Context, user entity.User) ([]entity.Course, exception.Exception) {
+	res, err := r.dbRepo.FindAllByEnrollingUserId(ctx, user)
 	return res, err
 }
 

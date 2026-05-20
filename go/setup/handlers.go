@@ -24,7 +24,7 @@ func setupHandlers(services services) Handlers {
 		Admin:        handler.NewAdminHandler(services.user),
 		User:         handler.NewUserHandler(services.user),
 		Sso:          handler.NewSsoHandler(services.sso),
-		My:           handler.NewMyHandler(services.user, services.course),
+		My:           handler.NewMyHandler(services.my),
 		Record:       handler.NewRecordHandler(services.record),
 		Try:          handler.NewTryHandler(services.try),
 	}

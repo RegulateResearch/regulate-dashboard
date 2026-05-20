@@ -11,6 +11,7 @@ type UserRepository interface {
 	FindAll(typing.Context) ([]entity.User, exception.Exception)
 	FindById(ctx typing.Context, id typing.ID) (entity.User, exception.Exception)
 	FilterExistingId(ctx typing.Context, ids []typing.ID) ([]typing.ID, exception.Exception)
+	IsExistById(ctx typing.Context, id typing.ID) (bool, exception.Exception)
 }
 
 type userRepositoryImpl struct {
@@ -35,5 +36,10 @@ func (r userRepositoryImpl) FindById(ctx typing.Context, id typing.ID) (entity.U
 
 func (r userRepositoryImpl) FilterExistingId(ctx typing.Context, ids []typing.ID) ([]typing.ID, exception.Exception) {
 	res, err := r.repoDb.FilterExistingId(ctx, ids)
+	return res, err
+}
+
+func (r userRepositoryImpl) IsExistById(ctx typing.Context, id typing.ID) (bool, exception.Exception) {
+	res, err := r.repoDb.IsExistById(ctx, id)
 	return res, err
 }

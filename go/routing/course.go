@@ -9,6 +9,9 @@ func setupCourseRouter(routers grouping.Routes, handlers setup.Handlers) {
 	courseHandler := handlers.Course
 	courseMemberHandler := handlers.CourseMember
 	adminCourseGroup := routers.Admin.Group("/courses")
+	userCourseGroup := routers.User.Group("/courses")
+
+	userCourseGroup.GET("", courseHandler.AllCourse)
 
 	adminCourseGroup.GET("", courseHandler.AllCourse)
 	adminCourseGroup.POST("", courseHandler.NewCourse)
