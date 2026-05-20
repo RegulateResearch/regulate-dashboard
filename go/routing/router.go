@@ -27,6 +27,7 @@ func setupEndpoints(routes grouping.Routes, handlers setup.Handlers) {
 	setupAuthRouting(routes, handlers)
 	setupCourseRouter(routes, handlers)
 	setupUsersRouting(routes, handlers)
+	setupMyRouter(routes, handlers)
 	setupRecordRoutes(routes, handlers)
 	setupTryRoutes(routes, handlers)
 }
