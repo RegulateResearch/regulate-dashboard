@@ -13,7 +13,8 @@ func UserEntityToDTO(user entity.User) dto.User {
 		Email:       user.Email,
 		Username:    user.Username,
 		DisplayName: user.DisplayName,
-		Role:        user.Role,
+		Role:        user.Role.ToString(),
+		CivitasID:   user.CivitasID,
 	}
 }
 
@@ -25,6 +26,7 @@ func UserDbToEntity(user dao.UserDb) entity.User {
 		DisplayName: user.DisplayName,
 		Password:    user.Password,
 		Role:        user.Role,
+		CivitasID:   user.CivitasID.String,
 	}
 }
 

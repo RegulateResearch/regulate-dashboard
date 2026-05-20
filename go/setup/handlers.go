@@ -10,6 +10,7 @@ type Handlers struct {
 	Admin        handler.AdminHandler
 	User         handler.UserHandler
 	Sso          handler.SsoHandler
+	My           handler.MyHandler
 	Record       handler.RecordHandler
 	Try          handler.TryHandler
 }
@@ -23,6 +24,7 @@ func setupHandlers(services services) Handlers {
 		Admin:        handler.NewAdminHandler(services.user),
 		User:         handler.NewUserHandler(services.user),
 		Sso:          handler.NewSsoHandler(services.sso),
+		My:           handler.NewMyHandler(services.user, services.course),
 		Record:       handler.NewRecordHandler(services.record),
 		Try:          handler.NewTryHandler(services.try),
 	}

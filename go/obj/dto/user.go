@@ -1,13 +1,12 @@
 package dto
 
-import "frascati/constants"
-
 type User struct {
 	Base
-	Email       string         `json:"email,omitempty"`
-	Username    string         `json:"username,omitempty"`
-	DisplayName string         `json:"displayName"`
-	Role        constants.Role `json:"role"`
+	Email       string `json:"email,omitempty"`
+	Username    string `json:"username,omitempty"`
+	DisplayName string `json:"displayName"`
+	Role        string `json:"role"`
+	CivitasID   string `json:"civitasId,omitempty"`
 }
 
 type UserLogin struct {
