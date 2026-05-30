@@ -8,11 +8,11 @@
 	let { data }: PageProps = $props();
 </script>
 
-<AuthForm formTitle="Masuk dengan SSO Universitas Indonesia" {formBody} {switchFormBtn} />
+<AuthForm formTitle="Masuk dengan Single Sign On Universitas Indonesia" {formBody} {switchFormBtn} />
 
 {#snippet formBody()}
 	<div class="flex flex-col items-center justify-center gap-4">
-		<UILogo />
+		<UILogo class="h-auto w-1/4" />
 		{#if data.error}
 			<p class="text-center text-red-500">
 				Gagal menyambungkan dengan layanan SSO Universitas Indonesia. <br /> Mohon coba lagi nanti

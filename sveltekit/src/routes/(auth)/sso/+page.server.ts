@@ -17,5 +17,5 @@ export const load: PageServerLoad = async ({ url }) => {
       error: err instanceof Error ? err.message : 'Unknown error'
     }
   }
-  throw redirect(303, '/my-dashboard')
+  throw redirect(303, '/')
 }

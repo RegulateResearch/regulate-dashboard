@@ -7,7 +7,7 @@ import { login } from '$lib/server/api/auth';
 
 export const load: PageServerLoad = async ({ cookies }) => {
   const authToken = cookies.get('authToken')
-  if (authToken) throw redirect(303, '/my-dashboard')
+  if (authToken) throw redirect(303, '/')
   return {
     pageTitle: "Masuk",
     form: await superValidate(zod4(formSchema)),
@@ -31,6 +31,6 @@ export const actions: Actions = {
       });
     }
 
-    throw redirect(303, '/my-dashboard')
+    throw redirect(303, '/')
   },
 } satisfies Actions;

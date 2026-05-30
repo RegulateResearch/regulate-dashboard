@@ -7,7 +7,7 @@ import { register } from '$lib/server/api/auth';
 
 export const load: PageServerLoad = async ({ cookies }) => {
   const authToken = cookies.get('authToken')
-  if (authToken) throw redirect(303, '/my-dashboard')
+  if (authToken) throw redirect(303, '/')
   return {
     pageTitle: "Daftar",
     form: await superValidate(zod4(formSchema)),
