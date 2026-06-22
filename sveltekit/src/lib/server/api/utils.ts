@@ -41,7 +41,7 @@ export const typedFetch = async <TResponse extends z.ZodTypeAny, TBody extends z
     });
 
     serverLog({
-      message: `[FETCH] Request to ${env.API_BASE_URL}${endpoint} returned status ${response.status}`,
+      message: `[FETCH] Request ${options?.method || 'GET'} to ${env.API_BASE_URL}${endpoint} returned status ${response.status}`,
       isError: false,
       devOnly: true
     })
