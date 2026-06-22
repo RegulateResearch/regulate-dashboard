@@ -1,13 +1,13 @@
 import { redirect } from '@sveltejs/kit';
-import type { PageServerLoad } from './$types';
+import type { LayoutServerLoad } from './$types';
 
-export const load: PageServerLoad = ({ locals }) => {
+export const load: LayoutServerLoad = ({ locals }) => {
   const role = locals.userInfo?.role
   switch (role) {
     case 'admin':
       throw redirect(307, '/admin');
     case 'lecturer':
-      throw redirect(307, '/lecturer');
+      break;
     case 'student':
       throw redirect(307, '/student');
     default:
