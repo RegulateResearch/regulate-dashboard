@@ -1,144 +1,76 @@
-<script lang="ts" module>
-	import BookOpenIcon from '@lucide/svelte/icons/book-open';
-	import BotIcon from '@lucide/svelte/icons/bot';
-	import ChartPieIcon from '@lucide/svelte/icons/chart-pie';
-	import FrameIcon from '@lucide/svelte/icons/frame';
-	import LifeBuoyIcon from '@lucide/svelte/icons/life-buoy';
-	import MapIcon from '@lucide/svelte/icons/map';
-	import SendIcon from '@lucide/svelte/icons/send';
-	import Settings2Icon from '@lucide/svelte/icons/settings-2';
-	import SquareTerminalIcon from '@lucide/svelte/icons/square-terminal';
-
-	const data = {
-		navMain: [
-			{
-				title: 'Playground',
-				url: '#',
-				icon: SquareTerminalIcon,
-				isActive: true,
-				items: [
-					{
-						title: 'History',
-						url: '#'
-					},
-					{
-						title: 'Starred',
-						url: '#'
-					},
-					{
-						title: 'Settings',
-						url: '#'
-					}
-				]
-			},
-			{
-				title: 'Models',
-				url: '#',
-				icon: BotIcon,
-				items: [
-					{
-						title: 'Genesis',
-						url: '#'
-					},
-					{
-						title: 'Explorer',
-						url: '#'
-					},
-					{
-						title: 'Quantum',
-						url: '#'
-					}
-				]
-			},
-			{
-				title: 'Documentation',
-				url: '#',
-				icon: BookOpenIcon,
-				items: [
-					{
-						title: 'Introduction',
-						url: '#'
-					},
-					{
-						title: 'Get Started',
-						url: '#'
-					},
-					{
-						title: 'Tutorials',
-						url: '#'
-					},
-					{
-						title: 'Changelog',
-						url: '#'
-					}
-				]
-			},
-			{
-				title: 'Settings',
-				url: '#',
-				icon: Settings2Icon,
-				items: [
-					{
-						title: 'General',
-						url: '#'
-					},
-					{
-						title: 'Team',
-						url: '#'
-					},
-					{
-						title: 'Billing',
-						url: '#'
-					},
-					{
-						title: 'Limits',
-						url: '#'
-					}
-				]
-			}
-		],
-		navSecondary: [
-			{
-				title: 'Support',
-				url: '#',
-				icon: LifeBuoyIcon
-			},
-			{
-				title: 'Feedback',
-				url: '#',
-				icon: SendIcon
-			}
-		],
-		projects: [
-			{
-				name: 'Design Engineering',
-				url: '#',
-				icon: FrameIcon
-			},
-			{
-				name: 'Sales & Marketing',
-				url: '#',
-				icon: ChartPieIcon
-			},
-			{
-				name: 'Travel',
-				url: '#',
-				icon: MapIcon
-			}
-		]
-	};
-</script>
-
 <script lang="ts">
 	import NavMain from './nav-main.svelte';
-	import NavProjects from './nav-projects.svelte';
-	import NavSecondary from './nav-secondary.svelte';
 	import NavUser from './nav-user.svelte';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import { RegulateLogo } from './contents/logo/index';
 	import type { ComponentProps } from 'svelte';
+	import { page } from '$app/state';
+	import LayoutDashboardIcon from '@lucide/svelte/icons/layout-dashboard';
+	import SquareLibraryIcon from '@lucide/svelte/icons/square-library';
+	import UsersIcon from '@lucide/svelte/icons/users';
 
 	let { ref = $bindable(null), ...restProps }: ComponentProps<typeof Sidebar.Root> = $props();
+	let navItem = $derived.by(() => {
+		switch (page.data.userInfo?.role) {
+			case 'admin':
+				return [
+					{
+						title: 'Dashboard',
+						url: '/admin/dashboard',
+						icon: LayoutDashboardIcon
+					},
+					{
+						title: 'Kelola Kelas',
+						url: '/admin/courses',
+						icon: SquareLibraryIcon
+					},
+					{
+						title: 'Kelola Pengguna',
+						url: '/admin/users',
+						icon: UsersIcon
+					}
+				];
+			case 'lecturer':
+				return [
+					{
+						title: 'Dashboard',
+						url: '/lecturer/dashboard',
+						icon: LayoutDashboardIcon
+					},
+					{
+						title: 'Kelas Saya',
+						url: '/lecturer/courses',
+						icon: SquareLibraryIcon
+					}
+				];
+			case 'student':
+				return [
+					{
+						title: 'Dashboard',
+						url: '/student/dashboard',
+						icon: LayoutDashboardIcon
+					},
+					{
+						title: 'Kelas Saya',
+						url: '/student/courses',
+						icon: SquareLibraryIcon
+					}
+				];
+			default:
+				return [
+					{
+						title: 'Dashboard',
+						url: '/student/dashboard',
+						icon: LayoutDashboardIcon
+					},
+					{
+						title: 'Kelas Saya',
+						url: '/student/courses',
+						icon: SquareLibraryIcon
+					}
+				];
+		}
+	});
 </script>
 
 <Sidebar.Root bind:ref variant="inset" {...restProps}>
@@ -147,7 +79,7 @@
 			<Sidebar.MenuItem>
 				<Sidebar.MenuButton size="lg">
 					{#snippet child()}
-						<div class="flex h-10 w-full items-center justify-center">
+						<div class="flex h-10 w-full items-center p-4">
 							<RegulateLogo withTitle class="h-auto w-3/4" />
 						</div>
 					{/snippet}
@@ -156,9 +88,7 @@
 		</Sidebar.Menu>
 	</Sidebar.Header>
 	<Sidebar.Content>
-		<NavMain items={data.navMain} />
-		<NavProjects projects={data.projects} />
-		<NavSecondary items={data.navSecondary} class="mt-auto" />
+		<NavMain items={navItem} />
 	</Sidebar.Content>
 	<Sidebar.Footer>
 		<NavUser />
