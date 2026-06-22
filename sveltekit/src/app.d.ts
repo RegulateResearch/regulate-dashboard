@@ -19,6 +19,10 @@ declare global {
 				role: string;
 			};
 			pageTitle?: string;
+			breadcrumbs?: {
+				name: string,
+				href: string
+			}[]
 		}
 		// interface PageState {}
 		// interface Platform {}
