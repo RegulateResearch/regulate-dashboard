@@ -4,13 +4,19 @@
 	import { formSchema, type FormSchema } from './schema';
 	import { zod4Client } from 'sveltekit-superforms/adapters';
 	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
-	import AuthForm from '../authForm.svelte';
+	import AuthForm from '$lib/components/auth-form.svelte';
 	import type { ActionData } from './$types';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import Eye from '@lucide/svelte/icons/eye';
 	import EyeOff from '@lucide/svelte/icons/eye-off';
 	import * as Tooltip from '$lib/components/ui/tooltip';
 	import { resolve } from '$app/paths';
+	import {
+		Field,
+		FieldDescription,
+		FieldSeparator
+	} from '$lib/components/ui/field/index.js';
+	import SSOButton from '$lib/components/sso-button.svelte';
 
 	type FormValidationData = {
 		data: { form: SuperValidated<Infer<FormSchema>> };
@@ -29,10 +35,16 @@
 	const { form: formData, enhance } = form;
 </script>
 
-<AuthForm formTitle="Masuk" showLogo showSSOButton {formBody} {switchFormBtn} />
+<AuthForm formTitle="Masuk" {formBody} {switchFormBtn} />
 
 {#snippet formBody()}
 	<form method="POST" use:enhance class="flex flex-col gap-6">
+		<Field>
+			<SSOButton />
+		</Field>
+		<FieldSeparator>
+			atau masuk dengan
+		</FieldSeparator>
 		<Form.Field {form} name="email">
 			<Form.Control>
 				{#snippet children({ props })}
@@ -96,5 +108,9 @@
 {/snippet}
 
 {#snippet switchFormBtn()}
-	<span>Belum punya akun? <a href={resolve("/register")} class="text-yellow-500">Daftar</a></span>
+	<Field class="p-2">
+		<FieldDescription class="text-center">
+			Belum punya akun? <a href={resolve('/register')}>Daftar</a>
+		</FieldDescription>
+	</Field>
 {/snippet}

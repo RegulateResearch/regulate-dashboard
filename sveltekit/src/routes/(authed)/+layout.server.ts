@@ -1,12 +1,13 @@
-import { getSession, logout } from '$lib/server/api/auth';
+import { logout } from '$lib/server/api/auth';
 import type { LayoutServerLoad } from './$types';
 
-export const load: LayoutServerLoad = async () => {
+export const load: LayoutServerLoad = async ({ locals }) => {
   try {
-    const session = await getSession()
-    if (session && session.message === 'token is valid') {
-      return { userInfo: session.data }
+    const userInfo = locals.userInfo
+    if (userInfo) {
+      return { userInfo }
     }
+    return logout()
   } catch {
     return logout()
   }
