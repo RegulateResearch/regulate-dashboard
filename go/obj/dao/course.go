@@ -1,12 +1,16 @@
 package dao
 
-import "frascati/constants"
+import (
+	"database/sql"
+	"frascati/constants"
+)
 
 type CourseDb struct {
 	BaseDb
 	Name string
 	Year int
 	Term constants.Semester
+	Url  sql.NullString
 }
 
 func NewCourseDb() CourseDb {

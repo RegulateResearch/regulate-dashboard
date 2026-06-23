@@ -5,4 +5,5 @@ type Course struct {
 	Name string `json:"name" binding:"required"`
 	Year int    `json:"year" binding:"required,max=9999"`
 	Term string `json:"term" binding:"required,oneof=odd even short"`
+	Url  string `json:"url,omitempty"`
 }

@@ -32,17 +32,20 @@ func NewCourseDbRepository(executor queryexec.QueryExecutor) CourseRepository {
 }
 
 func (r courseRepositoryImpl) Add(ctx typing.Context, course entity.Course) (entity.Course, exception.Exception) {
-	var res entity.Course
 	queryStr := `
-		INSERT INTO courses(name, course_year, semester, created_at, updated_at)
+		INSERT INTO courses(name, course_year, semester, course_url, created_at, updated_at)
 		VALUES
-			($1, $2, $3, NOW(), NOW())
-		RETURNING id, name, course_year, semester
+			($1, $2, $3, $4, NOW(), NOW())
+		RETURNING id, name, course_year, semester, course_url
 	`
 
+	var resDb dao.CourseDb
+
 	err := r.executor.
-		QueryRowContext(ctx, queryStr, course.Name, course.Year, course.Term).
-		Scan(&res.ID, &res.Name, &res.Year, &res.Term)
+		QueryRowContext(ctx, queryStr, course.Name, course.Year, course.Term, course.Url).
+		Scan(&resDb.ID, &resDb.Name, &resDb.Year, &resDb.Term, &resDb.Url)
+
+	res := converter.CourseDbToEntity(resDb)
 
 	if err != nil {
 		return entity.Course{}, repository_exception.WrapQueryexecException(err, "course")
@@ -53,7 +56,7 @@ func (r courseRepositoryImpl) Add(ctx typing.Context, course entity.Course) (ent
 
 func (r courseRepositoryImpl) FindAll(ctx typing.Context) ([]entity.Course, exception.Exception) {
 	query := `
-		SELECT id, name, course_year, semester
+		SELECT id, name, course_year, semester, course_url
 		FROM courses
 		WHERE deleted_at IS NULL
 	`
@@ -67,7 +70,7 @@ func (r courseRepositoryImpl) FindAll(ctx typing.Context) ([]entity.Course, exce
 	res, err := querying.ScanForRowsThenTransform(
 		rows, dao.NewCourseDb,
 		func(rows queryexec.Rows, elem dao.CourseDb) (dao.CourseDb, exception.Exception) {
-			err := rows.Scan(&elem.ID, &elem.Name, &elem.Year, &elem.Term)
+			err := rows.Scan(&elem.ID, &elem.Name, &elem.Year, &elem.Term, &elem.Url)
 			return elem, err
 		},
 		converter.CourseDbToEntity,
@@ -82,7 +85,7 @@ func (r courseRepositoryImpl) FindAll(ctx typing.Context) ([]entity.Course, exce
 
 func (r courseRepositoryImpl) FindAllByEnrollingUserId(ctx typing.Context, user entity.User) ([]entity.Course, exception.Exception) {
 	query := `
-		SELECT id, name, course_year, semester
+		SELECT id, name, course_year, semester, course_url
 		FROM courses
 		WHERE 
 			deleted_at IS NULL AND
@@ -105,7 +108,7 @@ func (r courseRepositoryImpl) FindAllByEnrollingUserId(ctx typing.Context, user 
 	res, err := querying.ScanForRowsThenTransform(
 		rows, dao.NewCourseDb,
 		func(rows queryexec.Rows, elem dao.CourseDb) (dao.CourseDb, exception.Exception) {
-			err := rows.Scan(&elem.ID, &elem.Name, &elem.Year, &elem.Term)
+			err := rows.Scan(&elem.ID, &elem.Name, &elem.Year, &elem.Term, &elem.Url)
 			return elem, err
 		},
 		converter.CourseDbToEntity,
@@ -119,20 +122,22 @@ func (r courseRepositoryImpl) FindAllByEnrollingUserId(ctx typing.Context, user 
 }
 
 func (r courseRepositoryImpl) FindById(ctx typing.Context, id typing.ID) (entity.Course, exception.Exception) {
-	var res entity.Course
 	querystr := `
-		SELECT id, name, course_year, semester
+		SELECT id, name, course_year, semester, course_url
 		FROM courses
 		WHERE id = $1 AND deleted_at IS NULL
 	`
 
+	var courseDb dao.CourseDb
 	err := r.executor.QueryRowContext(ctx, querystr, id).Scan(
-		&res.ID, &res.Name, &res.Year, &res.Term,
+		&courseDb.ID, &courseDb.Name, &courseDb.Year, &courseDb.Term, &courseDb.Url,
 	)
 
 	if err != nil {
 		return entity.Course{}, repository_exception.WrapQueryexecException(err, "course")
 	}
+
+	res := converter.CourseDbToEntity(courseDb)
 
 	return res, nil
 }
@@ -144,6 +149,7 @@ func (r courseRepositoryImpl) UpdateById(ctx typing.Context, id typing.ID, updat
 			name = $2,
 			course_year = $3,
 			semester = $4,
+			course_url = $5,
 			updated_at = NOW()
 		WHERE id = $1 AND deleted_at IS NULL
 	`

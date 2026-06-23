@@ -33,6 +33,11 @@ CREATE TABLE IF NOT EXISTS courses(
     semester SMALLINT NOT NULL
 );
 
+ALTER TABLE courses
+ADD COLUMN IF NOT EXISTS
+course_url VARCHAR
+;
+
 CREATE TABLE IF NOT EXISTS course_members(
     id BIGSERIAL PRIMARY KEY,
     created_at TIMESTAMP NOT NULL,
