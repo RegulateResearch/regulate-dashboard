@@ -13,6 +13,7 @@ func CourseEntityToDto(courseEnt entity.Course) dto.Course {
 		Name: courseEnt.Name,
 		Year: courseEnt.Year,
 		Term: courseEnt.Term.ToString(),
+		Url:  courseEnt.Url,
 	}
 }
 
@@ -21,6 +22,7 @@ func CourseDtoToEntity(courseDto dto.Course) entity.Course {
 		Name: courseDto.Name,
 		Year: courseDto.Year,
 		Term: constants.SemesterFromString(courseDto.Term),
+		Url:  courseDto.Url,
 	}
 }
 
@@ -30,5 +32,6 @@ func CourseDbToEntity(courseDb dao.CourseDb) entity.Course {
 		Name: courseDb.Name,
 		Year: courseDb.Year,
 		Term: courseDb.Term,
+		Url:  courseDb.Url.String,
 	}
 }

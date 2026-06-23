@@ -7,3 +7,8 @@ CREATE TABLE IF NOT EXISTS courses(
     course_year SMALLINT NOT NULL,
     semester SMALLINT NOT NULL
 );
+
+ALTER TABLE courses
+ADD COLUMN IF NOT EXISTS
+course_url VARCHAR
+;

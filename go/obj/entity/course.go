@@ -7,4 +7,5 @@ type Course struct {
 	Name string
 	Year int
 	Term constants.Semester
+	Url  string
 }
