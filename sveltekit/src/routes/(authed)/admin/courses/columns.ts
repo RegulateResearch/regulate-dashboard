@@ -116,7 +116,7 @@ export const columns: ColumnDef<Course>[] = [
       });
     },
     cell: ({ row }) => {
-      return renderComponent(DataTableActions, { id: row.original.id, url: row.original.url });
+      return renderComponent(DataTableActions, { data: row.original });
     },
   }
 ];
