@@ -1,21 +1,21 @@
 <script lang="ts">
+	import PageHeader from '$lib/components/page-header.svelte';
+	import { Button, buttonVariants } from '$lib/components/ui/button';
 	import DataTable from '$lib/components/ui/data-table/data-table.svelte';
-	import SquareLibraryIcon from '@lucide/svelte/icons/square-library';
-	import { columns } from './columns';
-	import type { PageProps } from './$types';
+	import * as Dialog from '$lib/components/ui/dialog';
 	import * as Empty from '$lib/components/ui/empty';
+	import * as Form from '$lib/components/ui/form/index';
+	import { Input } from '$lib/components/ui/input';
+	import RoundedTabs from '$lib/components/ui/rounded-tabs/rounded-tabs.svelte';
+	import * as Select from '$lib/components/ui/select';
 	import FolderIcon from '@lucide/svelte/icons/folder';
 	import PlusIcon from '@lucide/svelte/icons/plus';
-	import { Button, buttonVariants } from '$lib/components/ui/button';
-	import * as Dialog from '$lib/components/ui/dialog';
-	import { Input } from '$lib/components/ui/input';
-	import * as Select from '$lib/components/ui/select';
-	import * as Form from '$lib/components/ui/form/index';
+	import SquareLibraryIcon from '@lucide/svelte/icons/square-library';
 	import { superForm } from 'sveltekit-superforms';
 	import { zod4Client } from 'sveltekit-superforms/adapters';
+	import type { PageProps } from './$types';
+	import { columns, columnsLabel } from './columns';
 	import { formSchema } from './schema';
-	import PageHeader from '$lib/components/page-header.svelte';
-	import RoundedTabs from '$lib/components/ui/rounded-tabs/rounded-tabs.svelte';
 
 	let { data }: PageProps = $props();
 
@@ -28,28 +28,6 @@
 
 	const { form: formData, enhance } = form;
 	let dialogOpen = $state(false);
-	let courses = $derived(
-		data.courses
-			? data.courses.map((course) => {
-					let term: 'Ganjil' | 'Genap' | 'Semester Pendek' = 'Ganjil';
-					switch (course.term) {
-						case 'odd':
-							term = 'Ganjil';
-							break;
-						case 'even':
-							term = 'Genap';
-							break;
-						case 'short':
-							term = 'Semester Pendek';
-							break;
-					}
-					return {
-						...course,
-						term
-					};
-				})
-			: []
-	);
 
 	const yearOptions = (() => {
 		const currentYear = new Date().getFullYear();
@@ -160,6 +138,19 @@
 							<Form.FieldErrors />
 						</Form.Field>
 					</div>
+					<Form.Field {form} name="url">
+						<Form.Control>
+							{#snippet children({ props })}
+								<Form.Label>URL Kelas (cth. di LMS)</Form.Label>
+								<Input
+									{...props}
+									bind:value={$formData.url}
+									placeholder="Masukkan URL kelas (jika ada)"
+								/>
+							{/snippet}
+						</Form.Control>
+						<Form.FieldErrors />
+					</Form.Field>
 					<Form.Button>Buat Kelas</Form.Button>
 				</form>
 				<Dialog.Footer>
@@ -174,7 +165,26 @@
 
 <RoundedTabs class="min-h-0 grow">
 	{#if data.courses && data.courses.length > 0}
-		<DataTable {columns} data={courses} columnToFilter="name" filterPlaceholder="Cari kelas" />
+		<DataTable
+			{columns}
+			{columnsLabel}
+			data={data.courses}
+			columnToSearch="name"
+			searchPlaceholder="Cari kelas"
+			categorialFilters={[
+				{
+					title: 'Tahun Akademik',
+					colName: 'year',
+					options: yearOptions
+				},
+				{
+					title: 'Semester',
+					colName: 'term',
+					options: termOptions
+				},
+			]}
+			class="w-full h-full"
+		></DataTable>
 	{:else}
 		<Empty.Root>
 			<Empty.Header>

@@ -43,7 +43,7 @@
 		</ul>
 	{/if}
 
-	<div class="min-h-0 grow rounded-xl border bg-white p-6">
+	<div class="min-h-0 grow rounded-xl border bg-white p-4">
 		{@render children?.()}
 	</div>
 </div>

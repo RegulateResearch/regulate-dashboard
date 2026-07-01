@@ -9,6 +9,7 @@ export const getCoursesResponseSchema = z.object({
         name: z.string(),
         year: z.number(),
         term: z.enum(['odd', 'even', 'short']),
+        url: z.string().optional()
       }
       )
     )
@@ -21,6 +22,7 @@ export const createCoursesRequestSchema = z.object({
   name: z.string(),
   year: z.number(),
   term: z.enum(['odd', 'even', 'short']),
+  url: z.url().optional()
 });
 
 export type CreateCoursesRequest = z.infer<typeof createCoursesRequestSchema>;
@@ -33,6 +35,7 @@ export const createCoursesResponseSchema = z.object({
       name: z.string(),
       year: z.number(),
       term: z.enum(['odd', 'even', 'short']),
+      url: z.string().optional()
     }
     )
   ),

@@ -32,9 +32,8 @@ export const actions = {
     }
 
     const reqBody = {
-      name: form.data.name,
+      ...form.data,
       year: parseInt(form.data.year),
-      term: form.data.term
     }
 
     try {
