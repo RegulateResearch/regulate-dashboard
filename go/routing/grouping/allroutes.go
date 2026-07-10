@@ -11,6 +11,7 @@ type Routes struct {
 	Login   Route
 	User    Route
 	Admin   Route
+	General Route
 }
 
 func AllRoutes(router gin.IRouter, middlewares setup.Middlewares) Routes {
@@ -19,5 +20,6 @@ func AllRoutes(router gin.IRouter, middlewares setup.Middlewares) Routes {
 		Login:   loginRoute(router, middlewares),
 		User:    userRoute(router, middlewares),
 		Admin:   adminRoute(router, middlewares),
+		General: generalLoginRoute(router, middlewares),
 	}
 }
