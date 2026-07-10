@@ -5,11 +5,12 @@
 	import { zod4Client } from 'sveltekit-superforms/adapters';
 	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
 	import { resolve } from '$app/paths';
-	import AuthForm from '../authForm.svelte';
+	import AuthForm from '$lib/components/auth-form.svelte';
 	import Eye from '@lucide/svelte/icons/eye';
 	import EyeOff from '@lucide/svelte/icons/eye-off';
 	import * as Tooltip from '$lib/components/ui/tooltip';
 	import { Button } from '$lib/components/ui/button';
+	import { Field, FieldDescription } from '$lib/components/ui/field/index.js';
 
 	let {
 		data
@@ -28,7 +29,7 @@
 	const { form: formData, enhance } = form;
 </script>
 
-<AuthForm formTitle="Daftar" showLogo showSSOButton {formBody} {switchFormBtn} />
+<AuthForm formTitle="Daftar" {formBody} {switchFormBtn} />
 
 {#snippet formBody()}
 	<form method="POST" use:enhance class="flex flex-col gap-6">
@@ -83,17 +84,17 @@
 		<Form.Field {form} name="password">
 			<Form.Control>
 				{#snippet children({ props })}
-				<Form.Label>Kata Sandi</Form.Label>
-				<div class="flex items-center gap-2">
-					<Input
-						{...props}
-						id="password"
-						type={showPassword ? 'text' : 'password'}
-						placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;"
-						required
-						bind:value={$formData.password}
-					/>
-					<Tooltip.Root>
+					<Form.Label>Kata Sandi</Form.Label>
+					<div class="flex items-center gap-2">
+						<Input
+							{...props}
+							id="password"
+							type={showPassword ? 'text' : 'password'}
+							placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;"
+							required
+							bind:value={$formData.password}
+						/>
+						<Tooltip.Root>
 							<Tooltip.Trigger>
 								<Button
 									variant="outline"
@@ -120,17 +121,17 @@
 		<Form.Field {form} name="passwordConfirmation">
 			<Form.Control>
 				{#snippet children({ props })}
-				<Form.Label>Ulangi Kata Sandi</Form.Label>
-				<div class="flex items-center gap-2">
-					<Input
-						{...props}
-						id="passwordConfirmation"
-						type={showPasswordConfirmation ? 'text' : 'password'}
-						placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;"
-						required
-						bind:value={$formData.passwordConfirmation}
-					/>
-					<Tooltip.Root>
+					<Form.Label>Ulangi Kata Sandi</Form.Label>
+					<div class="flex items-center gap-2">
+						<Input
+							{...props}
+							id="passwordConfirmation"
+							type={showPasswordConfirmation ? 'text' : 'password'}
+							placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;"
+							required
+							bind:value={$formData.passwordConfirmation}
+						/>
+						<Tooltip.Root>
 							<Tooltip.Trigger>
 								<Button
 									variant="outline"
@@ -159,5 +160,9 @@
 {/snippet}
 
 {#snippet switchFormBtn()}
-	<span>Sudah punya akun? <a href={resolve('/login')} class="text-yellow-500">Masuk</a></span>
+	<Field class="p-2">
+		<FieldDescription class="text-center">
+			Sudah punya akun? <a href={resolve('/login')}>Masuk</a>
+		</FieldDescription>
+	</Field>
 {/snippet}
