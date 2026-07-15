@@ -20,3 +20,9 @@ func BaseDbToEntity(base dao.BaseDb) entity.Base {
 		DeletedAt: base.DeletedAt,
 	}
 }
+
+func BaseDtoToEntity(base dto.Base) entity.Base {
+	return entity.Base{
+		ID: base.ID,
+	}
+}
