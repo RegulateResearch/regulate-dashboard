@@ -9,7 +9,7 @@ const (
 )
 
 var roleStrArr = []string{
-	"undefined",
+	"",
 	"user",
 	"admin",
 	"superadmin",

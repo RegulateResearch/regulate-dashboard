@@ -35,3 +35,20 @@ func AcademicRoleFromString(roleStr string) AcademicRole {
 
 	return AcademicRole(roleNum)
 }
+
+func (r AcademicRole) ToDefaultCourseRole() CourseRole {
+	courseRoleArr := []CourseRole{
+		CourseRole(0),
+		COURSE_ROLE_STUDENT,
+		COURSE_ROLE_LECTURER,
+		COURSE_ROLE_STUDENT,
+	}
+
+	roleInt := int(r)
+	roleIdx := 0
+	if roleInt > 0 && roleInt < len(courseRoleArr) {
+		roleIdx = roleInt
+	}
+
+	return courseRoleArr[roleIdx]
+}

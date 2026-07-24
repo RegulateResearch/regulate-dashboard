@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"frascati/comp/queryexec"
 	"frascati/exception"
+	"frascati/lambda"
 	"frascati/obj/converter"
 	"frascati/obj/dao"
 	"frascati/obj/entity"
@@ -16,7 +17,7 @@ import (
 type UserRepository interface {
 	FindAll(typing.Context) ([]entity.User, exception.Exception)
 	FindById(ctx typing.Context, id typing.ID) (entity.User, exception.Exception)
-	FilterExistingId(ctx typing.Context, ids []typing.ID) ([]typing.ID, exception.Exception)
+	FilterExistingId(ctx typing.Context, ids []typing.ID) ([]entity.User, exception.Exception)
 	IsExistById(ctx typing.Context, id typing.ID) (bool, exception.Exception)
 	UpdateAccessBulk(ctx typing.Context, usersData []entity.User) ([]entity.User, exception.Exception)
 }
@@ -76,18 +77,18 @@ func (r userRepositoryImpl) FindById(ctx typing.Context, id typing.ID) (entity.U
 	return converter.UserDbToEntity(res), nil
 }
 
-func (r userRepositoryImpl) FilterExistingId(ctx typing.Context, ids []typing.ID) ([]typing.ID, exception.Exception) {
+func (r userRepositoryImpl) FilterExistingId(ctx typing.Context, ids []typing.ID) ([]entity.User, exception.Exception) {
 	querystr := `
-		SELECT id
+		SELECT DISTINCT u.id, u.academic_role
 		FROM (
 			VALUES
 				%s
 		) AS ids(id)
-		WHERE EXISTS (
-			SELECT 1
-			FROM users AS u
-			WHERE u.id = ids.id AND deleted_at IS NULL
-		)
+		JOIN (
+			SELECT id, academic_role
+			FROM users
+			WHERE deleted_at IS NULL
+		) AS u ON ids.id = u.id
 	`
 
 	paramIdxStart := 1
@@ -102,20 +103,23 @@ func (r userRepositoryImpl) FilterExistingId(ctx typing.Context, ids []typing.ID
 	)
 
 	querystr = fmt.Sprintf(querystr, rowstr)
-	fmt.Println(querystr)
 	rows, err := r.executor.QueryContext(ctx, querystr, args...)
 	if err != nil {
 		return nil, repository_exception.WrapQueryexecException(err, "user")
 	}
 	defer r.executor.CloseRows(rows, "user - FilterExistingId")
 
-	res, err := querying.ScanForRows(
-		rows, typing.IDDefault,
-		func(rows queryexec.Rows, elem typing.ID) (typing.ID, exception.Exception) {
-			err := rows.Scan(&elem)
+	resDb, err := querying.ScanForRows(
+		rows, dao.NewUserDb,
+		func(rows queryexec.Rows, elem dao.UserDb) (dao.UserDb, exception.Exception) {
+			err := rows.Scan(&elem.ID, &elem.AcademicRole)
 			return elem, err
 		},
 	)
+
+	res := lambda.MapList(resDb, converter.UserDbToEntity)
+	resDto := lambda.MapList(res, converter.UserEntityToDTO)
+	log.Println(resDto)
 
 	if err != nil {
 		return nil, repository_exception.WrapQueryexecException(err, "user")

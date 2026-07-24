@@ -3,7 +3,7 @@ package constants
 type CourseRole int
 
 const (
-	COURSE_ROLE_STUDENT Role = iota + 1
+	COURSE_ROLE_STUDENT CourseRole = iota + 1
 	COURSE_ROLE_TA
 	COURSE_ROLE_EDITING_TA
 	COURSE_ROLE_LECTURER

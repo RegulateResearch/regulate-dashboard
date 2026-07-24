@@ -13,7 +13,6 @@ func CourseMemberSimpleDtoToEntity(memberDto dto.CourseMemberSimple) entity.Cour
 				ID: memberDto.UserId,
 			},
 		},
-		Role: constants.CourseRoleFromString(memberDto.Role),
 	}
 }
 
@@ -29,7 +28,6 @@ func CourseMemberEntityToSimpleDto(memberEntity entity.CourseMember) dto.CourseM
 	return dto.CourseMemberSimple{
 		Base:   BaseEntityToDto(memberEntity.Base),
 		UserId: memberEntity.User.ID,
-		Role:   memberEntity.Role.ToString(),
 	}
 }
 
