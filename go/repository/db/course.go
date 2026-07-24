@@ -154,7 +154,7 @@ func (r courseRepositoryImpl) UpdateById(ctx typing.Context, id typing.ID, updat
 		WHERE id = $1 AND deleted_at IS NULL
 	`
 
-	res, err := r.executor.ExecContext(ctx, querystr, id, updateData.Name, updateData.Year, updateData.Term)
+	res, err := r.executor.ExecContext(ctx, querystr, id, updateData.Name, updateData.Year, updateData.Term, updateData.Url)
 	if err != nil {
 		return false, repository_exception.WrapQueryexecException(err, "course")
 	}
