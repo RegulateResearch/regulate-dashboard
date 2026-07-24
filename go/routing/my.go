@@ -7,9 +7,9 @@ import (
 
 func setupMyRouter(routers grouping.Routes, handlers setup.Handlers) {
 	myHandler := handlers.My
-	route := routers.User
-	group := route.Group("/my")
+	userGroup := routers.User.Group("/my")
+	generalGroup := routers.General.Group("/my")
 
-	group.GET("/profile", myHandler.MyProfile)
-	group.GET("/courses", myHandler.MyCourses)
+	generalGroup.GET("/profile", myHandler.MyProfile)
+	userGroup.GET("/courses", myHandler.MyCourses)
 }
