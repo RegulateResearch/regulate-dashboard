@@ -8,10 +8,12 @@ import (
 type CourseItemDb struct {
 	BaseDb
 	Name        string
+	Course      CourseDb
 	ItemType    constants.CourseItemType
 	ItemUrl     sql.NullString
 	Description sql.NullString
-	DueDate     sql.NullTime
+	StartTime   sql.NullTime
+	DueTime     sql.NullTime
 }
 
 func NewCourseItemDb() CourseItemDb {

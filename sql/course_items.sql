@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS course_items(
     name VARCHAR(100) NOT NULL,
     item_type SMALLINT NOT NULL,
     item_url VARCHAR,
-    due_date TIMESTAMP,
+    start_time TIMESTAMP,
+    due_time TIMESTAMP,
     description VARCHAR
 );

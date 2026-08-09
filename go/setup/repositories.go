@@ -12,6 +12,7 @@ import (
 type repositories struct {
 	auth         repository.AuthRepository
 	course       repository.CourseRepository
+	courseItem   repository.CourseItemRepository
 	courseMember repository.CourseMemberRepository
 	user         repository.UserRepository
 	record       repository.RecordRepository
@@ -22,6 +23,7 @@ func setupRepositories(db *sql.DB, processor background.Processor) repositories 
 	executor := dbhandler.NewDbExecutor(db, processor)
 	authRepoDb := repo_db.NewAuthRepositoryDb(executor)
 	courseRepoDb := repo_db.NewCourseDbRepository(executor)
+	courseItemRepoDb := repo_db.NewCourseItemRepository(executor)
 	courseMemberRepoDb := repo_db.NewCourseMemberDbRepository(executor)
 	userRepoDb := repo_db.NewUserRepository(executor)
 	recordRepoDb := repo_db.NewRecordRepository(executor)
@@ -30,6 +32,7 @@ func setupRepositories(db *sql.DB, processor background.Processor) repositories 
 		auth:         repository.NewAuthRepository(authRepoDb),
 		course:       repository.NewCourseRepository(courseRepoDb),
 		courseMember: repository.NewCourseMemberRepository(courseMemberRepoDb),
+		courseItem:   repository.NewCourseItemRepository(courseItemRepoDb),
 		user:         repository.NewUserRepository(userRepoDb),
 		record:       repository.NewRecordRepository(recordRepoDb),
 		transactor:   executor,

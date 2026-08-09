@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"errors"
 	"frascati/exception"
 	"frascati/obj/entity"
 	repo_db "frascati/repository/db"
@@ -15,6 +16,7 @@ type CourseRepository interface {
 	UpdateById(ctx typing.Context, id typing.ID, updateDate entity.Course) (bool, exception.Exception)
 	DeleteById(ctx typing.Context, id typing.ID) (bool, exception.Exception)
 	IsExistById(ctx typing.Context, id typing.ID) (bool, exception.Exception)
+	CheckExistById(ctx typing.Context, id typing.ID) exception.Exception
 }
 
 type courseRepositoryImpl struct {
@@ -60,4 +62,22 @@ func (r courseRepositoryImpl) Add(ctx typing.Context, course entity.Course) (ent
 func (r courseRepositoryImpl) IsExistById(ctx typing.Context, id typing.ID) (bool, exception.Exception) {
 	res, err := r.dbRepo.IsExistById(ctx, id)
 	return res, err
+}
+
+func (r courseRepositoryImpl) CheckExistById(ctx typing.Context, id typing.ID) exception.Exception {
+	isExist, err := r.IsExistById(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	if !isExist {
+		return exception.NewBaseException(
+			exception.CAUSE_NOT_FOUND,
+			"course_member/repository",
+			"record not found",
+			errors.New("course not found"),
+		)
+	}
+
+	return nil
 }

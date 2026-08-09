@@ -9,7 +9,7 @@ const (
 )
 
 var courseItemStrArr = []string{
-	"undefined",
+	"",
 	"assignment",
 	"activity",
 	"resource",
@@ -28,7 +28,7 @@ func (r CourseItemType) ToString() string {
 func CourseItemTypeFromString(itemTypeStr string) CourseItemType {
 	itemTypeNum := 0
 	for i := 1; i < len(courseItemStrArr) && itemTypeNum == 0; i++ {
-		if itemTypeStr == courseRoleStrArr[i] {
+		if itemTypeStr == courseItemStrArr[i] {
 			itemTypeNum = i
 		}
 	}
