@@ -11,6 +11,7 @@ import (
 )
 
 type AdminHandler struct {
+	baseHandler
 	userService service.UserService
 }
 
@@ -21,7 +22,7 @@ func NewAdminHandler(userService service.UserService) AdminHandler {
 }
 
 func (h AdminHandler) GetAll(ctx *gin.Context) {
-	res, exc := h.userService.FindAll(ctx)
+	res, exc := h.userService.FindAll(h.extractCtx(ctx))
 	if exc != nil {
 		ctx.Error(exc)
 		return
