@@ -20,6 +20,6 @@ type CourseItemWriteData struct {
 	ItemType    string    `json:"type,omitempty" binding:"required,oneof=assignment activity resource"`
 	ItemUrl     string    `json:"url,omitempty"`
 	Description string    `json:"description,omitempty"`
-	StartTime   time.Time `json:"startTime,omitempty" binding:"omitzero,gt"`
-	DueTime     time.Time `json:"dueTime,omitempty" binding:"omitzero,gt,gtefield=StartTime"`
+	StartTime   time.Time `json:"startTime,omitzero" binding:"omitzero,gt"`
+	DueTime     time.Time `json:"dueTime,omitzero" binding:"omitzero,gt,gtefield=StartTime"`
 }

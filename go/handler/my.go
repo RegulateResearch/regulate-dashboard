@@ -48,7 +48,7 @@ func (h MyHandler) MyCourses(ctx *gin.Context) {
 	}
 
 	userID := userData.ID
-	res, err := h.myService.MyCourses(ctx, userID)
+	res, err := h.myService.MyCourses(h.extractCtx(ctx), userID)
 	if err != nil {
 		ctx.Error(err)
 		return

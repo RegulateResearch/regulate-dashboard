@@ -8,6 +8,7 @@ import (
 	"frascati/obj/converter"
 	"frascati/obj/dao"
 	"frascati/obj/entity"
+	repository_exception "frascati/repository/exception"
 	"frascati/typing"
 	"frascati/utils/querying"
 )
@@ -15,6 +16,8 @@ import (
 type CourseItemRepository interface {
 	FindByCourse(ctx typing.Context, course entity.Course) ([]entity.CourseItem, exception.Exception)
 	AddBulk(ctx typing.Context, items []entity.CourseItem) ([]entity.CourseItem, exception.Exception)
+	UpdateSingular(ctx typing.Context, item entity.CourseItem) (entity.CourseItem, exception.Exception)
+	DeleteSingular(ctx typing.Context, item entity.CourseItem) (bool, exception.Exception)
 }
 
 type courseItemRepositoryImpl struct {
@@ -96,4 +99,63 @@ func (r courseItemRepositoryImpl) AddBulk(ctx typing.Context, items []entity.Cou
 	)
 
 	return res, err
+}
+
+func (r courseItemRepositoryImpl) UpdateSingular(ctx typing.Context, item entity.CourseItem) (entity.CourseItem, exception.Exception) {
+	querystr := `
+		UPDATE course_items
+		SET
+			name = $3,
+			item_type = $4,
+			item_url = $5,
+			start_time = $6,
+			due_time = $7,
+			description = $8,
+			updated_at = NOW()
+		WHERE
+			id = $1 AND
+			course_id = $2 AND
+			deleted_at IS NULL
+		RETURNING
+			id, name, item_type, item_url, start_time, due_time, description
+	`
+
+	updateDataDto := converter.CourseItemEntityToDaoDb(item)
+	resDto := dao.CourseItemDb{}
+	err := r.executor.QueryRowContext(
+		ctx, querystr, updateDataDto.ID, updateDataDto.Course.ID,
+		updateDataDto.Name, updateDataDto.ItemType, updateDataDto.ItemUrl,
+		updateDataDto.StartTime, updateDataDto.DueTime, updateDataDto.Description,
+	).Scan(&resDto.ID, &resDto.Name, &resDto.ItemType, &resDto.ItemUrl, &resDto.StartTime, &resDto.DueTime, &resDto.Description)
+
+	if err != nil {
+		return entity.CourseItem{}, repository_exception.WrapQueryexecException(err, "course_item")
+	}
+
+	res := converter.CourseItemDbToEntity(resDto)
+	return res, nil
+}
+
+func (r courseItemRepositoryImpl) DeleteSingular(ctx typing.Context, item entity.CourseItem) (bool, exception.Exception) {
+	querystr := `
+		UPDATE course_items
+		SET
+			deleted_at = NOW()
+		WHERE
+			id = $1 AND
+			course_id = $2 AND
+			deleted_at IS NULL
+	`
+
+	res, err := r.executor.ExecContext(ctx, querystr, item.ID, item.Course.ID)
+	if err != nil {
+		return false, err
+	}
+
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return false, err
+	}
+
+	return rowsAffected > 0, nil
 }

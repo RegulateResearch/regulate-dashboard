@@ -90,7 +90,7 @@ func (h CourseHandler) UpdateById(ctx *gin.Context) {
 func (h CourseHandler) DeleteById(ctx *gin.Context) {
 	id := typing.IDFromString(ctx.Param("course_id"))
 
-	err := h.serv.DeleteById(ctx, id)
+	err := h.serv.DeleteById(h.extractCtx(ctx), id)
 	if err != nil {
 		ctx.Error(err)
 		return

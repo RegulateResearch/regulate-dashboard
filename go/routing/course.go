@@ -40,4 +40,6 @@ func setupCourseItemRouter(routers grouping.Routes, handlers setup.Handlers) {
 
 	adminCourseGroup.GET("/:course_id/items", courseItemHandler.GetByCourse)
 	adminCourseGroup.POST("/:course_id/items", courseItemHandler.AddBulk)
+	adminCourseGroup.PUT("/:course_id/items/:item_id", courseItemHandler.UpdateSingular)
+	adminCourseGroup.DELETE("/:course_id/items/:item_id", courseItemHandler.DeleteSingular)
 }
