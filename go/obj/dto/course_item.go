@@ -7,7 +7,7 @@ import (
 type CourseItem struct {
 	Base
 	Name        string    `json:"name"`
-	Course      Course    `json:"course,omitempty,omitzero"`
+	Course      Course    `json:"course,omitzero"`
 	ItemType    string    `json:"type,omitempty"`
 	ItemUrl     string    `json:"url,omitempty"`
 	Description string    `json:"description,omitempty"`

@@ -10,6 +10,7 @@ import (
 type UserService interface {
 	FindAll(ctx typing.Context) ([]entity.User, exception.Exception)
 	FindById(ctx typing.Context, id typing.ID) (entity.User, exception.Exception)
+	UpdateAccessBulk(ctx typing.Context, usersData []entity.User) ([]entity.User, exception.Exception)
 }
 
 type userServiceImpl struct {
@@ -29,5 +30,10 @@ func (s userServiceImpl) FindAll(ctx typing.Context) ([]entity.User, exception.E
 
 func (s userServiceImpl) FindById(ctx typing.Context, id typing.ID) (entity.User, exception.Exception) {
 	res, err := s.userRepo.FindById(ctx, id)
+	return res, err
+}
+
+func (s userServiceImpl) UpdateAccessBulk(ctx typing.Context, usersData []entity.User) ([]entity.User, exception.Exception) {
+	res, err := s.userRepo.UpdateAccessBulk(ctx, usersData)
 	return res, err
 }

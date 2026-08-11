@@ -52,7 +52,7 @@ func (s courseMemberServiceImpl) FindByCourseId(ctx typing.Context, courseId typ
 func (s courseMemberServiceImpl) AddMultiple(ctx typing.Context, courseId typing.ID, newMember []entity.CourseMember) ([]entity.CourseMember, exception.Exception) {
 	var res []entity.CourseMember
 	err := s.transactor.WithTransaction(
-		ctx, txhandler.TxOptionSerializable, false,
+		ctx, txhandler.TxOptionDefault, false,
 		func(ctx typing.Context) exception.Exception {
 			insertResult, err := s.addMultiple(ctx, courseId, newMember)
 			res = insertResult
@@ -69,7 +69,7 @@ func (s courseMemberServiceImpl) addMultiple(ctx typing.Context, courseId typing
 		return nil, isExistErr
 	}
 
-	validIds, err := s.userRepo.FilterExistingId(
+	validUsers, err := s.userRepo.FilterExistingId(
 		ctx, lambda.MapList(newMember, func(member entity.CourseMember) (userID typing.ID) {
 			return member.User.ID
 		}),
@@ -79,18 +79,13 @@ func (s courseMemberServiceImpl) addMultiple(ctx typing.Context, courseId typing
 		return nil, err
 	}
 
-	validMember := lambda.FilterList(newMember, func(member entity.CourseMember) bool {
-		found := false
-		for i := 0; i < len(validIds) && !found; i++ {
-			found = member.User.ID == validIds[i]
+	validMember := lambda.MapList(validUsers, func(user entity.User) entity.CourseMember {
+		return entity.CourseMember{
+			Base:   user.Base,
+			User:   user,
+			Course: entity.Course{Base: entity.Base{ID: courseId}},
+			Role:   user.AcademicRole.ToDefaultCourseRole(),
 		}
-
-		return found
-	})
-
-	validMember = lambda.MapList(validMember, func(member entity.CourseMember) entity.CourseMember {
-		member.Course.ID = courseId
-		return member
 	})
 
 	res, err := s.memberRepo.AddMultiple(ctx, validMember)

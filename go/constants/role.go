@@ -9,7 +9,7 @@ const (
 )
 
 var roleStrArr = []string{
-	"undefined",
+	"",
 	"user",
 	"admin",
 	"superadmin",
@@ -23,4 +23,15 @@ func (r Role) ToString() string {
 	}
 
 	return roleStr
+}
+
+func RoleFromString(roleStr string) Role {
+	roleNum := 0
+	for i := 1; i < len(roleStrArr) && roleNum == 0; i++ {
+		if roleStr == roleStrArr[i] {
+			roleNum = i
+		}
+	}
+
+	return Role(roleNum)
 }

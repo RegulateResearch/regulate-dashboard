@@ -11,4 +11,5 @@ func setupUsersRouting(routers grouping.Routes, handlers setup.Handlers) {
 
 	adminGroup.GET("/users", userHandler.GetAll)
 	adminGroup.GET("/users/:id", userHandler.GetById)
+	adminGroup.PUT("/users", userHandler.UpdateAccess)
 }
