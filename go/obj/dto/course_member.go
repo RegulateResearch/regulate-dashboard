@@ -14,7 +14,6 @@ type CourseMember struct {
 type CourseMemberSimple struct {
 	Base
 	UserId typing.ID `json:"userId" binding:"required"`
-	Role   string    `json:"role" binding:"required,oneof=student TA editingTA lecturer"`
 }
 
 type CourseMemberUpdateBulk struct {

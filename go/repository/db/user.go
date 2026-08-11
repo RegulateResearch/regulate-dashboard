@@ -4,19 +4,22 @@ import (
 	"fmt"
 	"frascati/comp/queryexec"
 	"frascati/exception"
+	"frascati/lambda"
 	"frascati/obj/converter"
 	"frascati/obj/dao"
 	"frascati/obj/entity"
 	repository_exception "frascati/repository/exception"
 	"frascati/typing"
 	"frascati/utils/querying"
+	"log"
 )
 
 type UserRepository interface {
 	FindAll(typing.Context) ([]entity.User, exception.Exception)
 	FindById(ctx typing.Context, id typing.ID) (entity.User, exception.Exception)
-	FilterExistingId(ctx typing.Context, ids []typing.ID) ([]typing.ID, exception.Exception)
+	FilterExistingId(ctx typing.Context, ids []typing.ID) ([]entity.User, exception.Exception)
 	IsExistById(ctx typing.Context, id typing.ID) (bool, exception.Exception)
+	UpdateAccessBulk(ctx typing.Context, usersData []entity.User) ([]entity.User, exception.Exception)
 }
 
 type userRepositoryImpl struct {
@@ -31,7 +34,7 @@ func NewUserRepository(executor queryexec.QueryExecutor) UserRepository {
 
 func (r userRepositoryImpl) FindAll(ctx typing.Context) ([]entity.User, exception.Exception) {
 	query :=
-		`SELECT id, email, username, display_name, user_role, civitas_id
+		`SELECT id, email, username, display_name, user_role, civitas_id, academic_role
 		FROM users`
 
 	rows, err := r.executor.QueryContext(ctx, query)
@@ -43,7 +46,7 @@ func (r userRepositoryImpl) FindAll(ctx typing.Context) ([]entity.User, exceptio
 	res, err := querying.ScanForRowsThenTransform(
 		rows, dao.NewUserDb,
 		func(rows queryexec.Rows, elem dao.UserDb) (dao.UserDb, exception.Exception) {
-			err := rows.Scan(&elem.ID, &elem.Email, &elem.Username, &elem.DisplayName, &elem.Role, &elem.CivitasID)
+			err := rows.Scan(&elem.ID, &elem.Email, &elem.Username, &elem.DisplayName, &elem.Role, &elem.CivitasID, &elem.AcademicRole)
 			return elem, err
 		},
 		converter.UserDbToEntity,
@@ -74,18 +77,18 @@ func (r userRepositoryImpl) FindById(ctx typing.Context, id typing.ID) (entity.U
 	return converter.UserDbToEntity(res), nil
 }
 
-func (r userRepositoryImpl) FilterExistingId(ctx typing.Context, ids []typing.ID) ([]typing.ID, exception.Exception) {
+func (r userRepositoryImpl) FilterExistingId(ctx typing.Context, ids []typing.ID) ([]entity.User, exception.Exception) {
 	querystr := `
-		SELECT id
+		SELECT DISTINCT u.id, u.academic_role
 		FROM (
 			VALUES
 				%s
 		) AS ids(id)
-		WHERE EXISTS (
-			SELECT 1
-			FROM users AS u
-			WHERE u.id = ids.id AND deleted_at IS NULL
-		)
+		JOIN (
+			SELECT id, academic_role
+			FROM users
+			WHERE deleted_at IS NULL
+		) AS u ON ids.id = u.id
 	`
 
 	paramIdxStart := 1
@@ -100,20 +103,23 @@ func (r userRepositoryImpl) FilterExistingId(ctx typing.Context, ids []typing.ID
 	)
 
 	querystr = fmt.Sprintf(querystr, rowstr)
-	fmt.Println(querystr)
 	rows, err := r.executor.QueryContext(ctx, querystr, args...)
 	if err != nil {
 		return nil, repository_exception.WrapQueryexecException(err, "user")
 	}
 	defer r.executor.CloseRows(rows, "user - FilterExistingId")
 
-	res, err := querying.ScanForRows(
-		rows, typing.IDDefault,
-		func(rows queryexec.Rows, elem typing.ID) (typing.ID, exception.Exception) {
-			err := rows.Scan(&elem)
+	resDb, err := querying.ScanForRows(
+		rows, dao.NewUserDb,
+		func(rows queryexec.Rows, elem dao.UserDb) (dao.UserDb, exception.Exception) {
+			err := rows.Scan(&elem.ID, &elem.AcademicRole)
 			return elem, err
 		},
 	)
+
+	res := lambda.MapList(resDb, converter.UserDbToEntity)
+	resDto := lambda.MapList(res, converter.UserEntityToDTO)
+	log.Println(resDto)
 
 	if err != nil {
 		return nil, repository_exception.WrapQueryexecException(err, "user")
@@ -142,4 +148,51 @@ func (r userRepositoryImpl) IsExistById(ctx typing.Context, id typing.ID) (bool,
 	}
 
 	return rowsCount > 0, nil
+}
+
+func (r userRepositoryImpl) UpdateAccessBulk(ctx typing.Context, usersData []entity.User) ([]entity.User, exception.Exception) {
+	querystr := `
+		UPDATE users
+		SET
+			user_role = update_data.role,
+			academic_role = update_data.academic_role,
+			updated_at = NOW()
+		FROM (
+			VALUES
+				%s
+		) AS update_data(id, role, academic_role)
+		WHERE
+			users.id = update_data.id AND
+			users.deleted_at IS NULL
+		RETURNING users.id, users.user_role, users.academic_role 
+	`
+	rowstr, args, _ := querying.BulkValuesFromBeginning(usersData, func(user entity.User, currentIdx int) querying.DataStrArgs {
+		return querying.DataStrArgs{
+			RowStr: fmt.Sprintf(
+				"(CAST($%d AS BIGINT), CAST($%d AS SMALLINT), CAST($%d AS SMALLINT))",
+				currentIdx, currentIdx+1, currentIdx+2,
+			),
+			Args: []any{user.ID, user.Role, user.AcademicRole},
+		}
+	})
+
+	querystr = fmt.Sprintf(querystr, rowstr)
+	log.Println(args...)
+	rows, err := r.executor.QueryContext(ctx, querystr, args...)
+
+	res, err := querying.ScanForRowsThenTransform(
+		rows, dao.NewUserDb,
+		func(rows queryexec.Rows, elem dao.UserDb) (dao.UserDb, exception.Exception) {
+			err := rows.Scan(&elem.ID, &elem.Role, &elem.AcademicRole)
+			return elem, err
+		},
+		converter.UserDbToEntity,
+	)
+
+	if err != nil {
+		return nil, repository_exception.WrapQueryexecException(err, "user")
+	}
+
+	return res, nil
+
 }

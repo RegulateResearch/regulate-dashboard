@@ -3,6 +3,7 @@ package handler
 import (
 	"frascati/lambda"
 	"frascati/obj/converter"
+	"frascati/obj/dto"
 	"frascati/response"
 	"frascati/service"
 	"frascati/typing"
@@ -42,5 +43,24 @@ func (h UserHandler) GetById(ctx *gin.Context) {
 	}
 
 	resDto := converter.UserEntityToDTO(res)
+	ctx.JSON(http.StatusOK, response.NewSuccessResponse(resDto, "success"))
+}
+
+func (h UserHandler) UpdateAccess(ctx *gin.Context) {
+	var updateData []dto.UserAccess
+	err := ctx.ShouldBindBodyWithJSON(&updateData)
+	if err != nil {
+		ctx.Error(err)
+		return
+	}
+
+	users := lambda.MapList(updateData, converter.UserAccessToEntity)
+	res, exc := h.userService.UpdateAccessBulk(ctx, users)
+	if exc != nil {
+		ctx.Error(err)
+		return
+	}
+
+	resDto := lambda.MapList(res, converter.UserEntityToDTO)
 	ctx.JSON(http.StatusOK, response.NewSuccessResponse(resDto, "success"))
 }

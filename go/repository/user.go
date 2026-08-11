@@ -10,8 +10,9 @@ import (
 type UserRepository interface {
 	FindAll(typing.Context) ([]entity.User, exception.Exception)
 	FindById(ctx typing.Context, id typing.ID) (entity.User, exception.Exception)
-	FilterExistingId(ctx typing.Context, ids []typing.ID) ([]typing.ID, exception.Exception)
+	FilterExistingId(ctx typing.Context, ids []typing.ID) ([]entity.User, exception.Exception)
 	IsExistById(ctx typing.Context, id typing.ID) (bool, exception.Exception)
+	UpdateAccessBulk(ctx typing.Context, usersData []entity.User) ([]entity.User, exception.Exception)
 }
 
 type userRepositoryImpl struct {
@@ -34,12 +35,17 @@ func (r userRepositoryImpl) FindById(ctx typing.Context, id typing.ID) (entity.U
 	return res, err
 }
 
-func (r userRepositoryImpl) FilterExistingId(ctx typing.Context, ids []typing.ID) ([]typing.ID, exception.Exception) {
+func (r userRepositoryImpl) FilterExistingId(ctx typing.Context, ids []typing.ID) ([]entity.User, exception.Exception) {
 	res, err := r.repoDb.FilterExistingId(ctx, ids)
 	return res, err
 }
 
 func (r userRepositoryImpl) IsExistById(ctx typing.Context, id typing.ID) (bool, exception.Exception) {
 	res, err := r.repoDb.IsExistById(ctx, id)
+	return res, err
+}
+
+func (r userRepositoryImpl) UpdateAccessBulk(ctx typing.Context, usersData []entity.User) ([]entity.User, exception.Exception) {
+	res, err := r.repoDb.UpdateAccessBulk(ctx, usersData)
 	return res, err
 }
