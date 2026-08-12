@@ -1,4 +1,4 @@
-import { createCourse, getCourses } from "$lib/server/api/admin";
+import { createCourse, getCourses } from "$lib/server/api/admin/courses";
 import type { Actions, PageServerLoad } from "./$types";
 import { superValidate } from "sveltekit-superforms";
 import { formSchema } from "./schema";
@@ -22,7 +22,6 @@ export const load: PageServerLoad = async () => {
 
 export const actions = {
   default: async ({ request }) => {
-    console.log("Attempting to create course with form data:");
     const form = await superValidate(request, zod4(formSchema));
     if (!form.valid) {
       return {

@@ -80,7 +80,7 @@
 				<Dialog.Header>
 					<Dialog.Title>Buat Kelas Baru</Dialog.Title>
 				</Dialog.Header>
-				<form method="POST" use:enhance class="grid gap-4">
+				<form method="POST" use:enhance class="grid gap-4" id="create-course-form" >
 					<Form.Field {form} name="name">
 						<Form.Control>
 							{#snippet children({ props })}
@@ -151,9 +151,11 @@
 						</Form.Control>
 						<Form.FieldErrors />
 					</Form.Field>
-					<Form.Button>Buat Kelas</Form.Button>
 				</form>
 				<Dialog.Footer>
+					<Button type="submit" form="create-course-form" class={buttonVariants({ variant: 'default' })}>
+						Buat Kelas
+					</Button>
 					<Dialog.Close type="button" class={buttonVariants({ variant: 'outline' })}>
 						Batalkan
 					</Dialog.Close>
