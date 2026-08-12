@@ -51,7 +51,7 @@ func SetupApp() (App, exception.Exception) {
 
 	repos := setupRepositories(db, backgroundProcessor)
 	services := setupServices(repos, jwtService, bcryptService, backgroundProcessor, ssoClient)
-	middlewares := setupMiddlewares(jwtService, logger, gatekeeper)
+	middlewares := setupMiddlewares(jwtService, logger, gatekeeper, services)
 	handlers := setupHandlers(services)
 
 	startupTask := initStartupTask(services, backgroundProcessor)

@@ -27,6 +27,14 @@ func (r CourseRole) ToString() string {
 	return roleStr
 }
 
+func (r CourseRole) HaveViewAccess() bool {
+	return r >= CourseRole(COURSE_ROLE_STUDENT) && r <= CourseRole(COURSE_ROLE_LECTURER)
+}
+
+func (r CourseRole) HaveWriteAccess() bool {
+	return r >= CourseRole(COURSE_ROLE_EDITING_TA) && r <= CourseRole(COURSE_ROLE_LECTURER)
+}
+
 func CourseRoleFromString(roleStr string) CourseRole {
 	roleNum := 0
 	for i := 1; i < len(courseRoleStrArr) && roleNum == 0; i++ {

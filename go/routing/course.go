@@ -5,7 +5,7 @@ import (
 	"frascati/setup"
 )
 
-func setupCourseRouter(routers grouping.Routes, handlers setup.Handlers) {
+func setupCourseRouter(routers grouping.Routes, handlers setup.Handlers, middlewares setup.Middlewares) {
 	courseHandler := handlers.Course
 
 	adminCourseGroup := routers.Admin.Group("/courses")
@@ -21,7 +21,7 @@ func setupCourseRouter(routers grouping.Routes, handlers setup.Handlers) {
 	adminCourseGroup.DELETE("/:course_id", courseHandler.DeleteById)
 
 	setupCourseMemberRouter(routers, handlers)
-	setupCourseItemRouter(routers, handlers)
+	setupCourseItemRouter(routers, handlers, middlewares)
 }
 
 func setupCourseMemberRouter(routers grouping.Routes, handlers setup.Handlers) {
@@ -34,7 +34,7 @@ func setupCourseMemberRouter(routers grouping.Routes, handlers setup.Handlers) {
 	adminCourseGroup.DELETE("/:course_id/members", courseMemberHandler.DeleteMember)
 }
 
-func setupCourseItemRouter(routers grouping.Routes, handlers setup.Handlers) {
+func setupCourseItemRouter(routers grouping.Routes, handlers setup.Handlers, middlewares setup.Middlewares) {
 	courseItemHandler := handlers.CourseItem
 	adminCourseGroup := routers.Admin.Group("/courses")
 
@@ -42,4 +42,11 @@ func setupCourseItemRouter(routers grouping.Routes, handlers setup.Handlers) {
 	adminCourseGroup.POST("/:course_id/items", courseItemHandler.AddBulk)
 	adminCourseGroup.PUT("/:course_id/items/:item_id", courseItemHandler.UpdateSingular)
 	adminCourseGroup.DELETE("/:course_id/items/:item_id", courseItemHandler.DeleteSingular)
+
+	accessMid := middlewares.CourseAccess
+	userCourseGroup := routers.User.Group("/courses")
+	userCourseGroup.GET("/:course_id/items", accessMid.GetViewAccess, courseItemHandler.GetByCourse)
+	userCourseGroup.POST("/:course_id/items", accessMid.GetWriteAccess, courseItemHandler.AddBulk)
+	userCourseGroup.PUT("/:course_id/items/:item_id", accessMid.GetWriteAccess, courseItemHandler.UpdateSingular)
+	userCourseGroup.DELETE("/:course_id/items/:item_id", accessMid.GetWriteAccess, courseItemHandler.DeleteSingular)
 }

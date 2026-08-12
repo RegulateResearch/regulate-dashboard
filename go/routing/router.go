@@ -19,13 +19,13 @@ func SetupRouter(app setup.App) *gin.Engine {
 
 	routes := grouping.AllRoutes(r, middlewares)
 
-	setupEndpoints(routes, app.Handlers())
+	setupEndpoints(routes, app.Handlers(), middlewares)
 	return r
 }
 
-func setupEndpoints(routes grouping.Routes, handlers setup.Handlers) {
+func setupEndpoints(routes grouping.Routes, handlers setup.Handlers, middlewares setup.Middlewares) {
 	setupAuthRouting(routes, handlers)
-	setupCourseRouter(routes, handlers)
+	setupCourseRouter(routes, handlers, middlewares)
 	setupUsersRouting(routes, handlers)
 	setupMyRouter(routes, handlers)
 	setupRecordRoutes(routes, handlers)
