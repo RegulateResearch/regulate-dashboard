@@ -13,6 +13,7 @@ import (
 )
 
 type CourseHandler struct {
+	baseHandler
 	serv service.CourseService
 }
 
@@ -32,7 +33,7 @@ func (h CourseHandler) NewCourse(ctx *gin.Context) {
 
 	courseData := converter.CourseDtoToEntity(newCourse)
 
-	res, exc := h.serv.Add(ctx, courseData)
+	res, exc := h.serv.Add(h.extractCtx(ctx), courseData)
 	if exc != nil {
 		ctx.Error(exc)
 		return
@@ -44,7 +45,7 @@ func (h CourseHandler) NewCourse(ctx *gin.Context) {
 }
 
 func (h CourseHandler) AllCourse(ctx *gin.Context) {
-	res, exc := h.serv.FindAll(ctx)
+	res, exc := h.serv.FindAll(h.extractCtx(ctx))
 	if exc != nil {
 		ctx.Error(exc)
 		return
@@ -55,9 +56,9 @@ func (h CourseHandler) AllCourse(ctx *gin.Context) {
 }
 
 func (h CourseHandler) CourseById(ctx *gin.Context) {
-	id := typing.IDFromString(ctx.Param("id"))
+	id := typing.IDFromString(ctx.Param("course_id"))
 
-	data, err := h.serv.FindById(ctx, id)
+	data, err := h.serv.FindById(h.extractCtx(ctx), id)
 	if err != nil {
 		ctx.Error(err)
 		return
@@ -75,9 +76,9 @@ func (h CourseHandler) UpdateById(ctx *gin.Context) {
 		return
 	}
 
-	id := typing.IDFromString(ctx.Param("id"))
+	id := typing.IDFromString(ctx.Param("course_id"))
 	updateData := converter.CourseDtoToEntity(updateDataDto)
-	err := h.serv.UpdateById(ctx, id, updateData)
+	err := h.serv.UpdateById(h.extractCtx(ctx), id, updateData)
 	if err != nil {
 		ctx.Error(err)
 		return
@@ -87,9 +88,9 @@ func (h CourseHandler) UpdateById(ctx *gin.Context) {
 }
 
 func (h CourseHandler) DeleteById(ctx *gin.Context) {
-	id := typing.IDFromString(ctx.Param("id"))
+	id := typing.IDFromString(ctx.Param("course_id"))
 
-	err := h.serv.DeleteById(ctx, id)
+	err := h.serv.DeleteById(h.extractCtx(ctx), id)
 	if err != nil {
 		ctx.Error(err)
 		return

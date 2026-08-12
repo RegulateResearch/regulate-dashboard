@@ -10,6 +10,7 @@ import (
 )
 
 type SsoHandler struct {
+	baseHandler
 	serv service.SsoUiService
 }
 
@@ -27,7 +28,7 @@ func (h SsoHandler) Validate(ctx *gin.Context) {
 		return
 	}
 
-	res, exc := h.serv.Validate(ctx, validateData.Ticket, validateData.Service)
+	res, exc := h.serv.Validate(h.extractCtx(ctx), validateData.Ticket, validateData.Service)
 	if exc != nil {
 		ctx.Error(exc)
 		return

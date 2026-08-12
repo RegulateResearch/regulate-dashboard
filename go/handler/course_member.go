@@ -13,6 +13,7 @@ import (
 )
 
 type CourseMemberHandler struct {
+	baseHandler
 	memberService service.CourseMemberService
 }
 
@@ -23,8 +24,8 @@ func NewCourseMemberHandler(memberService service.CourseMemberService) CourseMem
 }
 
 func (h CourseMemberHandler) FindByCourse(ctx *gin.Context) {
-	courseId := typing.IDFromString(ctx.Param("id"))
-	res, err := h.memberService.FindByCourseId(ctx, courseId)
+	courseId := typing.IDFromString(ctx.Param("course_id"))
+	res, err := h.memberService.FindByCourseId(h.extractCtx(ctx), courseId)
 	if err != nil {
 		ctx.Error(err)
 		return
@@ -43,8 +44,8 @@ func (h CourseMemberHandler) AddNewMember(ctx *gin.Context) {
 	}
 
 	members := lambda.MapList(membersDto, converter.CourseMemberSimpleDtoToEntity)
-	courseID := typing.IDFromString(ctx.Param("id"))
-	res, exc := h.memberService.AddMultiple(ctx, courseID, members)
+	courseID := typing.IDFromString(ctx.Param("course_id"))
+	res, exc := h.memberService.AddMultiple(h.extractCtx(ctx), courseID, members)
 	if exc != nil {
 		ctx.Error(exc)
 		return
@@ -62,8 +63,8 @@ func (h CourseMemberHandler) DeleteMember(ctx *gin.Context) {
 		return
 	}
 
-	courseId := typing.IDFromString(ctx.Param("id"))
-	count, exc := h.memberService.DeleteMultiple(ctx, courseId, idsToBeDeleted.IDs)
+	courseId := typing.IDFromString(ctx.Param("course_id"))
+	count, exc := h.memberService.DeleteMultiple(h.extractCtx(ctx), courseId, idsToBeDeleted.IDs)
 	if exc != nil {
 		ctx.Error(exc)
 		return
@@ -84,8 +85,8 @@ func (h CourseMemberHandler) UpdateMember(ctx *gin.Context) {
 
 	members := lambda.MapList(updateData.Members, converter.CourseMemberUpdateDataToEntity)
 
-	courseId := typing.IDFromString(ctx.Param("id"))
-	res, err := h.memberService.Update(ctx, courseId, members)
+	courseId := typing.IDFromString(ctx.Param("course_id"))
+	res, err := h.memberService.Update(h.extractCtx(ctx), courseId, members)
 	if err != nil {
 		ctx.Error(err)
 		return

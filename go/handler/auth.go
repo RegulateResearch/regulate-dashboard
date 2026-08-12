@@ -5,12 +5,14 @@ import (
 	"frascati/obj/dto"
 	"frascati/response"
 	"frascati/service"
+	"frascati/typing"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 type AuthHandler struct {
+	baseHandler
 	authService service.AuthService
 }
 
@@ -31,7 +33,7 @@ func (h AuthHandler) Register(ctx *gin.Context) {
 	}
 
 	userWrite := converter.UserRegisterToEntity(userRegister)
-	userReturn, exc := h.authService.Register(ctx, userWrite)
+	userReturn, exc := h.authService.Register(h.extractCtx(ctx), userWrite)
 	if exc != nil {
 		ctx.Error(exc)
 		return
@@ -50,7 +52,8 @@ func (h AuthHandler) Login(ctx *gin.Context) {
 	}
 
 	userWrite := converter.UserLoginToEntity(userLogin)
-	token, exc := h.authService.Login(ctx, userWrite)
+	deepCtx := typing.NewDictionaryContext(ctx.Request.Context())
+	token, exc := h.authService.Login(deepCtx, userWrite)
 
 	if exc != nil {
 		ctx.Error(exc)

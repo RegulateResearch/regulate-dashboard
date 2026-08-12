@@ -12,6 +12,7 @@ import (
 )
 
 type RecordHandler struct {
+	baseHandler
 	serv service.RecordService
 }
 
@@ -22,7 +23,7 @@ func NewRecordHandler(serv service.RecordService) RecordHandler {
 }
 
 func (h RecordHandler) FindAll(ctx *gin.Context) {
-	res, err := h.serv.FindAll(ctx)
+	res, err := h.serv.FindAll(h.extractCtx(ctx))
 	if err != nil {
 		ctx.Error(err)
 		return
@@ -41,7 +42,7 @@ func (h RecordHandler) AddBulk(ctx *gin.Context) {
 	}
 
 	newData := lambda.MapList(newDataDto, converter.RecordDtoToEntity)
-	res, exc := h.serv.AddBulk(ctx, newData)
+	res, exc := h.serv.AddBulk(h.extractCtx(ctx), newData)
 	if exc != nil {
 		ctx.Error(exc)
 		return

@@ -35,3 +35,12 @@ func CourseDbToEntity(courseDb dao.CourseDb) entity.Course {
 		Url:  courseDb.Url.String,
 	}
 }
+
+func CourseEntityToDaoDb(course entity.Course) dao.CourseDb {
+	return dao.CourseDb{
+		BaseDb: BaseEntityToDaoDb(course.Base),
+		Name:   course.Name,
+		Year:   course.Year,
+		Term:   course.Term,
+	}
+}

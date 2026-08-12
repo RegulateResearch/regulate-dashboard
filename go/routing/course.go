@@ -5,9 +5,9 @@ import (
 	"frascati/setup"
 )
 
-func setupCourseRouter(routers grouping.Routes, handlers setup.Handlers) {
+func setupCourseRouter(routers grouping.Routes, handlers setup.Handlers, middlewares setup.Middlewares) {
 	courseHandler := handlers.Course
-	courseMemberHandler := handlers.CourseMember
+
 	adminCourseGroup := routers.Admin.Group("/courses")
 	userCourseGroup := routers.User.Group("/courses")
 
@@ -16,12 +16,37 @@ func setupCourseRouter(routers grouping.Routes, handlers setup.Handlers) {
 	adminCourseGroup.GET("", courseHandler.AllCourse)
 	adminCourseGroup.POST("", courseHandler.NewCourse)
 
-	adminCourseGroup.GET("/:id", courseHandler.CourseById)
-	adminCourseGroup.PUT("/:id", courseHandler.UpdateById)
-	adminCourseGroup.DELETE("/:id", courseHandler.DeleteById)
+	adminCourseGroup.GET("/:course_id", courseHandler.CourseById)
+	adminCourseGroup.PUT("/:course_id", courseHandler.UpdateById)
+	adminCourseGroup.DELETE("/:course_id", courseHandler.DeleteById)
 
-	adminCourseGroup.GET("/:id/members", courseMemberHandler.FindByCourse)
-	adminCourseGroup.POST("/:id/members", courseMemberHandler.AddNewMember)
-	adminCourseGroup.PUT("/:id/members", courseMemberHandler.UpdateMember)
-	adminCourseGroup.DELETE("/:id/members", courseMemberHandler.DeleteMember)
+	setupCourseMemberRouter(routers, handlers)
+	setupCourseItemRouter(routers, handlers, middlewares)
+}
+
+func setupCourseMemberRouter(routers grouping.Routes, handlers setup.Handlers) {
+	courseMemberHandler := handlers.CourseMember
+	adminCourseGroup := routers.Admin.Group("/courses")
+
+	adminCourseGroup.GET("/:course_id/members", courseMemberHandler.FindByCourse)
+	adminCourseGroup.POST("/:course_id/members", courseMemberHandler.AddNewMember)
+	adminCourseGroup.PUT("/:course_id/members", courseMemberHandler.UpdateMember)
+	adminCourseGroup.DELETE("/:course_id/members", courseMemberHandler.DeleteMember)
+}
+
+func setupCourseItemRouter(routers grouping.Routes, handlers setup.Handlers, middlewares setup.Middlewares) {
+	courseItemHandler := handlers.CourseItem
+	adminCourseGroup := routers.Admin.Group("/courses")
+
+	adminCourseGroup.GET("/:course_id/items", courseItemHandler.GetByCourse)
+	adminCourseGroup.POST("/:course_id/items", courseItemHandler.AddBulk)
+	adminCourseGroup.PUT("/:course_id/items/:item_id", courseItemHandler.UpdateSingular)
+	adminCourseGroup.DELETE("/:course_id/items/:item_id", courseItemHandler.DeleteSingular)
+
+	accessMid := middlewares.CourseAccess
+	userCourseGroup := routers.User.Group("/courses")
+	userCourseGroup.GET("/:course_id/items", accessMid.GetViewAccess, courseItemHandler.GetByCourse)
+	userCourseGroup.POST("/:course_id/items", accessMid.GetWriteAccess, courseItemHandler.AddBulk)
+	userCourseGroup.PUT("/:course_id/items/:item_id", accessMid.GetWriteAccess, courseItemHandler.UpdateSingular)
+	userCourseGroup.DELETE("/:course_id/items/:item_id", accessMid.GetWriteAccess, courseItemHandler.DeleteSingular)
 }

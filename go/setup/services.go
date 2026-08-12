@@ -10,6 +10,7 @@ import (
 type services struct {
 	auth         service.AuthService
 	course       service.CourseService
+	courseItem   service.CourseItemService
 	courseMember service.CourseMemberService
 	user         service.UserService
 	sso          service.SsoUiService
@@ -22,6 +23,7 @@ func setupServices(repos repositories, jwt auth.JwtService, bcrypt auth.BcryptSe
 	return services{
 		auth:         service.NewAuthService(repos.auth, bcrypt, jwt, repos.transactor),
 		course:       service.NewCourseService(repos.course),
+		courseItem:   service.NewCourseItemService(repos.courseItem, repos.course),
 		courseMember: service.NewCourseMemberService(repos.courseMember, repos.course, repos.user, repos.transactor),
 		user:         service.NewUserService(repos.user),
 		sso:          service.NewSsoUiService(ssoClient, repos.auth, jwt),

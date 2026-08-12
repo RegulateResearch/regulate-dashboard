@@ -5,6 +5,7 @@ import "frascati/handler"
 type Handlers struct {
 	Auth         handler.AuthHandler
 	Course       handler.CourseHandler
+	CourseItem   handler.CourseItemHandler
 	CourseMember handler.CourseMemberHandler
 	Session      handler.SessionHandler
 	Admin        handler.AdminHandler
@@ -19,6 +20,7 @@ func setupHandlers(services services) Handlers {
 	return Handlers{
 		Auth:         handler.NewAuthHandler(services.auth),
 		Course:       handler.NewCourseHandler(services.course),
+		CourseItem:   handler.NewCourseItemService(services.courseItem),
 		CourseMember: handler.NewCourseMemberHandler(services.courseMember),
 		Session:      handler.NewSessionHandler(),
 		Admin:        handler.NewAdminHandler(services.user),

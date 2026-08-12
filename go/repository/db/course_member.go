@@ -12,6 +12,7 @@ import (
 
 type CourseMemberRepository interface {
 	FindByCourse(ctx typing.Context, course entity.Course) ([]entity.CourseMember, exception.Exception)
+	FindAccessData(ctx typing.Context, member entity.CourseMember) (entity.CourseMember, exception.Exception)
 	AddMultiple(ctx typing.Context, newMembers []entity.CourseMember) ([]entity.CourseMember, exception.Exception)
 	DeleteMultiple(ctx typing.Context, courseId typing.ID, memberIds []typing.ID) (int64, exception.Exception)
 	Update(ctx typing.Context, courseId typing.ID, members []entity.CourseMember) ([]entity.CourseMember, exception.Exception)
@@ -58,6 +59,25 @@ func (r courseMemberRepositoryImpl) FindByCourse(ctx typing.Context, course enti
 	)
 
 	return res, nil
+}
+
+func (r courseMemberRepositoryImpl) FindAccessData(ctx typing.Context, memberData entity.CourseMember) (entity.CourseMember, exception.Exception) {
+	querystr := `
+		SELECT id, course_role
+		FROM course_members
+		WHERE
+			course_id = $1 AND
+			user_id = $2 AND
+			deleted_at IS NULL
+	`
+
+	member := entity.CourseMember{}
+	err := r.executor.QueryRowContext(ctx, querystr, memberData.Course.ID, memberData.User.ID).Scan(&member.ID, &member.Role)
+	if err != nil {
+		return entity.CourseMember{}, repository_exception.WrapQueryexecException(err, "course_member")
+	}
+
+	return member, nil
 }
 
 func (r courseMemberRepositoryImpl) AddMultiple(ctx typing.Context, newMembers []entity.CourseMember) ([]entity.CourseMember, exception.Exception) {

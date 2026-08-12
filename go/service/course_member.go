@@ -15,6 +15,7 @@ type CourseMemberService interface {
 	AddMultiple(ctx typing.Context, courseId typing.ID, newMember []entity.CourseMember) ([]entity.CourseMember, exception.Exception)
 	DeleteMultiple(ctx typing.Context, courseId typing.ID, memberIds []typing.ID) (int64, exception.Exception)
 	Update(ctx typing.Context, courseId typing.ID, members []entity.CourseMember) ([]entity.CourseMember, exception.Exception)
+	GetAccessData(ctx typing.Context, courseId typing.ID, userId typing.ID) (entity.CourseMember, exception.Exception)
 }
 
 type courseMemberServiceImpl struct {
@@ -109,6 +110,15 @@ func (s courseMemberServiceImpl) Update(ctx typing.Context, courseId typing.ID, 
 	}
 
 	res, err := s.memberRepo.Update(ctx, courseId, members)
+	return res, err
+}
+
+func (s courseMemberServiceImpl) GetAccessData(ctx typing.Context, courseId typing.ID, userId typing.ID) (entity.CourseMember, exception.Exception) {
+	member := entity.CourseMember{}
+	member.Course.ID = courseId
+	member.User.ID = userId
+
+	res, err := s.memberRepo.FindAccessData(ctx, member)
 	return res, err
 }
 

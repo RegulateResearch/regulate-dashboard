@@ -1,5 +1,5 @@
 # build stage
-FROM golang:1.23.6-alpine as build-stage
+FROM golang:1.25.12-alpine as build-stage
 
 WORKDIR /backend
 COPY go.mod go.sum ./

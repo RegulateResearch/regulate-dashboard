@@ -2,8 +2,8 @@ package dto
 
 type Course struct {
 	Base
-	Name string `json:"name" binding:"required"`
-	Year int    `json:"year" binding:"required,max=9999"`
-	Term string `json:"term" binding:"required,oneof=odd even short"`
+	Name string `json:"name,omitempty" binding:"required"`
+	Year int    `json:"year,omitempty" binding:"required,max=9999"`
+	Term string `json:"term,omitempty" binding:"required,oneof=odd even short"`
 	Url  string `json:"url,omitempty"`
 }

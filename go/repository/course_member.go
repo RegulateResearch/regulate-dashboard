@@ -9,6 +9,7 @@ import (
 
 type CourseMemberRepository interface {
 	FindByCourse(ctx typing.Context, course entity.Course) ([]entity.CourseMember, exception.Exception)
+	FindAccessData(ctx typing.Context, member entity.CourseMember) (entity.CourseMember, exception.Exception)
 	AddMultiple(ctx typing.Context, newMembers []entity.CourseMember) ([]entity.CourseMember, exception.Exception)
 	DeleteMultiple(ctx typing.Context, courseId typing.ID, memberIds []typing.ID) (int64, exception.Exception)
 	Update(ctx typing.Context, courseId typing.ID, members []entity.CourseMember) ([]entity.CourseMember, exception.Exception)
@@ -26,6 +27,11 @@ func NewCourseMemberRepository(repoDb repo_db.CourseMemberRepository) CourseMemb
 
 func (r courseMemberRepositoryImpl) FindByCourse(ctx typing.Context, course entity.Course) ([]entity.CourseMember, exception.Exception) {
 	res, err := r.repoDb.FindByCourse(ctx, course)
+	return res, err
+}
+
+func (r courseMemberRepositoryImpl) FindAccessData(ctx typing.Context, member entity.CourseMember) (entity.CourseMember, exception.Exception) {
+	res, err := r.repoDb.FindAccessData(ctx, member)
 	return res, err
 }
 

@@ -13,6 +13,7 @@ import (
 )
 
 type UserHandler struct {
+	baseHandler
 	userService service.UserService
 }
 
@@ -23,7 +24,7 @@ func NewUserHandler(userService service.UserService) UserHandler {
 }
 
 func (h UserHandler) GetAll(ctx *gin.Context) {
-	res, exc := h.userService.FindAll(ctx)
+	res, exc := h.userService.FindAll(h.extractCtx(ctx))
 	if exc != nil {
 		ctx.Error(exc)
 		return
@@ -36,7 +37,7 @@ func (h UserHandler) GetAll(ctx *gin.Context) {
 
 func (h UserHandler) GetById(ctx *gin.Context) {
 	id := typing.IDFromString(ctx.Param("id"))
-	res, err := h.userService.FindById(ctx, id)
+	res, err := h.userService.FindById(h.extractCtx(ctx), id)
 	if err != nil {
 		ctx.Error(err)
 		return
@@ -55,7 +56,7 @@ func (h UserHandler) UpdateAccess(ctx *gin.Context) {
 	}
 
 	users := lambda.MapList(updateData, converter.UserAccessToEntity)
-	res, exc := h.userService.UpdateAccessBulk(ctx, users)
+	res, exc := h.userService.UpdateAccessBulk(h.extractCtx(ctx), users)
 	if exc != nil {
 		ctx.Error(err)
 		return

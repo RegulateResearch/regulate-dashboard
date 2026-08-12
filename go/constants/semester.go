@@ -3,12 +3,13 @@ package constants
 type Semester int
 
 const (
-	SEMESTER_SHORT Semester = iota
+	SEMESTER_SHORT Semester = iota + 1
 	SEMESTER_ODD
 	SEMESTER_EVEN
 )
 
 var semesterStrArr = []string{
+	"",
 	"short",
 	"odd",
 	"even",
@@ -16,8 +17,8 @@ var semesterStrArr = []string{
 
 func (s Semester) ToString() string {
 	semesterInt := int(s)
-	semesterStr := "undefined"
-	if semesterInt >= 0 && semesterInt < len(roleStrArr) {
+	semesterStr := ""
+	if semesterInt >= 1 && semesterInt < len(roleStrArr) {
 		semesterStr = semesterStrArr[semesterInt]
 	}
 
@@ -31,7 +32,7 @@ func SemesterFromString(termStr string) Semester {
 		"even":  SEMESTER_EVEN,
 	}
 
-	res := SEMESTER_SHORT
+	res := Semester(0)
 	term, ok := termStrMap[termStr]
 	if ok {
 		res = term
