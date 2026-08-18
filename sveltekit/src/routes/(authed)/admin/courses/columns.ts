@@ -12,7 +12,7 @@ export type Course = {
 };
 
 export const columnsLabel = [
-  { id: 'id', label: 'id' },
+  { id: 'id', label: 'ID' },
   { id: 'name', label: 'Nama Kelas' },
   { id: 'year', label: 'Tahun Akademik' },
   { id: 'term', label: 'Semester' },
@@ -20,6 +20,28 @@ export const columnsLabel = [
 ]
 
 export const columns: ColumnDef<Course>[] = [
+  {
+    accessorKey: "id",
+    header: ({ column }) =>
+      renderComponent(DataTableSortableHeader, {
+        label: "ID",
+        onclick: column.getToggleSortingHandler(),
+        class: "text-center w-8"
+      }),
+    cell: ({ row }) => {
+      const idSnippet = createRawSnippet<[{ id: number }]>(
+        (getId) => {
+          const { id } = getId();
+          return {
+            render: () => `<div class="text-center text-stone-500">${id}</div>`
+          };
+        }
+      );
+      return renderSnippet(idSnippet, {
+        id: row.original.id
+      });
+    }
+  },
   {
     accessorKey: "name",
     size: 300,

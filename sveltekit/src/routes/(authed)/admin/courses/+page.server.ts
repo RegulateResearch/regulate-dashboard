@@ -1,10 +1,10 @@
-import { createCourse, getCourses } from "$lib/server/api/admin/courses";
-import type { Actions, PageServerLoad } from "./$types";
+import { createCourse, deleteCourse, getCourses } from "$lib/server/api/admin/courses";
 import { superValidate } from "sveltekit-superforms";
-import { formSchema } from "./schema";
+import { newCourseFormSchema } from "./schema";
 import { zod4 } from "sveltekit-superforms/adapters";
+import { fail } from "@sveltejs/kit";
 
-export const load: PageServerLoad = async () => {
+export const load = async () => {
   const breadcrumbs = [
     {
       name: 'Kelola Kelas',
@@ -16,18 +16,18 @@ export const load: PageServerLoad = async () => {
   return {
     breadcrumbs,
     courses: courses.data,
-    form: await superValidate(zod4(formSchema)),
+    form: await superValidate(zod4(newCourseFormSchema)),
   };
 };
 
 export const actions = {
-  default: async ({ request }) => {
-    const form = await superValidate(request, zod4(formSchema));
+  createCourse: async ({ request }) => {
+    const form = await superValidate(request, zod4(newCourseFormSchema));
     if (!form.valid) {
-      return {
+      return fail(400, {
         form,
-        message: 'failed'
-      }
+        message: 'Invalid form data'
+      });
     }
 
     const reqBody = {
@@ -37,22 +37,49 @@ export const actions = {
 
     try {
       const res = await createCourse(reqBody)
-      if (!res.data) {
-        return {
+      if (res.error) {
+        return fail(400, {
           form,
-          message: 'failed'
-        }
+          message: `Request failed to create course: ${res.error}`
+        })
       }
       return {
         form,
         message: 'success'
       }
     } catch {
-      console.log("FAILED to create course:");
-      return {
+      return fail(400, {
         form,
-        message: 'failed'
+        message: 'An error occurred while creating the course'
+      })
+    }
+  },
+  deleteCourse: async ({ request }) => {
+    const form = await request.formData();
+    const id = await form.get('id');
+
+    if (id === null) {
+      return fail(404, {
+        message: 'Course not found'
+      })
+    }
+
+    const parsedId = parseInt(id.toString());
+
+    try {
+      const res = await deleteCourse(parsedId)
+      if (res.error) {
+        return fail(400, {
+          message: `Failed to delete course: ${res.error}`
+        })
       }
+      return {
+        message: 'Delete course success'
+      }
+    } catch {
+      return fail(400, {
+        message: 'An error occurred while deleting the course'
+      })
     }
   }
-} satisfies Actions;
+}
