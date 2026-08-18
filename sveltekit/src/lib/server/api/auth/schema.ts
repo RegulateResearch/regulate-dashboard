@@ -1,7 +1,8 @@
 import { z } from 'zod';
+import { generalAPIResponseSchema } from '../schema';
 
 export const sessionResponseSchema = z.object({
-  message: z.string(),
+  ...generalAPIResponseSchema.shape,
   data: z.optional(z.object({
     id: z.number(),
     role: z.string()
@@ -16,7 +17,7 @@ export const loginRequestSchema = z.object({
 export type LoginRequest = z.infer<typeof loginRequestSchema>;
 
 export const loginResponseSchema = z.object({
-  message: z.string(),
+  ...generalAPIResponseSchema.shape,
   data: z.string(),
 });
 export type LoginResponse = z.infer<typeof loginResponseSchema>;

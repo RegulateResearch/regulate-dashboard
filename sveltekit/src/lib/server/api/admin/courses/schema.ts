@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { generalAPIResponseSchema } from '../../schema';
 
 export const courseSchema = z.object({
   name: z.string(),
@@ -15,18 +16,15 @@ export const courseSchemaWithId = z.object({
 export type CourseWithId = z.infer<typeof courseSchemaWithId>;
 
 export const getCourseByIdResponseSchema = z.object({
-  message: z.string(),
-  data: z.optional(
-    courseSchemaWithId
-  ),
+  ...generalAPIResponseSchema.shape,
+  data: z.object(courseSchemaWithId.shape).optional()
 });
 export type GetCourseByIdResponse = z.infer<typeof getCourseByIdResponseSchema>;
 
 export const getCoursesResponseSchema = z.object({
-  message: z.string(),
-  data: z.optional(
-    z.array(courseSchemaWithId)
-  ),
+  ...generalAPIResponseSchema.shape,
+  data: z.array(courseSchemaWithId).optional()
+
 });
 export type GetCoursesResponse = z.infer<typeof getCoursesResponseSchema>;
 
@@ -34,10 +32,9 @@ export const createCourseRequestSchema = courseSchema;
 export type CreateCourseRequest = z.infer<typeof createCourseRequestSchema>;
 
 export const createCourseResponseSchema = z.object({
-  message: z.string(),
-  data: z.optional(
-    courseSchemaWithId
-  ),
+  ...generalAPIResponseSchema.shape,
+  data: z.object(courseSchemaWithId.shape).optional()
+
 });
 export type CreateCourseResponse = z.infer<typeof createCourseResponseSchema>;
 
@@ -45,17 +42,14 @@ export const updateCourseRequestSchema = courseSchema;
 export type UpdateCourseRequest = z.infer<typeof updateCourseRequestSchema>;
 
 export const updateCourseResponseSchema = z.object({
-  message: z.string(),
-  data: z.optional(
-    courseSchemaWithId
-  ),
+  ...generalAPIResponseSchema.shape,
+  data: z.array(courseSchemaWithId).optional()
+
 });
 export type UpdateCourseResponse = z.infer<typeof updateCourseResponseSchema>;
 
 export const deleteCourseResponseSchema = z.object({
-  message: z.string(),
-  data: z.optional(
-    z.any()
-  ),
+  ...generalAPIResponseSchema.shape,
+  data: z.any().optional()
 });
 export type DeleteCourseResponse = z.infer<typeof deleteCourseResponseSchema>;

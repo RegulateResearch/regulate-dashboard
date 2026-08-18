@@ -1,9 +1,11 @@
 import { typedFetch } from "../../utils"
 import * as Schema from "./schema"
 
+const BASE_URL = '/admin/courses'
+
 export const getCourses = async () => {
   return await typedFetch(
-    '/admin/courses',
+    `${BASE_URL}`,
     Schema.getCoursesResponseSchema,
     {
       method: 'GET',
@@ -13,7 +15,7 @@ export const getCourses = async () => {
 
 export const getCourseById = async (id: number) => {
   return await typedFetch(
-    `/admin/courses/${id}`,
+    `${BASE_URL}/${id}`,
     Schema.getCourseByIdResponseSchema,
     {
       method: 'GET',
@@ -23,7 +25,7 @@ export const getCourseById = async (id: number) => {
 
 export const createCourse = async (body: Schema.CreateCourseRequest) => {
   return await typedFetch(
-    '/admin/courses',
+    `${BASE_URL}`,
     Schema.createCourseResponseSchema,
     {
       method: 'POST',
@@ -35,7 +37,7 @@ export const createCourse = async (body: Schema.CreateCourseRequest) => {
 
 export const updateCourse = async (id: number, body: Schema.UpdateCourseRequest) => {
   return await typedFetch(
-    `/admin/courses/${id}`,
+    `${BASE_URL}/${id}`,
     Schema.updateCourseResponseSchema,
     {
       method: 'PUT',
@@ -47,7 +49,7 @@ export const updateCourse = async (id: number, body: Schema.UpdateCourseRequest)
 
 export const deleteCourse = async (id: number) => {
   return await typedFetch(
-    `/admin/courses/${id}`,
+    `${BASE_URL}/${id}`,
     Schema.deleteCourseResponseSchema,
     {
       method: 'DELETE',
