@@ -12,6 +12,7 @@ func setupCourseRouter(routers grouping.Routes, handlers setup.Handlers, middlew
 	userCourseGroup := routers.User.Group("/courses")
 
 	userCourseGroup.GET("", courseHandler.AllCourse)
+	userCourseGroup.GET("/:course_id", courseHandler.CourseById)
 
 	adminCourseGroup.GET("", courseHandler.AllCourse)
 	adminCourseGroup.POST("", courseHandler.NewCourse)
