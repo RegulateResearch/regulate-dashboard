@@ -3,9 +3,12 @@
 	import AppSidebar from '$lib/components/app-sidebar.svelte';
 	import { Separator } from '$lib/components/ui/separator/index.js';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
+	import { Toaster } from "$lib/components/ui/sonner/index.js";
 
 	let { children } = $props();
 </script>
+
+<Toaster position="top-center" />
 
 <Sidebar.Provider class="h-svh">
 	<AppSidebar />
