@@ -20,7 +20,7 @@
 		}[];
 	} = $props();
 
-	let currentlyOpenNav = $derived(items.find((item) => item.url === page.url.pathname));
+	let currentlyOpenNav = $derived(items.find((item) => page.url.pathname.includes(item.url)));
 </script>
 
 <Sidebar.Group>

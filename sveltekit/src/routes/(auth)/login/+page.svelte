@@ -1,22 +1,19 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
+	import AuthForm from '$lib/components/auth-form.svelte';
+	import SSOButton from '$lib/components/sso-button.svelte';
+	import Button from '$lib/components/ui/button/button.svelte';
+	import { Field, FieldDescription, FieldSeparator } from '$lib/components/ui/field/index.js';
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input/index';
-	import { formSchema, type FormSchema } from './schema';
-	import { zod4Client } from 'sveltekit-superforms/adapters';
-	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
-	import AuthForm from '$lib/components/auth-form.svelte';
-	import type { ActionData } from './$types';
-	import Button from '$lib/components/ui/button/button.svelte';
+	import * as Tooltip from '$lib/components/ui/tooltip';
 	import Eye from '@lucide/svelte/icons/eye';
 	import EyeOff from '@lucide/svelte/icons/eye-off';
-	import * as Tooltip from '$lib/components/ui/tooltip';
-	import { resolve } from '$app/paths';
-	import {
-		Field,
-		FieldDescription,
-		FieldSeparator
-	} from '$lib/components/ui/field/index.js';
-	import SSOButton from '$lib/components/sso-button.svelte';
+	import { untrack } from 'svelte';
+	import { type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
+	import { zod4Client } from 'sveltekit-superforms/adapters';
+	import type { ActionData } from './$types';
+	import { formSchema, type FormSchema } from './schema';
 
 	type FormValidationData = {
 		data: { form: SuperValidated<Infer<FormSchema>> };
@@ -27,10 +24,12 @@
 
 	let showPassword = $state(false);
 
-	// svelte-ignore state_referenced_locally
-	const form = superForm(data.form, {
-		validators: zod4Client(formSchema)
-	});
+	const form = superForm(
+		untrack(() => data.form),
+		{
+			validators: zod4Client(formSchema)
+		}
+	);
 
 	const { form: formData, enhance } = form;
 </script>
@@ -42,9 +41,7 @@
 		<Field>
 			<SSOButton />
 		</Field>
-		<FieldSeparator>
-			atau masuk dengan
-		</FieldSeparator>
+		<FieldSeparator>atau masuk dengan</FieldSeparator>
 		<Form.Field {form} name="email">
 			<Form.Control>
 				{#snippet children({ props })}

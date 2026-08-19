@@ -1,4 +1,8 @@
 <script lang="ts" generics="TData, TValue">
+	import { createSvelteTable, FlexRender } from '$lib/components/ui/data-table/index.js';
+	import * as Table from '$lib/components/ui/table/index.js';
+	import * as Empty from '$lib/components/ui/empty';
+	import { cn } from '$lib/utils';
 	import {
 		type ColumnDef,
 		type ColumnFiltersState,
@@ -11,16 +15,11 @@
 		type SortingState,
 		type VisibilityState
 	} from '@tanstack/table-core';
-	import { createSvelteTable, FlexRender } from '$lib/components/ui/data-table/index.js';
-	import * as Table from '$lib/components/ui/table/index.js';
-	import { Button } from '$lib/components/ui//button';
-	import { Input } from '$lib/components/ui/input';
-	import ChevronLeftIcon from '@lucide/svelte/icons/chevron-left';
-	import ChevronRightIcon from '@lucide/svelte/icons/chevron-right';
-	import * as Select from '$lib/components/ui/select';
-	import Label from '../label/label.svelte';
 	import type { ClassValue } from 'clsx';
-	import { cn } from '$lib/utils';
+	import type { Component } from 'svelte';
+	import DataTableFilterToolbar from './data-table-filter-toolbar.svelte';
+	import DataTablePagination from './data-table-pagination.svelte';
+	import SearchXIcon from '@lucide/svelte/icons/search-x';
 
 	type DataTableProps<TData, TValue> = {
 		columns: ColumnDef<TData, TValue>[];
@@ -30,12 +29,27 @@
 	let {
 		data,
 		columns,
-		columnToFilter,
-		filterPlaceholder = 'Filter...',
+		columnToSearch,
+		columnsLabel,
+		searchPlaceholder = 'Filter...',
+		categorialFilters,
 		class: className
 	}: DataTableProps<TData, TValue> & {
-		columnToFilter: string;
-		filterPlaceholder: string;
+		columnToSearch: string;
+		columnsLabel: {
+			id: string;
+			label: string;
+		}[];
+		searchPlaceholder: string;
+		categorialFilters?: {
+			title: string;
+			colName: string;
+			options: {
+				label: string;
+				value: string;
+				icon?: Component;
+			}[];
+		}[];
 		class?: ClassValue;
 	} = $props();
 	let pagination = $state<PaginationState>({ pageIndex: 0, pageSize: 15 });
@@ -43,24 +57,6 @@
 	let columnFilters = $state<ColumnFiltersState>([]);
 	let columnVisibility = $state<VisibilityState>({});
 	let rowSelection = $state<RowSelectionState>({});
-	const paginationSelectOptions = [
-		{
-			value: '15',
-			label: '15'
-		},
-		{
-			value: '25',
-			label: '25'
-		},
-		{
-			value: '50',
-			label: '50'
-		}
-	];
-	const paginationSelectTriggerContent = $derived(
-		paginationSelectOptions.find((o) => o.value === table.getState().pagination.pageSize.toString())
-			?.label ?? 'Pilih jumlah baris'
-	);
 
 	const table = createSvelteTable({
 		get data() {
@@ -126,22 +122,19 @@
 	});
 </script>
 
-<div class={cn('container flex h-full flex-col gap-1', className)}>
-	<div class="flex shrink-0 items-center py-4">
-		<Input
-			placeholder={filterPlaceholder}
-			value={(table.getColumn(columnToFilter)?.getFilterValue() as string) ?? ''}
-			onchange={(e) => {
-				table.getColumn(columnToFilter)?.setFilterValue(e.currentTarget.value);
-			}}
-			oninput={(e) => {
-				table.getColumn(columnToFilter)?.setFilterValue(e.currentTarget.value);
-			}}
-			class="max-w-sm"
-		/>
-	</div>
+<div class={cn('flex flex-col gap-4', className)}>
+	<DataTableFilterToolbar
+		{table}
+		{columnsLabel}
+		{categorialFilters}
+		{columnToSearch}
+		{searchPlaceholder}
+		class="shrink-0"
+	/>
 	<div class="flex min-h-0 grow">
-		<Table.Root wrapperClass="rounded-md border overflow-scroll scrollbar-thumb-yellow-400 max-h-max">
+		<Table.Root
+			wrapperClass="rounded-lg border overflow-scroll scrollbar-thumb-yellow-400 max-h-max"
+		>
 			<Table.Header>
 				{#each table.getHeaderGroups() as headerGroup (headerGroup.id)}
 					<Table.Row>
@@ -173,54 +166,23 @@
 					</Table.Row>
 				{:else}
 					<Table.Row>
-						<Table.Cell colspan={columns.length} class="h-24 text-center">No results.</Table.Cell>
+						<Table.Cell colspan={columns.length} class="h-24 text-center">
+							<Empty.Root>
+								<Empty.Header>
+									<Empty.Media variant="icon">
+										<SearchXIcon />
+									</Empty.Media>
+									<Empty.Title>Hasil pencarian kosong.</Empty.Title>
+									<Empty.Description>
+										Mohon sesuaikan kembali pencarian dan filter.
+									</Empty.Description>
+								</Empty.Header>
+							</Empty.Root>
+						</Table.Cell>
 					</Table.Row>
 				{/each}
 			</Table.Body>
 		</Table.Root>
 	</div>
-	<div class="flex shrink-0 items-center justify-end space-x-2 py-4">
-		<div class="flex gap-2">
-			<Label>Baris per halaman:</Label>
-			<Select.Root
-				type="single"
-				value={table.getState().pagination.pageSize.toString()}
-				onValueChange={(value) => {
-					table.setPageSize(Number(value));
-				}}
-			>
-				<Select.Trigger>
-					{paginationSelectTriggerContent}
-				</Select.Trigger>
-				<Select.Content>
-					<Select.Group>
-						{#each paginationSelectOptions as option (option.value)}
-							<Select.Item value={option.value} label={option.label}>
-								{option.label}
-							</Select.Item>
-						{/each}
-					</Select.Group>
-				</Select.Content>
-			</Select.Root>
-		</div>
-		<Button
-			variant="outline"
-			size="icon"
-			onclick={() => table.previousPage()}
-			disabled={!table.getCanPreviousPage()}
-		>
-			<ChevronLeftIcon />
-		</Button>
-		<span class="flex items-center gap-1 text-sm">
-			Halaman {table.getState().pagination.pageIndex + 1} dari {table.getPageCount()}
-		</span>
-		<Button
-			variant="outline"
-			size="icon"
-			onclick={() => table.nextPage()}
-			disabled={!table.getCanNextPage()}
-		>
-			<ChevronRightIcon />
-		</Button>
-	</div>
+	<DataTablePagination {table} class="shrink-0" />
 </div>
