@@ -15,7 +15,8 @@
 	import FolderIcon from '@lucide/svelte/icons/folder';
 	import PlusIcon from '@lucide/svelte/icons/plus';
 	import SquareLibraryIcon from '@lucide/svelte/icons/square-library';
-	import { toast } from "svelte-sonner";
+	import { untrack } from 'svelte';
+	import { toast } from 'svelte-sonner';
 	import { superForm } from 'sveltekit-superforms';
 	import { zod4Client } from 'sveltekit-superforms/adapters';
 	import type { PageProps } from './$types';
@@ -28,17 +29,26 @@
 
 	let { data }: PageProps = $props();
 
-	const form = superForm(data.form, {
-		validators: zod4Client(newCourseFormSchema),
-		onResult({result}) {
-			if (result.type === 'success') {
+	const form = superForm(
+		untrack(() => data.form),
+		{
+			validators: zod4Client(newCourseFormSchema),
+			onError({ result }) {
+				if (result.type === 'error' || result.type === 'failure') {
+					toast.error('Gagal membuat kelas. Silakan periksa kembali data yang dimasukkan.');
+				}
+			},
+			onUpdate({ result }) {
+				if (result.type === 'failure') {
+					toast.error('Gagal membuat kelas. Silakan periksa kembali data yang dimasukkan.');
+				}
+			},
+			onUpdated() {
 				toast.success('Kelas berhasil dibuat');
 				newCourseModalState.close();
-			} else if (result.type === 'error' || result.type === 'failure') {
-				toast.error('Gagal membuat kelas. Silakan periksa kembali data yang dimasukkan.');
 			}
 		}
-	});
+	);
 
 	const { form: formData, enhance } = form;
 	let newCourseModalState = setCreateCourseModalState();

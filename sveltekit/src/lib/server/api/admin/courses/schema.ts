@@ -43,8 +43,7 @@ export type UpdateCourseRequest = z.infer<typeof updateCourseRequestSchema>;
 
 export const updateCourseResponseSchema = z.object({
   ...generalAPIResponseSchema.shape,
-  data: z.array(courseSchemaWithId).optional()
-
+  data: z.any().optional()
 });
 export type UpdateCourseResponse = z.infer<typeof updateCourseResponseSchema>;
 

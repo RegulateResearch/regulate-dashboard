@@ -1,8 +1,10 @@
 import { createCourse, deleteCourse, getCourses } from "$lib/server/api/admin/courses";
+import { AuthorizationError } from "$lib/server/api/errors";
+import { fail, redirect } from "@sveltejs/kit";
 import { superValidate } from "sveltekit-superforms";
-import { newCourseFormSchema } from "./schema";
 import { zod4 } from "sveltekit-superforms/adapters";
-import { fail } from "@sveltejs/kit";
+import { newCourseFormSchema } from "./schema";
+
 
 export const load = async () => {
   const breadcrumbs = [
@@ -11,13 +13,32 @@ export const load = async () => {
       href: '/admin/courses'
     }
   ]
-  const courses = await getCourses();
-
-  return {
-    breadcrumbs,
-    courses: courses.data,
-    form: await superValidate(zod4(newCourseFormSchema)),
-  };
+  try {
+    const courses = await getCourses();
+    if (!courses.data || courses.error) {
+      return {
+        breadcrumbs,
+        courses: null,
+        form: await superValidate(null, zod4(newCourseFormSchema)),
+        message: 'Courses not found'
+      };
+    }
+    return {
+      breadcrumbs,
+      courses: courses.data,
+      form: await superValidate(zod4(newCourseFormSchema)),
+    };
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      throw redirect(307, '/logout');
+    }
+    return {
+      breadcrumbs,
+      courses: null,
+      form: await superValidate(null, zod4(newCourseFormSchema)),
+      message: 'An error occurred while fetching the courses'
+    };
+  }
 };
 
 export const actions = {
@@ -47,7 +68,10 @@ export const actions = {
         form,
         message: 'success'
       }
-    } catch {
+    } catch (error) {
+      if (error instanceof AuthorizationError) {
+        throw redirect(307, '/logout');
+      }
       return fail(400, {
         form,
         message: 'An error occurred while creating the course'
@@ -76,7 +100,10 @@ export const actions = {
       return {
         message: 'Delete course success'
       }
-    } catch {
+    } catch (error) {
+      if (error instanceof AuthorizationError) {
+        throw redirect(307, '/logout');
+      }
       return fail(400, {
         message: 'An error occurred while deleting the course'
       })
