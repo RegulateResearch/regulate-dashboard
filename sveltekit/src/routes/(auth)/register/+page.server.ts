@@ -29,6 +29,8 @@ export const actions: Actions = {
       displayName: form.data.displayName,
       password: form.data.password,
     }
+    
+    console.log('register action called', requestBody);
 
     try {
       await register(requestBody)
@@ -37,6 +39,8 @@ export const actions: Actions = {
         form, message: 'failed'
       });
     }
+
+    console.log('register action called');
 
     throw redirect(303, '/login')
   },

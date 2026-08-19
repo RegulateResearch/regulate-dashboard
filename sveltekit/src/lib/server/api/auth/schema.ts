@@ -31,11 +31,8 @@ export const registerRequestSchema = z.object({
 export type RegisterRequest = z.infer<typeof registerRequestSchema>;
 
 export const registerResponseSchema = z.object({
-  id: z.number(),
-  email: z.email(),
-  username: z.string(),
-  displayName: z.string(),
-  role: z.number()
+  ...generalAPIResponseSchema.shape,
+  data: z.any().optional(),
 })
 export type RegisterResponse = z.infer<typeof registerResponseSchema>;
 
