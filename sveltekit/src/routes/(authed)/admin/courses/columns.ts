@@ -44,7 +44,6 @@ export const columns: ColumnDef<Course>[] = [
   },
   {
     accessorKey: "name",
-    size: 300,
     header: ({ column }) =>
       renderComponent(DataTableSortableHeader, {
         label: "Nama Kelas",
@@ -54,6 +53,7 @@ export const columns: ColumnDef<Course>[] = [
     cell: ({ row }) =>
       renderComponent(DataTableLongText, {
         label: row.original.name,
+        class: "min-w-125"
       })
   },
   {

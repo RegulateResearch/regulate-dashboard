@@ -5,7 +5,7 @@
 	import TrashIcon from '@lucide/svelte/icons/trash-2';
 	import CopyIcon from '@lucide/svelte/icons/copy';
 	import type { Course } from './columns';
-	import { getCreateCourseModalState, getDeleteCourseModalState } from './shared-modal-state.svelte.ts';
+	import { getCreateCourseModalState, getDeleteCourseModalState } from './modal-state.svelte.ts';
 
 	let { data }: { data: Course } = $props();
 	let deleteCourseModalState = getDeleteCourseModalState();

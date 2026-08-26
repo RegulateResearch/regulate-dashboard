@@ -23,9 +23,9 @@ export const getUserById = async (id: number) => {
     })
 }
 
-export const updateRoleUser = async (id: number, body: Schema.BulkUpdateUsersRequest) => {
+export const updateRoleUser = async (body: Schema.BulkUpdateUsersRequest) => {
   return await typedFetch(
-    `${BASE_URL}/${id}`,
+    `${BASE_URL}`,
     Schema.bulkUpdateUserRoleResponseSchema,
     {
       method: 'PUT',

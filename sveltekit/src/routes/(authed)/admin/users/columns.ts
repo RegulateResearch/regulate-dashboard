@@ -25,8 +25,29 @@ export const columnsLabel = [
 
 export const columns: ColumnDef<User>[] = [
   {
+    accessorKey: "id",
+    header: ({ column }) =>
+      renderComponent(DataTableSortableHeader, {
+        label: "ID",
+        onclick: column.getToggleSortingHandler(),
+        class: "text-center w-8"
+      }),
+    cell: ({ row }) => {
+      const idSnippet = createRawSnippet<[{ id: number }]>(
+        (getId) => {
+          const { id } = getId();
+          return {
+            render: () => `<div class="text-center text-stone-500">${id}</div>`
+          };
+        }
+      );
+      return renderSnippet(idSnippet, {
+        id: row.original.id
+      });
+    }
+  },
+  {
     accessorKey: "username",
-    size: 300,
     header: ({ column }) =>
       renderComponent(DataTableSortableHeader, {
         label: "Username",
@@ -36,7 +57,6 @@ export const columns: ColumnDef<User>[] = [
   },
   {
     accessorKey: "email",
-    size: 300,
     header: ({ column }) =>
       renderComponent(DataTableSortableHeader, {
         label: "Email",
@@ -46,7 +66,6 @@ export const columns: ColumnDef<User>[] = [
   },
   {
     accessorKey: "civitasId",
-    size: 300,
     header: ({ column }) =>
       renderComponent(DataTableSortableHeader, {
         label: "ID Civitas",
@@ -56,7 +75,6 @@ export const columns: ColumnDef<User>[] = [
   },
   {
     accessorKey: "displayName",
-    size: 300,
     header: ({ column }) =>
       renderComponent(DataTableSortableHeader, {
         label: "Nama Lengkap",
@@ -66,6 +84,7 @@ export const columns: ColumnDef<User>[] = [
     cell: ({ row }) =>
       renderComponent(DataTableLongText, {
         label: row.original.displayName,
+        class: "min-w-100"
       })
   },
   {
