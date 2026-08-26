@@ -1,6 +1,6 @@
 import type { PageServerLoad } from "./$types";
 import { getUsers, updateRoleUser } from "$lib/server/api/admin/user";
-import { AuthorizationError } from "$lib/server/api/errors";
+import { AuthorizationError } from "$lib/server/errors";
 import { fail, redirect } from "@sveltejs/kit";
 import { superValidate } from "sveltekit-superforms";
 import { editUserRoleSchema } from "./schema";

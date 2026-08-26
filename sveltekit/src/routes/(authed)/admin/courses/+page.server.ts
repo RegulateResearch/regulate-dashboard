@@ -1,5 +1,5 @@
 import { createCourse, deleteCourse, getCourses } from "$lib/server/api/admin/courses";
-import { AuthorizationError } from "$lib/server/api/errors";
+import { AuthorizationError } from "$lib/server/errors";
 import { fail, redirect } from "@sveltejs/kit";
 import { superValidate } from "sveltekit-superforms";
 import { zod4 } from "sveltekit-superforms/adapters";

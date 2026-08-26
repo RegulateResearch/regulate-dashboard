@@ -4,7 +4,7 @@ import { superValidate } from "sveltekit-superforms";
 import { editCourseFormSchema } from "./schema";
 import { zod4 } from "sveltekit-superforms/adapters";
 import { fail, redirect } from "@sveltejs/kit";
-import { AuthorizationError } from "$lib/server/api/errors";
+import { AuthorizationError } from "$lib/server/errors";
 
 export const load: PageServerLoad = async ({ params }) => {
   const breadcrumbs = [
