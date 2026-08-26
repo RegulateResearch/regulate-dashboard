@@ -70,8 +70,21 @@ export const columns: ColumnDef<User>[] = [
       renderComponent(DataTableSortableHeader, {
         label: "ID Civitas",
         onclick: column.getToggleSortingHandler(),
-        class: "flex space-x-2 w-full"
-      })
+        class: "flex space-x-2 w-full ju"
+      }),
+    cell: ({ row }) => {
+      const civitasIdSnippet = createRawSnippet<[{ civitasId: string }]>(
+        (getCivitasId) => {
+          const { civitasId } = getCivitasId();
+          return {
+            render: () => `<div class="text-center text-stone-500">${civitasId}</div>`
+          };
+        }
+      );
+      return renderSnippet(civitasIdSnippet, {
+        civitasId: row.original.civitasId || "-"
+      });
+    }
   },
   {
     accessorKey: "displayName",
