@@ -30,8 +30,6 @@ export const actions: Actions = {
       password: form.data.password,
     }
     
-    console.log('register action called', requestBody);
-
     try {
       await register(requestBody)
     } catch {
@@ -39,8 +37,6 @@ export const actions: Actions = {
         form, message: 'failed'
       });
     }
-
-    console.log('register action called');
 
     throw redirect(303, '/login')
   },
