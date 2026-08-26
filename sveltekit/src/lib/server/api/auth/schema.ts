@@ -5,7 +5,7 @@ export const sessionResponseSchema = z.object({
   ...generalAPIResponseSchema.shape,
   data: z.optional(z.object({
     id: z.number(),
-    role: z.string()
+    role: z.enum(['admin', 'user']),
   })),
 });
 export type SessionResponse = z.infer<typeof sessionResponseSchema>;

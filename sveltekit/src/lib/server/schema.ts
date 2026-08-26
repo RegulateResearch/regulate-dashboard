@@ -10,7 +10,7 @@ export const userSchema = z.object({
   username: z.string(),
   displayName: z.string(),
   role: z.enum(['admin', 'user']),
-  academicRole: z.enum(['student', 'lecturer']),
+  academicRole: z.enum(['student', 'lecturer']).optional(),
   civitasId: z.string().optional(),
 })
 export type User = z.infer<typeof userSchema>;
