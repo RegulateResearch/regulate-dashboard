@@ -1,5 +1,5 @@
 import { getSession } from '$lib/server/api/auth';
-import { AuthorizationError } from '$lib/server/api/errors';
+import { AuthorizationError } from '$lib/server/errors';
 import { redirect } from '@sveltejs/kit';
 
 export const handle = async ({ event, resolve }) => {

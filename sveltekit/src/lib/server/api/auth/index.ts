@@ -1,8 +1,8 @@
 import { getRequestEvent } from "$app/server";
-import { typedFetch } from "$lib/server/api/utils";
-import { redirect } from "@sveltejs/kit";
-import * as Schema from "./schema"
 import { env } from "$env/dynamic/public";
+import { typedFetch } from "$lib/server/utils";
+import { redirect } from "@sveltejs/kit";
+import * as Schema from "./schema";
 
 export const getSession = async () => {
   return await typedFetch(

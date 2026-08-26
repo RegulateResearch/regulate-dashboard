@@ -1,4 +1,4 @@
-import { typedFetch } from "../../utils"
+import { typedFetch } from "$lib/server/utils"
 import * as Schema from "./schema"
 
 const BASE_URL = '/admin/courses'

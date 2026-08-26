@@ -1,6 +1,6 @@
 import { getRequestEvent } from '$app/server';
 import { env } from '$env/dynamic/private';
-import { ApiError, AuthorizationError } from '$lib/server/api/errors';
+import { ApiError, AuthorizationError } from '$lib/server/errors';
 import { ZodError, type z } from 'zod';
 
 export const typedFetch = async <TResponse extends z.ZodTypeAny, TBody extends z.ZodTypeAny>(

@@ -1,5 +1,5 @@
+import { generalAPIResponseSchema } from '$lib/server/schema';
 import { z } from 'zod';
-import { generalAPIResponseSchema } from '../schema';
 
 export const sessionResponseSchema = z.object({
   ...generalAPIResponseSchema.shape,
