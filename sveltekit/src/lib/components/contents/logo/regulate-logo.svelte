@@ -21,7 +21,6 @@
 	}: Props = $props();
 
 	let visible = $derived(!animated);
-	let viewBox = $derived(withTitle ? '0 0 777 195' : '0 0 195 195');
 	let fillClass: ClassValue = $derived(active ? 'fill-yellow-300' : 'fill-neutral-300');
 
 	onMount(() => {
@@ -37,7 +36,14 @@
 </script>
 
 {#if visible}
-	<svg height="195" xmlns="http://www.w3.org/2000/svg" class={className} {viewBox} fill="none">
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		width={withTitle ? 777 : 16}
+		height={withTitle ? 195 : 16}
+		viewBox={withTitle ? '0 0 777 195' : '0 30 120 135'}
+		class={className}
+		fill="none"
+	>
 		<path
 			d="M76.7014 123.38C88.9565 119.876 92.9105 116.298 98.6963 109.606C104.482 102.914 108.124 94.6387 109.149 85.8522C110.174 77.0657 108.536 68.1739 104.446 60.3299C100.356 52.4859 94.0044 46.0516 86.2135 41.8616C78.4227 37.6716 69.5526 35.9191 60.7537 36.8314C51.9548 37.7437 43.633 41.2788 36.8676 46.9781C30.1021 52.6774 27.5359 56.8812 25.4366 64.3515C23.0433 72.8677 25.7087 86.0023 34.4333 89.8922C55.9063 97.8011 48.1392 49.5558 24.8067 74.2434C21.2345 78.023 17.2976 83.512 13.0449 91.1736C2.81367 109.606 -0.92041 123.961 20.5795 133.5C43.4937 143.666 100.15 118.944 74.1156 152.114C48.0813 185.284 37.2693 69.0066 18.2469 101.903C-0.775494 134.799 64.4463 126.885 76.7014 123.38Z"
 			stroke="#292524"
@@ -69,17 +75,18 @@
 			in:fade={{ duration: 250, delay: 300, easing: quintOut }}
 			out:fade={{ duration: 250, delay: 100, easing: quintOut }}
 		/>
-		<text
-      x="143.633"
-      y="149"
-      fill="#292524"
-      font-size="150"
-			class="font-extralight"
-      display={withTitle ? 'inline' : 'none'}
-      in:fade={{ duration: 500, delay: 500, easing: quintOut }}
-      out:fade={{ duration: 500, delay: 500, easing: quintOut }}
-    >
-      regulate
-    </text>
+		{#if withTitle}
+			<text
+				x="143.633"
+				y="149"
+				fill="#292524"
+				font-size="150"
+				class="font-extralight"
+				in:fade={{ duration: 500, delay: 500, easing: quintOut }}
+				out:fade={{ duration: 500, delay: 500, easing: quintOut }}
+			>
+				regulate
+			</text>
+		{/if}
 	</svg>
 {/if}

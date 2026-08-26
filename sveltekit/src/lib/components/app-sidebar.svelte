@@ -73,15 +73,17 @@
 	});
 </script>
 
-<Sidebar.Root bind:ref variant="inset" {...restProps}>
+<Sidebar.Root bind:ref {...restProps}>
 	<Sidebar.Header>
 		<Sidebar.Menu>
 			<Sidebar.MenuItem>
-				<Sidebar.MenuButton size="lg">
-					{#snippet child()}
-						<div class="flex h-10 w-full items-center p-4">
-							<RegulateLogo withTitle class="h-auto w-3/4" />
-						</div>
+				<Sidebar.MenuButton tooltipContent="Home" class="py-6 px-0 group-data-[collapsible=icon]:px-0! hover:bg-white">
+					{#snippet child({ props })}
+						<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+						<a href="/" {...props}>
+							<RegulateLogo class="size-8! p-1" />
+							<span class="text-2xl font-extralight">regulate</span>
+						</a>
 					{/snippet}
 				</Sidebar.MenuButton>
 			</Sidebar.MenuItem>
