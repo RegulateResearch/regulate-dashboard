@@ -1,4 +1,4 @@
-import { generalAPIResponseSchema, userSchemaWithId } from '$lib/server/schema';
+import { generalAPIResponseSchema, userSchemaWithId } from '$lib/schema';
 import { z } from 'zod';
 
 export const myProfileResponseSchema = z.object({

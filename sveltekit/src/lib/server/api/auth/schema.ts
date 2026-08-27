@@ -1,4 +1,4 @@
-import { generalAPIResponseSchema } from '$lib/server/schema';
+import { generalAPIResponseSchema } from '$lib/schema';
 import { z } from 'zod';
 
 export const sessionResponseSchema = z.object({

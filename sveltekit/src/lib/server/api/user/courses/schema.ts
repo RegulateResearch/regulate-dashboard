@@ -1,4 +1,4 @@
-import { courseSchema, courseSchemaWithId, generalAPIResponseSchema } from '$lib/server/schema';
+import { courseSchema, courseSchemaWithId, generalAPIResponseSchema } from '$lib/schema';
 import { z } from 'zod';
 
 export const getCourseByIdResponseSchema = z.object({

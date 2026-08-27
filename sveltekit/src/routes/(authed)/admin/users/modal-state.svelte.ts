@@ -1,18 +1,17 @@
 import { setContext, getContext } from 'svelte';
-import type { User } from './columns';
+import type { UserWithId } from '$lib/schema';
 
 
 class EditUserRoleModalState {
   isOpen = $state(false);
-  rowData: User = $state({ id: 0, username: '', displayName: '', role: 'user', academicRole: 'student', email: '', civitasId: '' })
+  rowData: UserWithId = $state({ id: 0, username: '', displayName: '', role: 'user', academicRole: 'student', email: '', civitasId: '' })
 
-  open(userRoleData?: User) {
-    this.rowData = userRoleData || { id: 0, username: '', displayName: '', role: 'user', academicRole: 'student', email: '', civitasId: '' };
+  open(userRoleData: UserWithId) {
+    this.rowData = userRoleData;
     this.isOpen = true;
   }
 
   close() {
-    this.rowData = { id: 0, username: '', displayName: '', role: 'user', academicRole: 'student', email: '', civitasId: '' };
     this.isOpen = false;
   }
 }

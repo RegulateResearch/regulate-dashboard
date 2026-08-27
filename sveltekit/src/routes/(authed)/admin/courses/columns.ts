@@ -2,14 +2,7 @@ import { DataTableSortableHeader, DataTableLongText, renderComponent, renderSnip
 import type { ColumnDef } from "@tanstack/table-core";
 import DataTableActions from "./data-table-actions.svelte";
 import { createRawSnippet } from "svelte";
-
-export type Course = {
-  id: number;
-  name: string;
-  year: number;
-  term: "odd" | "even" | "short";
-  url?: string;
-};
+import type { CourseWithId } from "$lib/schema";
 
 export const columnsLabel = [
   { id: 'id', label: 'ID' },
@@ -19,7 +12,7 @@ export const columnsLabel = [
   { id: 'action', label: 'Aksi Kelola' },
 ]
 
-export const columns: ColumnDef<Course>[] = [
+export const columns: ColumnDef<CourseWithId>[] = [
   {
     accessorKey: "id",
     header: ({ column }) =>

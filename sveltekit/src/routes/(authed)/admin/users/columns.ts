@@ -2,16 +2,8 @@ import { DataTableSortableHeader, DataTableLongText, renderComponent, renderSnip
 import type { ColumnDef } from "@tanstack/table-core";
 import DataTableActions from "./data-table-actions.svelte";
 import { createRawSnippet } from "svelte";
-
-export type User = {
-  id: number;
-  username: string;
-  displayName: string;
-  role: "admin" | "user";
-  academicRole: "student" | "lecturer";
-  email?: string;
-  civitasId?: string;
-};
+import type { UserWithId } from "$lib/schema";
+import type { ClassValue } from "clsx";
 
 export const columnsLabel = [
   { id: 'id', label: 'id' },
@@ -23,7 +15,7 @@ export const columnsLabel = [
   { id: 'civitasId', label: 'ID Civitas' },
 ]
 
-export const columns: ColumnDef<User>[] = [
+export const columns: ColumnDef<UserWithId>[] = [
   {
     accessorKey: "id",
     header: ({ column }) =>
@@ -45,6 +37,19 @@ export const columns: ColumnDef<User>[] = [
         id: row.original.id
       });
     }
+  },
+  {
+    accessorKey: "displayName",
+    header: ({ column }) =>
+      renderComponent(DataTableSortableHeader, {
+        label: "Nama Lengkap",
+        onclick: column.getToggleSortingHandler(),
+        class: "flex space-x-2 w-full"
+      }),
+    cell: ({ row }) =>
+      renderComponent(DataTableLongText, {
+        label: row.original.displayName,
+      })
   },
   {
     accessorKey: "username",
@@ -85,20 +90,6 @@ export const columns: ColumnDef<User>[] = [
         civitasId: row.original.civitasId || "-"
       });
     }
-  },
-  {
-    accessorKey: "displayName",
-    header: ({ column }) =>
-      renderComponent(DataTableSortableHeader, {
-        label: "Nama Lengkap",
-        onclick: column.getToggleSortingHandler(),
-        class: "flex space-x-2 w-full"
-      }),
-    cell: ({ row }) =>
-      renderComponent(DataTableLongText, {
-        label: row.original.displayName,
-        class: "min-w-100"
-      })
   },
   {
     accessorKey: "role",
@@ -149,11 +140,11 @@ export const columns: ColumnDef<User>[] = [
         class: "text-center"
       }),
     cell: ({ row }) => {
-      const academicRoleSnippet = createRawSnippet<[{ academicRole: "student" | "lecturer" }]>(
+      const academicRoleSnippet = createRawSnippet<[{ academicRole: "student" | "lecturer" | undefined }]>(
         (getAcademicRole) => {
           const { academicRole } = getAcademicRole();
           let academicRoleString: 'Mahasiswa' | 'Dosen' = 'Mahasiswa';
-          let academicRoleStyle;
+          let academicRoleStyle: ClassValue;
           switch (academicRole) {
             case 'student':
               academicRoleString = 'Mahasiswa';

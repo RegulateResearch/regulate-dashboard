@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button/index.js';
 	import SquarePenIcon from '@lucide/svelte/icons/square-pen';
-	import type { User } from './columns';
+	import type { UserWithId } from '$lib/schema';
 	import { getEditRoleModalState } from './modal-state.svelte';
 
-	let { data }: { data: User } = $props();
+	let { data }: { data: UserWithId } = $props();
 	let editRoleModalState = getEditRoleModalState();
 </script>
 

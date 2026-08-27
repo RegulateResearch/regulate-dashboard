@@ -1,6 +1,6 @@
 // See https://svelte.dev/docs/kit/types#app.d.ts
 
-import type { UserWithId } from "$lib/server/schema";
+import type { UserWithId } from "$lib/schema";
 
 // for information about these interfaces
 declare global {
