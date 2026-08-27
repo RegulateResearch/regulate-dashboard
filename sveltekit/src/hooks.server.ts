@@ -1,6 +1,5 @@
-import { getSession } from '$lib/server/api/auth';
+import { getSession, logout } from '$lib/server/api/auth';
 import { AuthorizationError } from '$lib/server/errors';
-import { redirect } from '@sveltejs/kit';
 
 export const handle = async ({ event, resolve }) => {
   try {
@@ -10,7 +9,7 @@ export const handle = async ({ event, resolve }) => {
     }
   } catch (error) {
     if (error instanceof AuthorizationError) {
-      throw redirect(302, '/login');
+      logout();
     }
     event.locals.session = undefined
   }
