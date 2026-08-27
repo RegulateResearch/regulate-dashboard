@@ -12,6 +12,8 @@ export const typedFetch = async <TResponse extends z.ZodTypeAny, TBody extends z
     bodySchema?: TBody
   }
 ): Promise<z.infer<TResponse>> => {
+  const serverLogBaseString = `Request ${options?.method || 'GET'} to ${env.API_BASE_URL}${endpoint}`
+
   const { fetch, cookies } = getRequestEvent();
   try {
     let requestBody: string | undefined;
@@ -40,14 +42,11 @@ export const typedFetch = async <TResponse extends z.ZodTypeAny, TBody extends z
       headers: requestHeaders
     });
 
-    serverLog({
-      message: `[FETCH] Request ${options?.method || 'GET'} to ${env.API_BASE_URL}${endpoint} returned status ${response.status}`,
-      isError: false,
-      devOnly: true
-    })
-
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({ message: response.statusText }));
+      if (response.status === 401) {
+        throw new AuthorizationError(errorData.message || 'Request failed')
+      }
       throw new ApiError(
         errorData.message || 'Request failed',
         response.status,
@@ -56,21 +55,32 @@ export const typedFetch = async <TResponse extends z.ZodTypeAny, TBody extends z
     }
 
     const responseData: unknown = await response.json();
+
+    serverLog({
+      message: `
+      [FETCH] ${serverLogBaseString} returned status ${response.status}
+      Request Body: ${requestBody || "-"}
+      Response Body: ${responseData ? JSON.stringify(responseData) : "-"}
+      `,
+      isError: false,
+      devOnly: true
+    })
+
     return responseSchema.parse(responseData);
   } catch (error) {
     let message = 'An unexpected error occurred';
     let devOnly = true;
     if (error instanceof ApiError) {
-      message = `[ERROR] ApiError: ${error.message} (Status: ${error.statusCode}) (Data: ${JSON.stringify(error.details)})`
+      message = `[ERROR] ${serverLogBaseString} ApiError: ${error.message} (Status: ${error.statusCode}) (Data: ${JSON.stringify(error.details)})`
     } else if (error instanceof AuthorizationError) {
-      message = `[ERROR] AuthorizationError: ${error.message}`
+      message = `[ERROR] ${serverLogBaseString} AuthorizationError: ${error.message}`
     } else if (error instanceof ZodError) {
-      message = `[ERROR] ValidationError: ${error.message}`
+      message = `[ERROR] ${serverLogBaseString} ValidationError: ${error.message}`
     } else if (error instanceof Error) {
-      message = `[ERROR] ${error.name}: ${error.message}`
+      message = `[ERROR] ${serverLogBaseString} ${error.name}: ${error.message}`
       devOnly = false;
     } else {
-      message = `[ERROR] Unknown error: An unexpected error occurred ${error}`
+      message = `[ERROR] ${serverLogBaseString} Unknown error: An unexpected error occurred ${error}`
       devOnly = false;
     }
     serverLog({
