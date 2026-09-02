@@ -1,25 +1,28 @@
 <script lang="ts" generics="TData, TValue">
 	import { createSvelteTable, FlexRender } from '$lib/components/ui/data-table/index.js';
-	import * as Table from '$lib/components/ui/table/index.js';
 	import * as Empty from '$lib/components/ui/empty';
+	import * as Table from '$lib/components/ui/table/index.js';
 	import { cn } from '$lib/utils';
+	import SearchXIcon from '@lucide/svelte/icons/search-x';
 	import {
-		type ColumnDef,
-		type ColumnFiltersState,
 		getCoreRowModel,
+		getFacetedRowModel,
+		getFacetedUniqueValues,
 		getFilteredRowModel,
 		getPaginationRowModel,
 		getSortedRowModel,
+		type ColumnDef,
+		type ColumnFiltersState,
 		type PaginationState,
+		type RowModel,
 		type RowSelectionState,
 		type SortingState,
 		type VisibilityState
 	} from '@tanstack/table-core';
 	import type { ClassValue } from 'clsx';
-	import type { Component } from 'svelte';
+	import { type Component, type Snippet } from 'svelte';
 	import DataTableFilterToolbar from './data-table-filter-toolbar.svelte';
 	import DataTablePagination from './data-table-pagination.svelte';
-	import SearchXIcon from '@lucide/svelte/icons/search-x';
 
 	type DataTableProps<TData, TValue> = {
 		columns: ColumnDef<TData, TValue>[];
@@ -33,6 +36,10 @@
 		columnsLabel,
 		searchPlaceholder = 'Filter...',
 		categorialFilters,
+		columnVisibility = $bindable({}),
+		rowSelection = $bindable({}),
+		selectedRow = $bindable(),
+		additionalMenu,
 		class: className
 	}: DataTableProps<TData, TValue> & {
 		columnToSearch: string;
@@ -45,28 +52,35 @@
 			title: string;
 			colName: string;
 			options: {
-				label: string;
+				label?: string;
 				value: string;
 				icon?: Component;
 			}[];
 		}[];
+		columnVisibility?: VisibilityState;
+		rowSelection?: RowSelectionState;
+		selectedRow?: RowModel<TData> | undefined;
+		additionalMenu?: Snippet;
 		class?: ClassValue;
 	} = $props();
+
 	let pagination = $state<PaginationState>({ pageIndex: 0, pageSize: 15 });
 	let sorting = $state<SortingState>([]);
 	let columnFilters = $state<ColumnFiltersState>([]);
-	let columnVisibility = $state<VisibilityState>({});
-	let rowSelection = $state<RowSelectionState>({});
 
 	const table = createSvelteTable({
 		get data() {
 			return data;
 		},
-		columns,
+		get columns() {
+			return columns;
+		},
 		getCoreRowModel: getCoreRowModel(),
 		getPaginationRowModel: getPaginationRowModel(),
 		getSortedRowModel: getSortedRowModel(),
 		getFilteredRowModel: getFilteredRowModel(),
+		getFacetedRowModel: getFacetedRowModel(),
+		getFacetedUniqueValues: getFacetedUniqueValues(),
 		onPaginationChange: (updater) => {
 			if (typeof updater === 'function') {
 				pagination = updater(pagination);
@@ -120,26 +134,39 @@
 			}
 		}
 	});
+
+	$effect(() => {
+		selectedRow = table.getSelectedRowModel();
+	});
 </script>
 
 <div class={cn('flex flex-col gap-4', className)}>
-	<DataTableFilterToolbar
-		{table}
-		{columnsLabel}
-		{categorialFilters}
-		{columnToSearch}
-		{searchPlaceholder}
-		class="shrink-0"
-	/>
+	<div class="flex w-full flex-row gap-1">
+		<DataTableFilterToolbar
+			{table}
+			{columnsLabel}
+			{categorialFilters}
+			{columnToSearch}
+			{searchPlaceholder}
+			class="grow"
+		/>
+		<div class="shrink-0">
+			{#if additionalMenu}
+				{@render additionalMenu()}
+			{/if}
+		</div>
+	</div>
 	<div class="flex min-h-0 grow">
 		<Table.Root
 			wrapperClass="rounded-lg border overflow-scroll scrollbar-thumb-yellow-400 max-h-max"
+			class="table-fixed"
 		>
 			<Table.Header>
 				{#each table.getHeaderGroups() as headerGroup (headerGroup.id)}
 					<Table.Row>
 						{#each headerGroup.headers as header (header.id)}
 							<Table.Head
+								style="width: {header.getSize()}px;"
 								colspan={header.colSpan}
 								class="sticky top-0 z-10 bg-background after:absolute after:bottom-0 after:left-0 after:h-px after:w-full after:bg-border"
 							>
@@ -159,7 +186,7 @@
 				{#each table.getRowModel().rows as row (row.id)}
 					<Table.Row data-state={row.getIsSelected() && 'selected'}>
 						{#each row.getVisibleCells() as cell (cell.id)}
-							<Table.Cell>
+							<Table.Cell style="width: {cell.column.getSize()}px;">
 								<FlexRender content={cell.column.columnDef.cell} context={cell.getContext()} />
 							</Table.Cell>
 						{/each}
