@@ -36,7 +36,8 @@ export const columns: ColumnDef<UserWithId>[] = [
       return renderSnippet(idSnippet, {
         id: row.original.id
       });
-    }
+    },
+    maxSize: 48,
   },
   {
     accessorKey: "displayName",
@@ -130,6 +131,7 @@ export const columns: ColumnDef<UserWithId>[] = [
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
     },
+    maxSize: 142,
   },
   {
     accessorKey: "academicRole",
@@ -170,6 +172,7 @@ export const columns: ColumnDef<UserWithId>[] = [
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
     },
+    maxSize: 142,
   },
   {
     accessorKey: "action",
@@ -189,5 +192,6 @@ export const columns: ColumnDef<UserWithId>[] = [
     cell: ({ row }) => {
       return renderComponent(DataTableActions, { data: row.original });
     },
+    maxSize: 96,
   }
 ];

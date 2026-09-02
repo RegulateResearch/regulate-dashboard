@@ -33,7 +33,8 @@ export const columns: ColumnDef<CourseWithId>[] = [
       return renderSnippet(idSnippet, {
         id: row.original.id
       });
-    }
+    },
+    maxSize: 48,
   },
   {
     accessorKey: "name",
@@ -46,8 +47,8 @@ export const columns: ColumnDef<CourseWithId>[] = [
     cell: ({ row }) =>
       renderComponent(DataTableLongText, {
         label: row.original.name,
-        class: "min-w-125"
-      })
+      }),
+      minSize: 200
   },
   {
     accessorKey: "year",
@@ -69,7 +70,8 @@ export const columns: ColumnDef<CourseWithId>[] = [
       return renderSnippet(yearSnippet, {
         year: row.original.year
       });
-    }
+    },
+    maxSize: 96,
   },
   {
     accessorKey: "term",
@@ -114,6 +116,7 @@ export const columns: ColumnDef<CourseWithId>[] = [
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
     },
+    maxSize: 50,
   },
   {
     accessorKey: "action",
@@ -133,5 +136,6 @@ export const columns: ColumnDef<CourseWithId>[] = [
     cell: ({ row }) => {
       return renderComponent(DataTableActions, { data: row.original });
     },
+    maxSize: 128,
   }
 ];
