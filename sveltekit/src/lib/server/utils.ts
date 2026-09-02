@@ -58,9 +58,9 @@ export const typedFetch = async <TResponse extends z.ZodTypeAny, TBody extends z
 
     serverLog({
       message: `
-      [FETCH] ${serverLogBaseString} returned status ${response.status}
-      Request Body: ${requestBody || "-"}
-      Response Body: ${responseData ? JSON.stringify(responseData) : "-"}
+[FETCH] ${serverLogBaseString} returned status ${response.status}
+Request Body: ${requestBody || "-"}
+Response Body: ${responseData ? JSON.stringify(responseData, null, 2) : "-"}
       `,
       isError: false,
       devOnly: true
