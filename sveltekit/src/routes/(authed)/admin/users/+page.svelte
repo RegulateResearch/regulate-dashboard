@@ -40,9 +40,11 @@
 					);
 				}
 			},
-			onUpdated() {
-				toast.success('Peran pengguna berhasil diperbarui');
-				editRoleModalState.close();
+			onUpdated({ form }) {
+				if (form.valid) {
+					toast.success('Peran pengguna berhasil diperbarui');
+					editRoleModalState.close();
+				}
 			}
 		}
 	);

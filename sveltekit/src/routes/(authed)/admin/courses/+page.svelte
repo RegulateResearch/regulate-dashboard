@@ -40,9 +40,11 @@
 					toast.error('Gagal membuat kelas. Silakan periksa kembali data yang dimasukkan.');
 				}
 			},
-			onUpdated() {
-				toast.success('Kelas berhasil dibuat');
-				newCourseModalState.close();
+			onUpdated({ form }) {
+				if (form.valid) {
+					toast.success('Kelas berhasil dibuat');
+					newCourseModalState.close();
+				}
 			}
 		}
 	);
