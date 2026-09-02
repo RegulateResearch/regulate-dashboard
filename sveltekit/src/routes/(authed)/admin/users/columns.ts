@@ -1,4 +1,4 @@
-import { DataTableSortableHeader, DataTableLongText, renderComponent, renderSnippet } from "$lib/components/ui/data-table";
+import { DataTableSortableHeader, DataTableLongText, renderComponent, renderSnippet, DataTableCheckbox } from "$lib/components/ui/data-table";
 import type { ColumnDef } from "@tanstack/table-core";
 import DataTableActions from "./data-table-actions.svelte";
 import { createRawSnippet } from "svelte";
@@ -6,6 +6,7 @@ import type { UserWithId } from "$lib/schema";
 import type { ClassValue } from "clsx";
 
 export const columnsLabel = [
+  { id: 'select', label: 'Pilihan' },
   { id: 'id', label: 'id' },
   { id: 'email', label: 'Email' },
   { id: 'username', label: 'Username' },
@@ -13,9 +14,31 @@ export const columnsLabel = [
   { id: 'role', label: 'Peran (Sistem)' },
   { id: 'academicRole', label: 'Peran (Akademik)' },
   { id: 'civitasId', label: 'ID Civitas' },
+  { id: 'action', label: 'Aksi Kelola' },
 ]
 
 export const columns: ColumnDef<UserWithId>[] = [
+  {
+    accessorKey: "select",
+    header: ({ table }) =>
+      renderComponent(DataTableCheckbox, {
+        checked: table.getIsAllPageRowsSelected(),
+        indeterminate:
+          table.getIsSomePageRowsSelected() &&
+          !table.getIsAllPageRowsSelected(),
+        onCheckedChange: (value: boolean) =>
+          table.toggleAllPageRowsSelected(!!value),
+        "aria-label": "Select all",
+      }),
+    cell: ({ row }) =>
+      renderComponent(DataTableCheckbox, {
+        checked: row.getIsSelected(),
+        onCheckedChange: (value: boolean) => row.toggleSelected(!!value),
+        "aria-label": "Select row",
+      }),
+    enableSorting: false,
+    maxSize: 32,
+  },
   {
     accessorKey: "id",
     header: ({ column }) =>
