@@ -19,8 +19,8 @@
 	}: {
 		column: Column<TData, TValue>;
 		title: string;
-		options: {
-			label: string;
+		options?: {
+			label?: string;
 			value: string;
 			icon?: Component;
 		}[];
@@ -28,6 +28,26 @@
 
 	const facets = $derived(column?.getFacetedUniqueValues());
 	const selectedValues = $derived(new SvelteSet(column?.getFilterValue() as string[]));
+	const displayedOptions = $derived.by(() => {
+		if (options) {
+			options.forEach((opt) => {
+				opt.label = opt.label || opt.value;
+			});
+			return options;
+		}
+		let displayedOptions: {
+			label?: string;
+			value: string;
+			icon?: Component;
+		}[] = [];
+		column
+			?.getFacetedUniqueValues()
+			.keys()
+			.forEach((key) => {
+				displayedOptions.push({ label: key, value: key });
+			});
+		return displayedOptions;
+	});
 </script>
 
 <Popover.Root>
@@ -47,7 +67,7 @@
 								{selectedValues.size} filter
 							</Badge>
 						{:else}
-							{#each options.filter((opt) => selectedValues.has(opt.value)) as option (option)}
+							{#each displayedOptions.filter((opt) => selectedValues.has(opt.value)) as option (option)}
 								<Badge variant="secondary" class="rounded-sm px-1 font-normal">
 									{option.label}
 								</Badge>
@@ -64,7 +84,7 @@
 			<Command.List>
 				<Command.Empty>Tidak ada hasil.</Command.Empty>
 				<Command.Group>
-					{#each options as option (option)}
+					{#each displayedOptions as option (option)}
 						{@const isSelected = selectedValues.has(option.value)}
 						<Command.Item
 							onSelect={() => {
