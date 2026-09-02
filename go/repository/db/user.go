@@ -34,7 +34,9 @@ func NewUserRepository(executor queryexec.QueryExecutor) UserRepository {
 
 func (r userRepositoryImpl) FindAll(ctx typing.Context) ([]entity.User, exception.Exception) {
 	query :=
-		`SELECT id, email, username, display_name, user_role, civitas_id, academic_role
+		`SELECT 
+			id, email, username, display_name, user_role, 
+			civitas_id, academic_role
 		FROM users`
 
 	rows, err := r.executor.QueryContext(ctx, query)
@@ -46,7 +48,10 @@ func (r userRepositoryImpl) FindAll(ctx typing.Context) ([]entity.User, exceptio
 	res, err := querying.ScanForRowsThenTransform(
 		rows, dao.NewUserDb,
 		func(rows queryexec.Rows, elem dao.UserDb) (dao.UserDb, exception.Exception) {
-			err := rows.Scan(&elem.ID, &elem.Email, &elem.Username, &elem.DisplayName, &elem.Role, &elem.CivitasID, &elem.AcademicRole)
+			err := rows.Scan(
+				&elem.ID, &elem.Email, &elem.Username, &elem.DisplayName, &elem.Role,
+				&elem.CivitasID, &elem.AcademicRole,
+			)
 			return elem, err
 		},
 		converter.UserDbToEntity,
@@ -63,13 +68,16 @@ func (r userRepositoryImpl) FindById(ctx typing.Context, id typing.ID) (entity.U
 	var res dao.UserDb
 	querystr := `
 		SELECT 
-			id, email, username, display_name, user_role, civitas_id
+			id, email, username, display_name, user_role, 
+			civitas_id, academic_role
 		FROM users
 		WHERE id = $1 AND deleted_at IS NULL
 	`
 
-	err := r.executor.QueryRowContext(ctx, querystr, id).
-		Scan(&res.ID, &res.Email, &res.Username, &res.DisplayName, &res.Role, &res.CivitasID)
+	err := r.executor.QueryRowContext(ctx, querystr, id).Scan(
+		&res.ID, &res.Email, &res.Username, &res.DisplayName, &res.Role,
+		&res.CivitasID, &res.AcademicRole,
+	)
 	if err != nil {
 		return entity.User{}, repository_exception.WrapQueryexecException(err, "user")
 	}
