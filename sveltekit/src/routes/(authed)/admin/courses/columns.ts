@@ -34,7 +34,7 @@ export const columns: ColumnDef<CourseWithId>[] = [
         id: row.original.id
       });
     },
-    maxSize: 48,
+    maxSize: 24,
   },
   {
     accessorKey: "name",
