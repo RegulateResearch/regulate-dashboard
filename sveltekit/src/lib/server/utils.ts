@@ -9,7 +9,8 @@ export const typedFetch = async <TResponse extends z.ZodTypeAny, TBody extends z
   options?: Omit<RequestInit, 'body'> & {
     requireAuthentication: boolean,
     body?: z.infer<TBody>,
-    bodySchema?: TBody
+    bodySchema?: TBody,
+    clientUrl?: string
   }
 ): Promise<z.infer<TResponse>> => {
   const serverLogBaseString = `Request ${options?.method || 'GET'} to ${env.API_BASE_URL}${endpoint}`
@@ -29,7 +30,7 @@ export const typedFetch = async <TResponse extends z.ZodTypeAny, TBody extends z
     }
     if (requestHeaders && options?.requireAuthentication) {
       const authToken = cookies.get('authToken')
-      if (!authToken) throw AuthorizationError
+      if (!authToken) throw new AuthorizationError('authToken cookie is missing, user is not authenticated')
       requestHeaders = {
         ...requestHeaders,
         'Authorization': `Bearer ${authToken}`,
@@ -59,6 +60,7 @@ export const typedFetch = async <TResponse extends z.ZodTypeAny, TBody extends z
     serverLog({
       message: `
 [FETCH] ${serverLogBaseString} returned status ${response.status}
+Request client URL: ${options?.clientUrl || "-"}
 Request Body: ${requestBody || "-"}
 Response Body: ${responseData ? JSON.stringify(responseData, null, 2) : "-"}
       `,
@@ -71,16 +73,28 @@ Response Body: ${responseData ? JSON.stringify(responseData, null, 2) : "-"}
     let message = 'An unexpected error occurred';
     let devOnly = true;
     if (error instanceof ApiError) {
-      message = `[ERROR] ${serverLogBaseString} ApiError: ${error.message} (Status: ${error.statusCode}) (Data: ${JSON.stringify(error.details)})`
+      message = `
+[ERROR] ${serverLogBaseString} ApiError: ${error.message}
+Request client URL: ${options?.clientUrl || "-"}
+Status: ${error.statusCode}
+Data: ${JSON.stringify(error.details, null, 2) || "-"}`
     } else if (error instanceof AuthorizationError) {
-      message = `[ERROR] ${serverLogBaseString} AuthorizationError: ${error.message}`
+      message = `
+[ERROR] ${serverLogBaseString} AuthorizationError: ${error.message}
+Request client URL: ${options?.clientUrl || "-"}`
     } else if (error instanceof ZodError) {
-      message = `[ERROR] ${serverLogBaseString} ValidationError: ${error.message}`
+      message = `
+[ERROR] ${serverLogBaseString} ValidationError: ${error.message}
+Request client URL: ${options?.clientUrl || "-"}`
     } else if (error instanceof Error) {
-      message = `[ERROR] ${serverLogBaseString} ${error.name}: ${error.message}`
+      message = `
+[ERROR] ${serverLogBaseString} ${error.name}: ${error.message}
+Request client URL: ${options?.clientUrl || "-"}`
       devOnly = false;
     } else {
-      message = `[ERROR] ${serverLogBaseString} Unknown error: An unexpected error occurred ${error}`
+      message = `
+[ERROR] ${serverLogBaseString} Unknown error: An unexpected error occurred ${error}
+Request client URL: ${options?.clientUrl || "-"}`
       devOnly = false;
     }
     serverLog({

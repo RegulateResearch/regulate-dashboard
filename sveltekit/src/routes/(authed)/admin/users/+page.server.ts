@@ -7,14 +7,14 @@ import { zod4 } from "sveltekit-superforms/adapters";
 import type { PageServerLoad } from "./$types";
 import { editBulkUserRoleSchema, editSingleUserRoleSchema } from "./schema";
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({ route }) => {
   const breadcrumbs = [
     {
       name: 'Kelola Pengguna',
       href: '/admin/users'
     }
   ]
-  const users = await getUsers();
+  const users = await getUsers(route.id ?? undefined);
 
   return {
     breadcrumbs,
@@ -25,7 +25,7 @@ export const load: PageServerLoad = async () => {
 };
 
 export const actions = {
-  editSingleUserRole: async ({ request }) => {
+  editSingleUserRole: async ({ request, route }) => {
     const form = await superValidate(request, zod4(editSingleUserRoleSchema));
     if (!form.valid) {
       return fail(400, {
@@ -37,7 +37,7 @@ export const actions = {
     const reqBody = [form.data]
 
     try {
-      const res = await updateRoleUser(reqBody)
+      const res = await updateRoleUser(reqBody, route.id ?? undefined)
       if (res.error) {
         return fail(400, {
           form,
@@ -58,7 +58,7 @@ export const actions = {
       })
     }
   },
-  editBulkUserRole: async ({ request }) => {
+  editBulkUserRole: async ({ request, route }) => {
     const form = await superValidate(request, zod4(editBulkUserRoleSchema));
     if (!form.valid) {
       return fail(400, {
@@ -75,7 +75,7 @@ export const actions = {
     });
 
     try {
-      const res = await updateRoleUser(reqBody)
+      const res = await updateRoleUser(reqBody, route.id ?? undefined)
       if (res.error) {
         return fail(400, {
           form,
