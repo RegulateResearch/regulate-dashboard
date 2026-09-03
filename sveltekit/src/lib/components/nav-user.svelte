@@ -9,14 +9,20 @@
 	import { page } from '$app/state';
 	import { enhance } from '$app/forms';
 
-	let userInfo = {
+	let userInfo = $state({
 		name: page.data.userInfo?.displayName || `User ${page.data.userInfo?.id}`,
 		email: page.data.userInfo?.email || 'user1@mail.com',
 		role:
 			page.data.userInfo?.role === 'admin'
 				? page.data.userInfo?.role
 				: page.data.userInfo?.academicRole
-	};
+	});
+
+	let role = $derived.by(() => {
+		if (userInfo.role === 'admin') return 'Admin';
+		if (userInfo.role === 'lecturer') return 'Dosen';
+		return 'Mahasiswa';
+	});
 
 	let avatarFallback = $derived(
 		userInfo.name
@@ -55,7 +61,7 @@
 								<span>{userInfo.name}</span>
 								{#if userInfo.role}
 									<span class="rounded-xl bg-primary px-2 py-0.5 text-xs text-primary-foreground">
-										{userInfo.role}
+										{role}
 									</span>
 								{/if}
 							</div>
