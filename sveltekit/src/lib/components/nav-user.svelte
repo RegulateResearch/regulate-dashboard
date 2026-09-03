@@ -9,10 +9,20 @@
 	import { page } from '$app/state';
 	import { enhance } from '$app/forms';
 
-	let userInfo = {
-		name: page.data.userInfo?.name || `User ${page.data.userInfo?.id}`,
-		email: page.data.userInfo?.email || 'user1@mail.com'
-	};
+	let userInfo = $state({
+		name: page.data.userInfo?.displayName || `User ${page.data.userInfo?.id}`,
+		email: page.data.userInfo?.email || 'user1@mail.com',
+		role:
+			page.data.userInfo?.role === 'admin'
+				? page.data.userInfo?.role
+				: page.data.userInfo?.academicRole
+	});
+
+	let role = $derived.by(() => {
+		if (userInfo.role === 'admin') return 'Admin';
+		if (userInfo.role === 'lecturer') return 'Dosen';
+		return 'Mahasiswa';
+	});
 
 	let avatarFallback = $derived(
 		userInfo.name
@@ -47,7 +57,14 @@
 							<Avatar.Fallback class="rounded-lg">{avatarFallback}</Avatar.Fallback>
 						</Avatar.Root>
 						<div class="grid flex-1 text-start text-sm leading-tight">
-							<span class="truncate font-medium">{userInfo.name}</span>
+							<div class="flex items-center gap-1 truncate font-medium">
+								<span>{userInfo.name}</span>
+								{#if userInfo.role}
+									<span class="rounded-xl bg-primary px-2 py-0.5 text-xs text-primary-foreground">
+										{role}
+									</span>
+								{/if}
+							</div>
 							<span class="truncate text-xs">{userInfo.email}</span>
 						</div>
 						<ChevronsUpDownIcon class="ms-auto size-4" />

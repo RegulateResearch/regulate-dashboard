@@ -2,14 +2,7 @@ import { DataTableSortableHeader, DataTableLongText, renderComponent, renderSnip
 import type { ColumnDef } from "@tanstack/table-core";
 import DataTableActions from "./data-table-actions.svelte";
 import { createRawSnippet } from "svelte";
-
-export type Course = {
-  id: number;
-  name: string;
-  year: number;
-  term: "odd" | "even" | "short";
-  url?: string;
-};
+import type { CourseWithId } from "$lib/schema";
 
 export const columnsLabel = [
   { id: 'id', label: 'ID' },
@@ -19,7 +12,7 @@ export const columnsLabel = [
   { id: 'action', label: 'Aksi Kelola' },
 ]
 
-export const columns: ColumnDef<Course>[] = [
+export const columns: ColumnDef<CourseWithId>[] = [
   {
     accessorKey: "id",
     header: ({ column }) =>
@@ -40,11 +33,11 @@ export const columns: ColumnDef<Course>[] = [
       return renderSnippet(idSnippet, {
         id: row.original.id
       });
-    }
+    },
+    maxSize: 24,
   },
   {
     accessorKey: "name",
-    size: 300,
     header: ({ column }) =>
       renderComponent(DataTableSortableHeader, {
         label: "Nama Kelas",
@@ -54,7 +47,8 @@ export const columns: ColumnDef<Course>[] = [
     cell: ({ row }) =>
       renderComponent(DataTableLongText, {
         label: row.original.name,
-      })
+      }),
+      minSize: 200
   },
   {
     accessorKey: "year",
@@ -76,7 +70,8 @@ export const columns: ColumnDef<Course>[] = [
       return renderSnippet(yearSnippet, {
         year: row.original.year
       });
-    }
+    },
+    maxSize: 96,
   },
   {
     accessorKey: "term",
@@ -121,6 +116,7 @@ export const columns: ColumnDef<Course>[] = [
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
     },
+    maxSize: 50,
   },
   {
     accessorKey: "action",
@@ -140,5 +136,6 @@ export const columns: ColumnDef<Course>[] = [
     cell: ({ row }) => {
       return renderComponent(DataTableActions, { data: row.original });
     },
+    maxSize: 128,
   }
 ];

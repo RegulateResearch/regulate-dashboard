@@ -1,11 +1,11 @@
+import { generalAPIResponseSchema } from '$lib/schema';
 import { z } from 'zod';
-import { generalAPIResponseSchema } from '../schema';
 
 export const sessionResponseSchema = z.object({
   ...generalAPIResponseSchema.shape,
   data: z.optional(z.object({
     id: z.number(),
-    role: z.string()
+    role: z.enum(['admin', 'user']),
   })),
 });
 export type SessionResponse = z.infer<typeof sessionResponseSchema>;

@@ -1,19 +1,5 @@
+import { courseSchema, courseSchemaWithId, generalAPIResponseSchema } from '$lib/schema';
 import { z } from 'zod';
-import { generalAPIResponseSchema } from '../../schema';
-
-export const courseSchema = z.object({
-  name: z.string(),
-  year: z.number(),
-  term: z.enum(['odd', 'even', 'short']),
-  url: z.string().optional()
-})
-export type Course = z.infer<typeof courseSchema>;
-
-export const courseSchemaWithId = z.object({
-  ...courseSchema.shape,
-  id: z.number(),
-})
-export type CourseWithId = z.infer<typeof courseSchemaWithId>;
 
 export const getCourseByIdResponseSchema = z.object({
   ...generalAPIResponseSchema.shape,

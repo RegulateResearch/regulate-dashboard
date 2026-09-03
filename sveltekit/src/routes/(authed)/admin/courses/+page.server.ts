@@ -1,12 +1,12 @@
 import { createCourse, deleteCourse, getCourses } from "$lib/server/api/admin/courses";
-import { AuthorizationError } from "$lib/server/api/errors";
+import { AuthorizationError } from "$lib/server/errors";
 import { fail, redirect } from "@sveltejs/kit";
 import { superValidate } from "sveltekit-superforms";
 import { zod4 } from "sveltekit-superforms/adapters";
 import { newCourseFormSchema } from "./schema";
 
 
-export const load = async () => {
+export const load = async ({ route }) => {
   const breadcrumbs = [
     {
       name: 'Kelola Kelas',
@@ -14,7 +14,7 @@ export const load = async () => {
     }
   ]
   try {
-    const courses = await getCourses();
+    const courses = await getCourses(route.id ?? undefined);
     if (!courses.data || courses.error) {
       return {
         breadcrumbs,
@@ -42,7 +42,7 @@ export const load = async () => {
 };
 
 export const actions = {
-  createCourse: async ({ request }) => {
+  createCourse: async ({ request, route }) => {
     const form = await superValidate(request, zod4(newCourseFormSchema));
     if (!form.valid) {
       return fail(400, {
@@ -57,7 +57,7 @@ export const actions = {
     }
 
     try {
-      const res = await createCourse(reqBody)
+      const res = await createCourse(reqBody, route.id ?? undefined)
       if (res.error) {
         return fail(400, {
           form,
@@ -78,7 +78,7 @@ export const actions = {
       })
     }
   },
-  deleteCourse: async ({ request }) => {
+  deleteCourse: async ({ request, route }) => {
     const form = await request.formData();
     const id = await form.get('id');
 
@@ -91,7 +91,7 @@ export const actions = {
     const parsedId = parseInt(id.toString());
 
     try {
-      const res = await deleteCourse(parsedId)
+      const res = await deleteCourse(parsedId, route.id ?? undefined)
       if (res.error) {
         return fail(400, {
           message: `Failed to delete course: ${res.error}`

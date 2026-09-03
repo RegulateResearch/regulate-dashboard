@@ -1,23 +1,20 @@
 // See https://svelte.dev/docs/kit/types#app.d.ts
+
+import type { UserWithId } from "$lib/schema";
+
 // for information about these interfaces
 declare global {
 	namespace App {
 		// interface Error {}
 		interface Locals {
-			userInfo?: {
+			session?: {
 				id: number,
-				name?: string;
-				email?: string;
-				role: string;
-			};
+				role: "admin" | "user";
+			},
+			userInfo?: UserWithId;
 		}
 		interface PageData {
-			userInfo?: {
-				id: number,
-				name: string;
-				email: string;
-				role: string;
-			};
+			userInfo?: UserWithId;
 			pageTitle?: string;
 			breadcrumbs?: {
 				name: string,

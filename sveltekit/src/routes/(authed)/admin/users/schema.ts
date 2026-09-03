@@ -1,9 +1,17 @@
 import { z } from "zod";
 
-export const formSchema = z.object({
-  name: z.string(),
-  year: z.string().regex(/^\d+$/), // Ensure it's a string that represents a number
-  term: z.enum(['odd', 'even', 'short']),
+export const editSingleUserRoleSchema = z.object({
+  id: z.number(),
+  role: z.enum(['admin', 'user']),
+  academicRole: z.enum(['student', 'lecturer'])
 });
 
-export type FormSchema = typeof formSchema;
+export type EditSingleUserRoleData = typeof editSingleUserRoleSchema;
+
+export const editBulkUserRoleSchema = z.object({
+  id: z.array(z.number()),
+  role: z.enum(['admin', 'user']),
+  academicRole: z.enum(['student', 'lecturer'])
+});
+
+export type EditBulkUserRoleData = typeof editBulkUserRoleSchema;

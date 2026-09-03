@@ -2,7 +2,7 @@ import type { PageServerLoad } from "./$types"
 import { sso } from '$lib/server/api/auth';
 import { redirect } from "@sveltejs/kit";
 
-export const load: PageServerLoad = async ({ url }) => {
+export const load: PageServerLoad = async ({ url, route }) => {
   const ticket = url.searchParams.get('ticket')
   const service = encodeURIComponent(`${url.origin}/sso`)
   try {
@@ -10,7 +10,7 @@ export const load: PageServerLoad = async ({ url }) => {
     await sso({
       ticket,
       service: service
-    })
+    }, route.id ?? undefined)
   } catch (err) {
     return {
       pageTitle: 'Single Sign-on Universitas Indonesia',

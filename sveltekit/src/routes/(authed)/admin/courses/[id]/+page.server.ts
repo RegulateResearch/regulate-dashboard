@@ -4,9 +4,9 @@ import { superValidate } from "sveltekit-superforms";
 import { editCourseFormSchema } from "./schema";
 import { zod4 } from "sveltekit-superforms/adapters";
 import { fail, redirect } from "@sveltejs/kit";
-import { AuthorizationError } from "$lib/server/api/errors";
+import { AuthorizationError } from "$lib/server/errors";
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load: PageServerLoad = async ({ params, route }) => {
   const breadcrumbs = [
     {
       name: 'Kelola Kelas',
@@ -19,7 +19,7 @@ export const load: PageServerLoad = async ({ params }) => {
   ]
 
   try {
-    const course = await getCourseById(parseInt(params.id));
+    const course = await getCourseById(parseInt(params.id), route.id ?? undefined);
     if (!course.data || course.error) {
       return {
         breadcrumbs,
@@ -53,7 +53,7 @@ export const load: PageServerLoad = async ({ params }) => {
 };
 
 export const actions = {
-  updateCourse: async ({ request, params }) => {
+  updateCourse: async ({ request, params, route }) => {
     const form = await superValidate(request, zod4(editCourseFormSchema));
     if (!form.valid) {
       return fail(400, {
@@ -68,7 +68,7 @@ export const actions = {
     }
 
     try {
-      const res = await updateCourse(parseInt(params.id), reqBody)
+      const res = await updateCourse(parseInt(params.id), reqBody, route.id ?? undefined)
       if (res.error) {
         return fail(400, {
           form,

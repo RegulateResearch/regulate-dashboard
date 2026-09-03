@@ -22,10 +22,7 @@
 	import type { PageProps } from './$types';
 	import { columns, columnsLabel } from './columns';
 	import { newCourseFormSchema } from './schema';
-	import {
-		setCreateCourseModalState,
-		setDeleteCourseModalState
-	} from './shared-modal-state.svelte.ts';
+	import { setCreateCourseModalState, setDeleteCourseModalState } from './modal-state.svelte.ts';
 
 	let { data }: PageProps = $props();
 
@@ -43,9 +40,11 @@
 					toast.error('Gagal membuat kelas. Silakan periksa kembali data yang dimasukkan.');
 				}
 			},
-			onUpdated() {
-				toast.success('Kelas berhasil dibuat');
-				newCourseModalState.close();
+			onUpdated({ form }) {
+				if (form.valid) {
+					toast.success('Kelas berhasil dibuat');
+					newCourseModalState.close();
+				}
 			}
 		}
 	);
@@ -135,25 +134,27 @@
 			class="h-full w-full"
 		></DataTable>
 	{:else}
-		<Empty.Root>
-			<Empty.Header>
-				<Empty.Media variant="icon">
-					<FolderIcon />
-				</Empty.Media>
-				<Empty.Title>Belum ada kelas</Empty.Title>
-				<Empty.Description>
-					Belum ada kelas yang dibuat. Buat kelas baru untuk mulai mengelola materi dan tugas.
-				</Empty.Description>
-			</Empty.Header>
-			<Empty.Content>
-				<div class="flex gap-2">
-					<Button size="sm">
-						<PlusIcon />
-						Buat Kelas
-					</Button>
-				</div>
-			</Empty.Content>
-		</Empty.Root>
+		<div class="h-full w-full">
+			<Empty.Root class="h-full w-full">
+				<Empty.Header>
+					<Empty.Media variant="icon">
+						<FolderIcon />
+					</Empty.Media>
+					<Empty.Title>Belum ada kelas</Empty.Title>
+					<Empty.Description>
+						Belum ada kelas yang dibuat. Buat kelas baru untuk mulai mengelola materi dan tugas.
+					</Empty.Description>
+				</Empty.Header>
+				<Empty.Content>
+					<div class="flex gap-2">
+						<Button size="sm" onclick={() => newCourseModalState.open()}>
+							<PlusIcon />
+							Buat Kelas
+						</Button>
+					</div>
+				</Empty.Content>
+			</Empty.Root>
+		</div>
 	{/if}
 </RoundedTabs>
 
@@ -266,7 +267,6 @@
 			use:defaultEnhance={() => {
 				return async ({ result, update }) => {
 					if (result.type === 'success') {
-						console.log('Delete course result:', result);
 						deleteCourseModalState.close();
 						toast.success('Kelas berhasil dihapus');
 					} else {

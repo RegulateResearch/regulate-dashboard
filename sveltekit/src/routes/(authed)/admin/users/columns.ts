@@ -1,19 +1,12 @@
-import { DataTableSortableHeader, DataTableLongText, renderComponent, renderSnippet } from "$lib/components/ui/data-table";
+import { DataTableSortableHeader, DataTableLongText, renderComponent, renderSnippet, DataTableCheckbox } from "$lib/components/ui/data-table";
 import type { ColumnDef } from "@tanstack/table-core";
 import DataTableActions from "./data-table-actions.svelte";
 import { createRawSnippet } from "svelte";
-
-export type User = {
-  id: number;
-  username: string;
-  displayName: string;
-  role: "admin" | "user";
-  academicRole: "student" | "lecturer";
-  email?: string;
-  civitasId?: string;
-};
+import type { UserWithId } from "$lib/schema";
+import type { ClassValue } from "clsx";
 
 export const columnsLabel = [
+  { id: 'select', label: 'Pilihan' },
   { id: 'id', label: 'id' },
   { id: 'email', label: 'Email' },
   { id: 'username', label: 'Username' },
@@ -21,42 +14,56 @@ export const columnsLabel = [
   { id: 'role', label: 'Peran (Sistem)' },
   { id: 'academicRole', label: 'Peran (Akademik)' },
   { id: 'civitasId', label: 'ID Civitas' },
+  { id: 'action', label: 'Aksi Kelola' },
 ]
 
-export const columns: ColumnDef<User>[] = [
+export const columns: ColumnDef<UserWithId>[] = [
   {
-    accessorKey: "username",
-    size: 300,
-    header: ({ column }) =>
-      renderComponent(DataTableSortableHeader, {
-        label: "Username",
-        onclick: column.getToggleSortingHandler(),
-        class: "flex space-x-2 w-full"
-      })
+    accessorKey: "select",
+    header: ({ table }) =>
+      renderComponent(DataTableCheckbox, {
+        checked: table.getIsAllPageRowsSelected(),
+        indeterminate:
+          table.getIsSomePageRowsSelected() &&
+          !table.getIsAllPageRowsSelected(),
+        onCheckedChange: (value: boolean) =>
+          table.toggleAllPageRowsSelected(!!value),
+        "aria-label": "Select all",
+      }),
+    cell: ({ row }) =>
+      renderComponent(DataTableCheckbox, {
+        checked: row.getIsSelected(),
+        onCheckedChange: (value: boolean) => row.toggleSelected(!!value),
+        "aria-label": "Select row",
+      }),
+    enableSorting: false,
+    maxSize: 32,
   },
   {
-    accessorKey: "email",
-    size: 300,
+    accessorKey: "id",
     header: ({ column }) =>
       renderComponent(DataTableSortableHeader, {
-        label: "Email",
+        label: "ID",
         onclick: column.getToggleSortingHandler(),
-        class: "flex space-x-2 w-full"
-      })
-  },
-  {
-    accessorKey: "civitasId",
-    size: 300,
-    header: ({ column }) =>
-      renderComponent(DataTableSortableHeader, {
-        label: "ID Civitas",
-        onclick: column.getToggleSortingHandler(),
-        class: "flex space-x-2 w-full"
-      })
+        class: "text-center w-8"
+      }),
+    cell: ({ row }) => {
+      const idSnippet = createRawSnippet<[{ id: number }]>(
+        (getId) => {
+          const { id } = getId();
+          return {
+            render: () => `<div class="text-center text-stone-500">${id}</div>`
+          };
+        }
+      );
+      return renderSnippet(idSnippet, {
+        id: row.original.id
+      });
+    },
+    maxSize: 48,
   },
   {
     accessorKey: "displayName",
-    size: 300,
     header: ({ column }) =>
       renderComponent(DataTableSortableHeader, {
         label: "Nama Lengkap",
@@ -67,6 +74,46 @@ export const columns: ColumnDef<User>[] = [
       renderComponent(DataTableLongText, {
         label: row.original.displayName,
       })
+  },
+  {
+    accessorKey: "username",
+    header: ({ column }) =>
+      renderComponent(DataTableSortableHeader, {
+        label: "Username",
+        onclick: column.getToggleSortingHandler(),
+        class: "flex space-x-2 w-full"
+      })
+  },
+  {
+    accessorKey: "email",
+    header: ({ column }) =>
+      renderComponent(DataTableSortableHeader, {
+        label: "Email",
+        onclick: column.getToggleSortingHandler(),
+        class: "flex space-x-2 w-full"
+      })
+  },
+  {
+    accessorKey: "civitasId",
+    header: ({ column }) =>
+      renderComponent(DataTableSortableHeader, {
+        label: "ID Civitas",
+        onclick: column.getToggleSortingHandler(),
+        class: "flex space-x-2 w-full ju"
+      }),
+    cell: ({ row }) => {
+      const civitasIdSnippet = createRawSnippet<[{ civitasId: string }]>(
+        (getCivitasId) => {
+          const { civitasId } = getCivitasId();
+          return {
+            render: () => `<div class="text-center text-stone-500">${civitasId}</div>`
+          };
+        }
+      );
+      return renderSnippet(civitasIdSnippet, {
+        civitasId: row.original.civitasId || "-"
+      });
+    }
   },
   {
     accessorKey: "role",
@@ -107,6 +154,7 @@ export const columns: ColumnDef<User>[] = [
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
     },
+    maxSize: 142,
   },
   {
     accessorKey: "academicRole",
@@ -117,11 +165,11 @@ export const columns: ColumnDef<User>[] = [
         class: "text-center"
       }),
     cell: ({ row }) => {
-      const academicRoleSnippet = createRawSnippet<[{ academicRole: "student" | "lecturer" }]>(
+      const academicRoleSnippet = createRawSnippet<[{ academicRole: "student" | "lecturer" | undefined }]>(
         (getAcademicRole) => {
           const { academicRole } = getAcademicRole();
           let academicRoleString: 'Mahasiswa' | 'Dosen' = 'Mahasiswa';
-          let academicRoleStyle;
+          let academicRoleStyle: ClassValue;
           switch (academicRole) {
             case 'student':
               academicRoleString = 'Mahasiswa';
@@ -147,6 +195,7 @@ export const columns: ColumnDef<User>[] = [
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
     },
+    maxSize: 142,
   },
   {
     accessorKey: "action",
@@ -166,5 +215,6 @@ export const columns: ColumnDef<User>[] = [
     cell: ({ row }) => {
       return renderComponent(DataTableActions, { data: row.original });
     },
+    maxSize: 96,
   }
 ];

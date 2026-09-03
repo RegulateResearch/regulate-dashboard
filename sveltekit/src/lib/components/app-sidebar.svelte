@@ -11,77 +11,68 @@
 
 	let { ref = $bindable(null), ...restProps }: ComponentProps<typeof Sidebar.Root> = $props();
 	let navItem = $derived.by(() => {
-		switch (page.data.userInfo?.role) {
-			case 'admin':
-				return [
-					{
-						title: 'Dashboard',
-						url: '/admin/dashboard',
-						icon: LayoutDashboardIcon
-					},
-					{
-						title: 'Kelola Kelas',
-						url: '/admin/courses',
-						icon: SquareLibraryIcon
-					},
-					{
-						title: 'Kelola Pengguna',
-						url: '/admin/users',
-						icon: UsersIcon
-					}
-				];
-			case 'lecturer':
-				return [
-					{
-						title: 'Dashboard',
-						url: '/lecturer/dashboard',
-						icon: LayoutDashboardIcon
-					},
-					{
-						title: 'Kelas Saya',
-						url: '/lecturer/courses',
-						icon: SquareLibraryIcon
-					}
-				];
-			case 'student':
-				return [
-					{
-						title: 'Dashboard',
-						url: '/student/dashboard',
-						icon: LayoutDashboardIcon
-					},
-					{
-						title: 'Kelas Saya',
-						url: '/student/courses',
-						icon: SquareLibraryIcon
-					}
-				];
-			default:
-				return [
-					{
-						title: 'Dashboard',
-						url: '/student/dashboard',
-						icon: LayoutDashboardIcon
-					},
-					{
-						title: 'Kelas Saya',
-						url: '/student/courses',
-						icon: SquareLibraryIcon
-					}
-				];
-		}
+		if (page.data.userInfo?.role === 'admin')
+			return [
+				{
+					title: 'Dashboard',
+					url: '/admin/dashboard',
+					icon: LayoutDashboardIcon
+				},
+				{
+					title: 'Kelola Kelas',
+					url: '/admin/courses',
+					icon: SquareLibraryIcon
+				},
+				{
+					title: 'Kelola Pengguna',
+					url: '/admin/users',
+					icon: UsersIcon
+				}
+			];
+
+		if (page.data.userInfo?.academicRole)
+			return [
+				{
+					title: 'Dashboard',
+					url: '/lecturer/dashboard',
+					icon: LayoutDashboardIcon
+				},
+				{
+					title: 'Kelas Saya',
+					url: '/lecturer/courses',
+					icon: SquareLibraryIcon
+				}
+			];
+
+		return [
+			{
+				title: 'Dashboard',
+				url: '/student/dashboard',
+				icon: LayoutDashboardIcon
+			},
+			{
+				title: 'Kelas Saya',
+				url: '/student/courses',
+				icon: SquareLibraryIcon
+			}
+		];
 	});
 </script>
 
-<Sidebar.Root bind:ref variant="inset" {...restProps}>
+<Sidebar.Root bind:ref {...restProps}>
 	<Sidebar.Header>
 		<Sidebar.Menu>
 			<Sidebar.MenuItem>
-				<Sidebar.MenuButton size="lg">
-					{#snippet child()}
-						<div class="flex h-10 w-full items-center p-4">
-							<RegulateLogo withTitle class="h-auto w-3/4" />
-						</div>
+				<Sidebar.MenuButton
+					tooltipContent="Home"
+					class="px-0 py-6 group-data-[collapsible=icon]:px-0! hover:bg-white"
+				>
+					{#snippet child({ props })}
+						<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+						<a href="/" {...props}>
+							<RegulateLogo class="size-8! p-1" />
+							<span class="text-2xl font-extralight">regulate</span>
+						</a>
 					{/snippet}
 				</Sidebar.MenuButton>
 			</Sidebar.MenuItem>

@@ -25,7 +25,7 @@
 			title: string;
 			colName: string;
 			options: {
-				label: string;
+				label?: string;
 				value: string;
 				icon?: Component;
 			}[];

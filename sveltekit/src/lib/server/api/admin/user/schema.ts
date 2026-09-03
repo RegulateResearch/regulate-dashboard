@@ -1,21 +1,5 @@
+import { generalAPIResponseSchema, userSchemaWithId } from '$lib/schema';
 import { z } from 'zod';
-import { generalAPIResponseSchema } from '../../schema';
-
-export const userSchema = z.object({
-  email: z.email().optional(),
-  username: z.string(),
-  displayName: z.string(),
-  role: z.enum(['admin', 'user']),
-  academicRole: z.enum(['student', 'lecturer']),
-  civitasId: z.string().optional(),
-})
-export type User = z.infer<typeof userSchema>;
-
-export const userSchemaWithId = z.object({
-  ...userSchema.shape,
-  id: z.number(),
-})
-export type UserWithId = z.infer<typeof userSchemaWithId>;
 
 export const getUserByIdResponseSchema = z.object({
   ...generalAPIResponseSchema.shape,

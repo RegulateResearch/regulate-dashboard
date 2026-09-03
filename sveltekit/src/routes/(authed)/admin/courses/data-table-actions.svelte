@@ -4,10 +4,10 @@
 	import ExternalLinkIcon from '@lucide/svelte/icons/external-link';
 	import TrashIcon from '@lucide/svelte/icons/trash-2';
 	import CopyIcon from '@lucide/svelte/icons/copy';
-	import type { Course } from './columns';
-	import { getCreateCourseModalState, getDeleteCourseModalState } from './shared-modal-state.svelte.ts';
+	import type { CourseWithId } from '$lib/schema';
+	import { getCreateCourseModalState, getDeleteCourseModalState } from './modal-state.svelte.ts';
 
-	let { data }: { data: Course } = $props();
+	let { data }: { data: CourseWithId } = $props();
 	let deleteCourseModalState = getDeleteCourseModalState();
 	let createCourseModalState = getCreateCourseModalState();
 </script>
@@ -28,16 +28,19 @@
 		type="button"
 		variant="ghost"
 		size="icon-sm"
-		onclick={() => (deleteCourseModalState.open(data.id))}
+		onclick={() => deleteCourseModalState.open(data.id)}
 		><TrashIcon class="text-red-500"></TrashIcon></Button
 	>
-	<Button type="button" variant="ghost" size="icon-sm"
-		onclick={() => (createCourseModalState.open({
-			name: `${data.name} (Copy)`,
-			year: data.year.toString(),
-			term: data.term,
-			url: data.url,
-		}))}
-		><CopyIcon class="text-purple-500"></CopyIcon></Button
+	<Button
+		type="button"
+		variant="ghost"
+		size="icon-sm"
+		onclick={() =>
+			createCourseModalState.open({
+				name: `${data.name} (Copy)`,
+				year: data.year.toString(),
+				term: data.term,
+				url: data.url
+			})}><CopyIcon class="text-purple-500"></CopyIcon></Button
 	>
 </div>

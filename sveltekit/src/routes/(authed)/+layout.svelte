@@ -11,8 +11,8 @@
 <Toaster position="top-center" />
 
 <Sidebar.Provider class="h-svh">
-	<AppSidebar />
-	<Sidebar.Inset class="max-h-full">
+	<AppSidebar variant="inset" collapsible="icon" />
+	<Sidebar.Inset class="max-h-full min-w-0">
 		<header class="flex h-16 shrink-0 items-center gap-2">
 			<div class="flex items-center gap-2 px-4">
 				<Sidebar.Trigger class="-ms-1" />

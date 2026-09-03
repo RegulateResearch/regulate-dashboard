@@ -15,7 +15,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
 };
 
 export const actions: Actions = {
-  default: async ({ request }) => {
+  default: async ({ request, route }) => {
     const form = await superValidate(request, zod4(formSchema));
     if (!form.valid) {
       return fail(400, {
@@ -30,17 +30,13 @@ export const actions: Actions = {
       password: form.data.password,
     }
     
-    console.log('register action called', requestBody);
-
     try {
-      await register(requestBody)
+      await register(requestBody, route.id ?? undefined);
     } catch {
       return fail(400, {
         form, message: 'failed'
       });
     }
-
-    console.log('register action called');
 
     throw redirect(303, '/login')
   },
