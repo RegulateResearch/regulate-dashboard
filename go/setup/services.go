@@ -27,7 +27,7 @@ func setupServices(repos repositories, jwt auth.JwtService, bcrypt auth.BcryptSe
 		courseMember: service.NewCourseMemberService(repos.courseMember, repos.course, repos.user, repos.transactor),
 		user:         service.NewUserService(repos.user),
 		sso:          service.NewSsoUiService(ssoClient, repos.auth, jwt),
-		my:           service.NewMyService(repos.user, repos.course),
+		my:           service.NewMyService(repos.user, repos.course, repos.userTask, repos.taskRecord, repos.transactor),
 		record:       service.NewRecordService(repos.record),
 		try:          service.NewTryService(backgroundProcessor),
 	}

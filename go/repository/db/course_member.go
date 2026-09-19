@@ -58,6 +58,10 @@ func (r courseMemberRepositoryImpl) FindByCourse(ctx typing.Context, course enti
 		},
 	)
 
+	if err != nil {
+		return nil, repository_exception.WrapQueryexecException(err, "course_member")
+	}
+
 	return res, nil
 }
 

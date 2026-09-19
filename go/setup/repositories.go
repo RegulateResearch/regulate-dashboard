@@ -15,6 +15,8 @@ type repositories struct {
 	courseItem   repository.CourseItemRepository
 	courseMember repository.CourseMemberRepository
 	user         repository.UserRepository
+	userTask     repository.UserTaskRepository
+	taskRecord   repository.TaskRecordRepository
 	record       repository.RecordRepository
 	transactor   txhandler.Transactor
 }
@@ -26,6 +28,8 @@ func setupRepositories(db *sql.DB, processor background.Processor) repositories 
 	courseItemRepoDb := repo_db.NewCourseItemRepository(executor)
 	courseMemberRepoDb := repo_db.NewCourseMemberDbRepository(executor)
 	userRepoDb := repo_db.NewUserRepository(executor)
+	userTaskDb := repo_db.NewUserTaskRepository(executor)
+	taskRecordDb := repo_db.NewTaskRecordRepository(executor)
 	recordRepoDb := repo_db.NewRecordRepository(executor)
 
 	return repositories{
@@ -34,6 +38,8 @@ func setupRepositories(db *sql.DB, processor background.Processor) repositories 
 		courseMember: repository.NewCourseMemberRepository(courseMemberRepoDb),
 		courseItem:   repository.NewCourseItemRepository(courseItemRepoDb),
 		user:         repository.NewUserRepository(userRepoDb),
+		userTask:     repository.NewUserTaskRepository(userTaskDb),
+		taskRecord:   repository.NewTaskRecordRepository(taskRecordDb),
 		record:       repository.NewRecordRepository(recordRepoDb),
 		transactor:   executor,
 	}

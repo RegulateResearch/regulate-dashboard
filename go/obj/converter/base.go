@@ -1,6 +1,7 @@
 package converter
 
 import (
+	"database/sql"
 	"frascati/obj/dao"
 	"frascati/obj/dto"
 	"frascati/obj/entity"
@@ -17,7 +18,7 @@ func BaseDbToEntity(base dao.BaseDb) entity.Base {
 		ID:        base.ID,
 		CreatedAt: base.CreatedAt,
 		UpdatedAt: base.UpdatedAt,
-		DeletedAt: base.DeletedAt,
+		DeletedAt: base.DeletedAt.Time,
 	}
 }
 
@@ -26,7 +27,7 @@ func BaseEntityToDaoDb(base entity.Base) dao.BaseDb {
 		ID:        base.ID,
 		CreatedAt: base.CreatedAt,
 		UpdatedAt: base.UpdatedAt,
-		DeletedAt: base.DeletedAt,
+		DeletedAt: sql.NullTime{Time: base.DeletedAt, Valid: base.DeletedAt.IsZero()},
 	}
 }
 

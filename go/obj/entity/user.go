@@ -2,6 +2,7 @@ package entity
 
 import (
 	"frascati/constants"
+	"frascati/typing"
 )
 
 type User struct {
@@ -18,4 +19,8 @@ type User struct {
 
 func NewUser() User {
 	return User{}
+}
+
+func UserWithID(id typing.ID) User {
+	return User{Base: baseWithID(id)}
 }

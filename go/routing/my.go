@@ -12,4 +12,5 @@ func setupMyRouter(routers grouping.Routes, handlers setup.Handlers) {
 
 	generalGroup.GET("/profile", myHandler.MyProfile)
 	userGroup.GET("/courses", myHandler.MyCourses)
+	userGroup.GET("/tasks", myHandler.MyTasks)
 }

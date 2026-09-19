@@ -57,3 +57,22 @@ func (h MyHandler) MyCourses(ctx *gin.Context) {
 	resDto := lambda.MapList(res, converter.CourseEntityToDto)
 	ctx.JSON(http.StatusOK, response.NewSuccessResponse(resDto, "success"))
 }
+
+func (h MyHandler) MyTasks(ctx *gin.Context) {
+	userData, err := session.PassAuthValue(ctx)
+	if err != nil {
+		ctx.Error(err)
+		return
+	}
+
+	userID := userData.ID
+	syncFirst := ctx.Query("sync") == "true"
+	res, err := h.myService.MyTasks(h.extractCtx(ctx), userID, syncFirst)
+	if err != nil {
+		ctx.Error(err)
+		return
+	}
+
+	resDto := lambda.MapList(res, converter.UserTaskEntityToDto)
+	ctx.JSON(http.StatusOK, response.NewSuccessResponse(resDto, "success"))
+}

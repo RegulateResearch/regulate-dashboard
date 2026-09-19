@@ -29,3 +29,20 @@ func MapListWithDependentSideEffectState[Origin any, Transformed any, SideEffect
 	lastState = currentState
 	return result, lastState
 }
+
+func MapListWithSerialState[Origin any, Transformed any, SerialState any](
+	data []Origin, initState SerialState,
+	mapFn func(elem Origin, currentState SerialState) Transformed,
+	stateUpdateFn func(currentState SerialState) (nextState SerialState),
+) []Transformed {
+	length := len(data)
+	transformedData := make([]Transformed, len(data))
+	currentState := initState
+
+	for i := 0; i < length; i++ {
+		transformedData[i] = mapFn(data[i], currentState)
+		currentState = stateUpdateFn(currentState)
+	}
+
+	return transformedData
+}
