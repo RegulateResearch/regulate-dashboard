@@ -5,6 +5,7 @@ import (
 	"frascati/obj/dao"
 	"frascati/obj/dto"
 	"frascati/obj/entity"
+	"frascati/utils/nullable"
 )
 
 func UserTaskDbToEntity(data dao.UserTaskDb) entity.UserTask {
@@ -20,6 +21,21 @@ func UserTaskDbToEntity(data dao.UserTaskDb) entity.UserTask {
 	}
 }
 
+func UserTaskEntityToDb(data entity.UserTask) dao.UserTaskDb {
+	res := dao.UserTaskDb{
+		BaseDb:      BaseEntityToDaoDb(data.Base),
+		User:        UserEntityToDb(data.User),
+		Item:        CourseItemEntityToDaoDb(data.Item),
+		Progress:    data.Progress.ToVal(),
+		TargetStart: nullable.ToSqlNullTime(data.TargetStart),
+		TargetDone:  nullable.ToSqlNullTime(data.TargetDone),
+		IsStartFlag: data.IsStartFlag,
+		IsDoneFlag:  data.IsDoneFlag,
+	}
+
+	return res
+}
+
 func UserTaskEntityToDto(data entity.UserTask) dto.UserTask {
 	return dto.UserTask{
 		Base:        BaseEntityToDto(data.Base),
@@ -30,5 +46,13 @@ func UserTaskEntityToDto(data entity.UserTask) dto.UserTask {
 		ActualStart: data.ActualStart,
 		TargetDone:  data.TargetDone,
 		ActualDone:  data.ActualDone,
+	}
+}
+
+func UserTaskWriteDataToEntity(data dto.UserTaskWriteData) entity.UserTask {
+	return entity.UserTask{
+		Progress:    constants.TaskProgressFromString(data.Progress),
+		TargetStart: data.TargetStart,
+		TargetDone:  data.TargetDone,
 	}
 }

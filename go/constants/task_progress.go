@@ -6,6 +6,11 @@ import (
 
 type TaskProgress typing.Enum
 
+func (tp TaskProgress) ToVal() int {
+	enum := typing.Enum(tp)
+	return enum.Val()
+}
+
 func (tp TaskProgress) ToString() string {
 	enum := typing.Enum(tp)
 	return enum.Name()

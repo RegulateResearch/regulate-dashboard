@@ -1,6 +1,7 @@
 package repo_db
 
 import (
+	"fmt"
 	"frascati/comp/queryexec"
 	"frascati/exception"
 	"frascati/obj/converter"
@@ -9,12 +10,14 @@ import (
 	repository_exception "frascati/repository/exception"
 	"frascati/typing"
 	"frascati/utils/querying"
+	"log"
 )
 
 type UserTaskRepository interface {
 	FindByUser(ctx typing.Context, user entity.User) ([]entity.UserTask, exception.Exception)
-	FindByUserAndId(ctx typing.Context, user entity.User, ID typing.ID) (entity.UserTask, exception.Exception)
+	FindByUserAndId(ctx typing.Context, user entity.User, id typing.ID) (entity.UserTask, exception.Exception)
 	AddInferByNotYetAdded(ctx typing.Context, user entity.User) (dataAffected int64, err exception.Exception)
+	UpdateStatusAndTimes(ctx typing.Context, task entity.UserTask) (entity.UserTask, exception.Exception)
 }
 
 type userTaskRepositoryImpl struct {
@@ -70,7 +73,7 @@ func (r userTaskRepositoryImpl) FindByUser(ctx typing.Context, user entity.User)
 	return res, nil
 }
 
-func (r userTaskRepositoryImpl) FindByUserAndId(ctx typing.Context, user entity.User, ID typing.ID) (entity.UserTask, exception.Exception) {
+func (r userTaskRepositoryImpl) FindByUserAndId(ctx typing.Context, user entity.User, id typing.ID) (entity.UserTask, exception.Exception) {
 	querystr := `
 		WITH task_data AS (
 			SELECT id, item_id, progress, target_start, actual_start, target_done, actual_done
@@ -100,8 +103,8 @@ func (r userTaskRepositoryImpl) FindByUserAndId(ctx typing.Context, user entity.
 	`
 
 	task := dao.UserTaskDb{}
-	err := r.executor.QueryRowContext(ctx, querystr).Scan(
-		&task.ID, &task.Progress, &task.TargetStart, &task.TargetDone, &task.ActualDone,
+	err := r.executor.QueryRowContext(ctx, querystr, id, user.ID).Scan(
+		&task.ID, &task.Progress, &task.TargetStart, &task.ActualStart, &task.TargetDone, &task.ActualDone,
 		&task.Item.ID, &task.Item.Name, &task.Item.StartTime, &task.Item.DueTime,
 		&task.Item.Course.ID, &task.Item.Course.Name,
 	)
@@ -148,4 +151,67 @@ func (r userTaskRepositoryImpl) AddInferByNotYetAdded(ctx typing.Context, user e
 	}
 
 	return rowsAffected, nil
+}
+
+func (r userTaskRepositoryImpl) UpdateStatusAndTimes(ctx typing.Context, task entity.UserTask) (entity.UserTask, exception.Exception) {
+	querystr := `
+		UPDATE user_tasks
+		SET
+			%s,
+			updated_at = NOW()
+		WHERE
+			id = $1 AND
+			deleted_at IS NULL
+		RETURNING 
+			id, progress, 
+			target_start, actual_start, 
+			target_done, actual_done
+	`
+
+	startIdx := 2
+	initArgs := []any{task.ID}
+	taskDb := converter.UserTaskEntityToDb(task)
+	updatePairStr, args, _ := querying.UpdatePairsQuerystr(taskDb, startIdx, updateDataToQueryingPair)
+
+	querystr = fmt.Sprintf(querystr, updatePairStr)
+	args = append(initArgs, args...)
+
+	log.Println(querystr)
+	log.Println(args)
+
+	var resDao dao.UserTaskDb
+	err := r.executor.QueryRowContext(ctx, querystr, args...).Scan(
+		&resDao.ID, &resDao.Progress,
+		&resDao.TargetStart, &resDao.ActualStart,
+		&resDao.TargetDone, &resDao.ActualDone,
+	)
+
+	if err != nil {
+		return entity.UserTask{}, repository_exception.WrapQueryexecException(err, "user_task")
+	}
+
+	res := converter.UserTaskDbToEntity(resDao)
+	return res, nil
+}
+
+func updateDataToQueryingPair(data dao.UserTaskDb) []querying.Pair {
+	res := []querying.Pair{
+		{Col: "progress", Val: data.Progress, IsParam: true},
+		{Col: "target_start", Val: data.TargetStart, IsParam: true},
+		{Col: "target_done", Val: data.TargetDone, IsParam: true},
+	}
+
+	if data.IsStartFlag {
+		res = append(res, querying.Pair{
+			Col: "actual_start", Val: "NOW()", IsParam: false,
+		})
+	}
+
+	if data.IsDoneFlag {
+		res = append(res, querying.Pair{
+			Col: "actual_done", Val: "NOW()", IsParam: false,
+		})
+	}
+
+	return res
 }

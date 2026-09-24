@@ -13,6 +13,8 @@ type UserTaskDb struct {
 	ActualStart sql.NullTime
 	TargetDone  sql.NullTime
 	ActualDone  sql.NullTime
+	IsStartFlag bool
+	IsDoneFlag  bool
 }
 
 func NewUserTaskDb() UserTaskDb {

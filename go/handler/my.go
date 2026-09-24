@@ -3,9 +3,11 @@ package handler
 import (
 	"frascati/lambda"
 	"frascati/obj/converter"
+	"frascati/obj/dto"
 	"frascati/response"
 	"frascati/service"
 	"frascati/session"
+	"frascati/typing"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -74,5 +76,52 @@ func (h MyHandler) MyTasks(ctx *gin.Context) {
 	}
 
 	resDto := lambda.MapList(res, converter.UserTaskEntityToDto)
+	ctx.JSON(http.StatusOK, response.NewSuccessResponse(resDto, "success"))
+}
+
+func (h MyHandler) MyTaskById(ctx *gin.Context) {
+	userData, exc := session.PassAuthValue(ctx)
+	if exc != nil {
+		ctx.Error(exc)
+		return
+	}
+
+	taskID := typing.IDFromString(ctx.Param("task_id"))
+	res, err := h.myService.MyTaskById(h.extractCtx(ctx), userData.ID, taskID)
+	if err != nil {
+		ctx.Error(err)
+		return
+	}
+
+	resDto := converter.UserTaskEntityToDto(res)
+	ctx.JSON(http.StatusOK, response.NewSuccessResponse(resDto, "success"))
+}
+
+func (h MyHandler) UpdateTask(ctx *gin.Context) {
+	userData, exc := session.PassAuthValue(ctx)
+	if exc != nil {
+		ctx.Error(exc)
+		return
+	}
+
+	var updateDataDto dto.UserTaskWriteData
+	err := ctx.ShouldBindBodyWithJSON(&updateDataDto)
+	if err != nil {
+		ctx.Error(err)
+		return
+	}
+
+	taskID := typing.IDFromString(ctx.Param("task_id"))
+	updateData := converter.UserTaskWriteDataToEntity(updateDataDto)
+	updateData.ID = taskID
+	userID := userData.ID
+
+	res, exc := h.myService.UpdateTask(h.extractCtx(ctx), userID, updateData)
+	if exc != nil {
+		ctx.Error(exc)
+		return
+	}
+
+	resDto := converter.UserTaskEntityToDto(res)
 	ctx.JSON(http.StatusOK, response.NewSuccessResponse(resDto, "success"))
 }

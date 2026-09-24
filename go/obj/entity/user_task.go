@@ -14,4 +14,6 @@ type UserTask struct {
 	ActualStart time.Time
 	TargetDone  time.Time
 	ActualDone  time.Time
+	IsStartFlag bool
+	IsDoneFlag  bool
 }
