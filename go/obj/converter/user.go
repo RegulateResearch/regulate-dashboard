@@ -33,6 +33,12 @@ func UserDbToEntity(user dao.UserDb) entity.User {
 	}
 }
 
+func UserEntityToDb(data entity.User) dao.UserDb {
+	return dao.UserDb{
+		BaseDb: BaseEntityToDaoDb(data.Base),
+	}
+}
+
 func UserLoginToEntity(data dto.UserLogin) entity.User {
 	return entity.User{
 		Email:    data.Email,

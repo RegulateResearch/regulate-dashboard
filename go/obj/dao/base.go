@@ -1,6 +1,7 @@
 package dao
 
 import (
+	"database/sql"
 	"frascati/typing"
 	"time"
 )
@@ -11,7 +12,7 @@ type BaseDb struct {
 	ID        typing.ID
 	CreatedAt time.Time
 	UpdatedAt time.Time
-	DeletedAt time.Time
+	DeletedAt sql.NullTime
 }
 
 func newBaseDb() BaseDb {

@@ -15,3 +15,7 @@ type Base struct {
 func newBase() Base {
 	return Base{}
 }
+
+func baseWithID(id typing.ID) Base {
+	return Base{ID: id}
+}
