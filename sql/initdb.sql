@@ -67,3 +67,32 @@ CREATE TABLE IF NOT EXISTS course_items(
     description VARCHAR
 );
 
+CREATE TABLE IF NOT EXISTS user_tasks(
+    id BIGSERIAL PRIMARY KEY,
+    created_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP NOT NULL,
+    deleted_at TIMESTAMP,
+    user_id BIGINT NOT NULL REFERENCES users(id),
+    item_id BIGINT NOT NULL REFERENCES course_items(id),
+    grade DECIMAL(10,5),
+    progress SMALLINT NOT NULL DEFAULT 1, -- 1 == to-do
+    target_start TIMESTAMP,
+    actual_start TIMESTAMP,
+    target_done TIMESTAMP,
+    actual_done TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS task_records(
+    id BIGSERIAL PRIMARY KEY,
+    created_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP NOT NULL,
+    deleted_at TIMESTAMP,
+    task_id BIGINT NOT NULL REFERENCES user_tasks(id),
+    progress_before SMALLINT NOT NULL,
+    progress_after SMALLINT NOT NULL,
+    target_start_before TIMESTAMP,
+    target_start_after TIMESTAMP,
+    target_done_before TIMESTAMP,
+    target_done_after TIMESTAMP
+);
+

@@ -1,4 +1,4 @@
-include .env
+-include .env
 
 init:
 	cp .env.empty .env
